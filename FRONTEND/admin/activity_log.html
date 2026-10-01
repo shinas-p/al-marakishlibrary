@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Logs - Al Marakish Library</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --bg-dark: #0f1724;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: white;
+            line-height: 1.6;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 32px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), #f59e0b);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .filters {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            border: 1px solid var(--border);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .btn-filter {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .table-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(0, 0, 0, 0.2);
+            text-align: left;
+            padding: 15px;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: #64748b;
+            color: white;
+        }
+
+        .badge-login {
+            background: #10b981;
+        }
+
+        .badge-delete {
+            background: #ef4444;
+        }
+
+        .badge-update {
+            background: #3b82f6;
+        }
+
+        .badge-add {
+            background: #f59e0b;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-history"></i> Admin Activity Logs</h1>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>Admin</label>
+                <select id="adminFilter">
+                    <option value="">All Admins</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Action Type</label>
+                <select id="typeFilter">
+                    <option value="">All Types</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Date</label>
+                <input type="date" id="dateFilter">
+            </div>
+            <button class="btn-filter" onclick="loadLogs()">Apply Filters</button>
+            <button class="btn-filter" style="background: var(--border);" onclick="resetFilters()">Reset</button>
+        </div>
+
+        <div class="table-card">
+            <table id="logsTable">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Admin</th>
+                        <th>Action</th>
+                        <th>Description</th>
+                        <th>IP Address</th>
+                    </tr>
+                </thead>
+                <tbody id="logsBody">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px;">Loading logs...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        // Load Sidebar
+        fetch('/admin/sidebar.html').then(res => res.text()).then(data => {
+            document.getElementById('sidebar-container').innerHTML = data;
+            if (typeof initSidebar === 'function') initSidebar();
+        });
+
+        protectRoute();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadLogs();
+        });
+
+        async function loadLogs() {
+            const adminId = document.getElementById('adminFilter').value;
+            const type = document.getElementById('typeFilter').value;
+            const date = document.getElementById('dateFilter').value;
+            const tbody = document.getElementById('logsBody');
+
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
+
+            try {
+                const response = await apiRequest(`/admin/activity-logs?admin_id=${adminId}&type=${type}&date=${date}`);
+                if (response.success) {
+                    // Populate filters if not already done
+                    if (document.getElementById('adminFilter').options.length === 1) {
+                        const adminSelect = document.getElementById('adminFilter');
+                        response.filters.admins.forEach(a => {
+                            const opt = document.createElement('option');
+                            opt.value = a.id;
+                            opt.textContent = a.full_name || a.username;
+                            adminSelect.appendChild(opt);
+                        });
+
+                        const typeSelect = document.getElementById('typeFilter');
+                        response.filters.types.forEach(t => {
+                            const opt = document.createElement('option');
+                            opt.value = t;
+                            opt.textContent = t.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                            typeSelect.appendChild(opt);
+                        });
+                    }
+
+                    if (response.logs.length > 0) {
+                        tbody.innerHTML = response.logs.map(log => {
+                            let badgeClass = 'badge';
+                            if (log.action_type.includes('login')) badgeClass += ' badge-login';
+                            else if (log.action_type.includes('delete')) badgeClass += ' badge-delete';
+                            else if (log.action_type.includes('update')) badgeClass += ' badge-update';
+                            else if (log.action_type.includes('add')) badgeClass += ' badge-add';
+
+                            return `
+                                <tr>
+                                    <td>${new Date(log.created_at).toLocaleString()}</td>
+                                    <td>
+                                        <strong>${log.full_name || log.username}</strong><br>
+                                        <small style="color: var(--text-muted)">@${log.username}</small>
+                                    </td>
+                                    <td><span class="${badgeClass}">${log.action_type.replace(/_/g, ' ')}</span></td>
+                                    <td>${log.description}</td>
+                                    <td style="font-family: monospace; color: var(--text-muted);">${log.ip_address}</td>
+                                </tr>
+                            `;
+                        }).join('');
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">No logs found matching your criteria.</td></tr>';
+                    }
+                }
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #ef4444;">Error loading logs.</td></tr>';
+            }
+        }
+
+        function resetFilters() {
+            document.getElementById('adminFilter').value = '';
+            document.getElementById('typeFilter').value = '';
+            document.getElementById('dateFilter').value = '';
+            loadLogs();
+        }
+    </script>
+</body>
+
+</html>

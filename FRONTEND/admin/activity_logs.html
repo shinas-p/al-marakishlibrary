@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Logs | Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/owner-pages.css">
+    <style>
+        .filter-bar {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(156, 77, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">
+                    <i class="fas fa-list-check crown-icon"></i> Audit Trails
+                </h1>
+                <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">
+                    Complete history of administrative actions and system events.
+                </p>
+            </div>
+            <button class="btn btn-primary" onclick="loadLogs()">
+                <i class="fas fa-rotate"></i> Refresh Records
+            </button>
+        </div>
+
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label><i class="fas fa-tag"></i> Category</label>
+                <select id="filterCategory" onchange="loadLogs()">
+                    <option value="">All Categories</option>
+                    <option value="system">System</option>
+                    <option value="books">Books</option>
+                    <option value="users">Users</option>
+                    <option value="circulation">Circulation</option>
+                    <option value="admins">Admins</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-triangle-exclamation"></i> Severity</label>
+                <select id="filterSeverity" onchange="loadLogs()">
+                    <option value="">All Severity</option>
+                    <option value="low">Low (Info)</option>
+                    <option value="medium">Medium (Warning)</option>
+                    <option value="high">High (Error)</option>
+                    <option value="critical">Critical (Alert)</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-magnifying-glass"></i> Search Terminal</label>
+                <input type="text" id="searchInput" placeholder="Search by description..." oninput="filterLogsClient()">
+            </div>
+        </div>
+
+        <div class="owner-table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Origin</th>
+                        <th>Protocol</th>
+                        <th>Scope</th>
+                        <th>Execution Trace</th>
+                        <th>Terminal Status</th>
+                        <th>Risk Level</th>
+                    </tr>
+                </thead>
+                <tbody id="logsTableBody">
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding: 100px;">
+                            <i class="fas fa-spinner fa-spin fa-3x" style="color: var(--primary);"></i>
+                            <div style="margin-top:20px; font-weight: 600;">Decrypting log data...</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        let allLogs = [];
+
+        (async function () {
+            // Sidebar loading is now handled by sidebar.js auto-init
+            // Route protection
+            await protectRoute();
+            loadLogs();
+        })();
+
+        async function loadLogs() {
+            const cat = document.getElementById('filterCategory').value;
+            const sev = document.getElementById('filterSeverity').value;
+
+            let url = `/admin/activity-logs?limit=100`;
+            if (cat) url += `&category=${cat}`;
+            if (sev) url += `&severity=${sev}`;
+
+            try {
+                const res = await apiRequest(url);
+                if (res.success) {
+                    allLogs = res.logs;
+                    renderLogs(allLogs);
+                }
+            } catch (e) {
+                console.error('Audit load failed:', e);
+            }
+        }
+
+        function renderLogs(logs) {
+            const tbody = document.getElementById('logsTableBody');
+            if (logs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px;">No audit records found for current filter.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = logs.map(log => `
+                <tr style="transition: 0.2s; cursor: default;" onmouseover="this.style.background='rgba(156,77,255,0.03)'" onmouseout="this.style.background=''">
+                    <td style="white-space:nowrap; color: var(--text-secondary); font-size:12px; font-family: monospace;">${formatDate(log.created_at)}</td>
+                    <td>
+                        <div style="font-weight:700; font-size: 13px;">${escapeHtml(log.username || 'System')}</div>
+                        <div style="font-size:10px; color: var(--primary); text-transform: uppercase; font-weight: 800;">${log.user_role || '-'}</div>
+                    </td>
+                    <td><code style="background:rgba(0,0,0,0.4); padding:4px 8px; border-radius:6px; font-size: 11px; border: 1px solid var(--border);">${log.action_type}</code></td>
+                    <td><span class="badge" style="background:rgba(156,77,255,0.1); color: var(--primary); border: 1px solid rgba(156,77,255,0.2);">${log.action_category}</span></td>
+                    <td style="font-size:13px; max-width:350px; line-height: 1.5; color: #f1f5f9;">${escapeHtml(log.action_description)}</td>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <div style="width:8px; height:8px; border-radius:50%; background:${log.status === 'success' ? 'var(--success)' : 'var(--danger)'}; box-shadow: 0 0 8px currentColor;"></div>
+                            <span style="font-size: 12px; font-weight: 600; text-transform: capitalize;">${log.status}</span>
+                        </div>
+                    </td>
+                    <td><span class="badge" style="${getSeverityStyle(log.severity)}">${log.severity}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function filterLogsClient() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allLogs.filter(l =>
+                l.action_description.toLowerCase().includes(term) ||
+                l.username?.toLowerCase().includes(term) ||
+                l.action_type.toLowerCase().includes(term)
+            );
+            renderLogs(filtered);
+        }
+
+        function getSeverityStyle(s) {
+            if (s === 'high' || s === 'critical') return 'background:rgba(239,68,68,0.1); color:#ff6b6b; border: 1px solid rgba(239,68,68,0.2);';
+            if (s === 'medium') return 'background:rgba(245,158,11,0.1); color:#ff9f43; border: 1px solid rgba(245,158,11,0.2);';
+            return 'background:rgba(16,185,129,0.1); color:#2ed573; border: 1px solid rgba(16,185,129,0.2);';
+        }
+
+        function formatDate(ds) {
+            return new Date(ds).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+
+        function escapeHtml(t) {
+            const d = document.createElement('div');
+            d.textContent = t || '';
+            return d.innerHTML;
+        }
+    </script>
+</body>
+
+</html>

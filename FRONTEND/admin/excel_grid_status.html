@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Book Grid Add - Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/owner-pages.css">
+    <link rel="stylesheet" href="/assets/css/excel-grid.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <!-- Premium Header -->
+        <div class="profile-header" style="display: flex; gap: 40px; margin-bottom: 40px; align-items: flex-start;">
+            <div class="avatar-container" style="position: relative; flex-shrink: 0;">
+                <div class="profile-avatar"
+                    style="width: 140px; height: 140px; border-radius: 35px; background: linear-gradient(135deg, var(--bg-secondary) 0%, #1e293b 100%); border: 4px solid var(--border); display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);">
+                    <i class="fas fa-table-list"
+                        style="font-size: 60px; color: var(--primary); filter: drop-shadow(0 0 15px rgba(156, 77, 255, 0.4));"></i>
+                </div>
+                <span class="status-pill status-active"
+                    style="position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); background: #10b981; color: white; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; text-transform: uppercase;">Excel
+                    Mode</span>
+            </div>
+            <div class="profile-info" style="flex: 1;">
+                <h1
+                    style="font-family: 'Outfit', sans-serif; font-size: 42px; font-weight: 800; margin-bottom: 8px; background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                    Excel Book Grid Add</h1>
+                <div class="profile-badges" style="display: flex; gap: 12px; margin-bottom: 24px;">
+                    <div class="badge"
+                        style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 6px 14px; border-radius: 12px; font-size: 14px; color: var(--text-secondary); display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-file-excel" style="color: #10b981;"></i> Bulk Import Terminal
+                    </div>
+                </div>
+                <div class="profile-actions" style="display: flex; gap: 16px;">
+                    <button class="btn btn-primary" onclick="window.location.href='import.html'"
+                        style="padding: 12px 24px; border-radius: 14px; font-weight: 600; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s;">
+                        <i class="fas fa-arrow-left"></i> Back to Import
+                    </button>
+                    <button class="btn btn-primary" onclick="pasteFromExcel()"
+                        style="padding: 12px 24px; border-radius: 14px; font-weight: 600; background: var(--primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s; box-shadow: 0 4px 15px rgba(156, 77, 255, 0.2);">
+                        <i class="fas fa-paste"></i> Paste from Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid Interface -->
+        <div class="grid-container">
+            <div class="grid-toolbar">
+                <div class="toolbar-left">
+                    <button class="grid-btn btn-add-row" onclick="addRow()"><i class="fas fa-plus"></i> Add Row</button>
+                    <button class="grid-btn btn-10-rows" onclick="addMultipleRows(10)"><i
+                            class="fas fa-layer-group"></i> +10 Rows</button>
+                    <button class="grid-btn btn-undo" onclick="undo()"><i class="fas fa-undo"></i> Undo</button>
+                    <button class="grid-btn btn-redo" onclick="redo()"><i class="fas fa-redo"></i> Redo</button>
+                    <button class="grid-btn btn-import" onclick="document.getElementById('excelFileInput').click()"><i
+                            class="fas fa-file-import"></i> Import Excel</button>
+                    <button class="grid-btn btn-export" onclick="exportFailedRows()"><i
+                            class="fas fa-exclamation-triangle"></i> Export Failed</button>
+                    <button class="grid-btn btn-clear" onclick="clearGrid()"><i class="fas fa-trash"></i> Clear
+                        All</button>
+                    <input type="file" id="excelFileInput" style="display: none;" accept=".xlsx, .xls, .csv">
+                </div>
+
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search all fields..." onkeyup="searchGrid(this.value)">
+                </div>
+
+                <div class="toolbar-right">
+                    <button class="grid-btn btn-preview" onclick="saveToDatabase()"><i class="fas fa-check-circle"></i>
+                        Preview & Save</button>
+                </div>
+            </div>
+
+            <div class="grid-table-wrapper">
+                <table class="excel-grid" id="bookGrid">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;">#</th>
+                            <th style="width: 50px;">Status</th>
+                            <th>ACC NO *</th>
+                            <th>ISBN *</th>
+                            <th>CALL NO *</th>
+                            <th>TITLE *</th>
+                            <th>AUTHOR *</th>
+                            <th>CATEGORY *</th>
+                            <th>LANGUAGE *</th>
+                            <th>PUBLISHER *</th>
+                            <th>EDITION *</th>
+                            <th>PUB. YEAR *</th>
+                            <th>PAGES *</th>
+                            <th>VOLUME *</th>
+                            <th>PRICE *</th>
+                            <th>LOCATION</th>
+                            <th>DESCRIPTION</th>
+                            <th>COVER</th>
+                            <th>E BOOK</th>
+                            <th>COUNTRY</th>
+                            <th style="width: 40px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="gridBody">
+                        <!-- Rows will be injected here -->
+                    </tbody>
+                </table>
+                <div id="emptyState" class="empty-state">
+                    <i class="fas fa-table-cells"></i>
+                    <h2>Pasted Excel Data will appear here</h2>
+                    <p>Copy your rows from Excel/Sheets and click "Paste from Excel" or press Ctrl+V</p>
+                </div>
+            </div>
+
+            <div class="grid-footer">
+                <div class="stat-item">
+                    <div class="stat-dot" style="background: #ffffff;"></div> Total: <span id="stat-total">0</span>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-dot" style="background: #10b981;"></div> Valid: <span id="stat-valid">0</span>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-dot" style="background: #ef4444;"></div> Errors: <span id="stat-errors">0</span>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-dot" style="background: #f59e0b;"></div> Duplicates: <span
+                        id="stat-duplicates">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script src="/assets/js/excel-grid.js"></script>
+    <script>
+        initGrid('books');
+    </script>
+</body>
+
+</html>

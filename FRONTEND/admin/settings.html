@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings - AL MARAKISH LIBRARY</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #a855f7;
+            --primary-light: #c084fc;
+            --primary-dark: #7e22ce;
+            --primary-glow: rgba(168, 85, 247, 0.4);
+            --secondary: #fbbf24;
+            --accent: #22c55e;
+            --danger: #f43f5e;
+            --bg-body: #05080f;
+            --bg-sidebar: #0a0f1d;
+            --bg-card: rgba(17, 25, 40, 0.75);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --card-glow: 0 0 20px rgba(168, 85, 247, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.2) 0, transparent 40%),
+                radial-gradient(at 100% 0%, rgba(251, 191, 36, 0.1) 0, transparent 40%),
+                radial-gradient(at 50% 100%, rgba(126, 34, 206, 0.15) 0, transparent 50%);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: all 0.4s ease;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .settings-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 30px;
+            max-width: 1200px;
+        }
+
+        /* Profile Card */
+        .profile-side-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 45px 35px;
+            text-align: center;
+            height: fit-content;
+            box-shadow: var(--shadow-lg), var(--card-glow);
+            transition: 0.4s ease;
+        }
+
+        .profile-side-card:hover {
+            border-color: rgba(168, 85, 247, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .profile-photo-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 25px;
+        }
+
+        .profile-photo {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--glass-border);
+            box-shadow: 0 0 30px var(--primary-glow);
+            background: #1e293b;
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .profile-photo:hover {
+            transform: scale(1.05);
+            border-color: var(--primary-light);
+            box-shadow: 0 0 40px var(--primary-glow);
+        }
+
+        .photo-upload-btn {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: 3px solid var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .photo-upload-btn:hover {
+            transform: scale(1.1);
+            background: var(--primary-light);
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .profile-role {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(156, 77, 255, 0.15);
+            color: var(--primary-light);
+            border: 1px solid rgba(156, 77, 255, 0.2);
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .profile-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            text-align: left;
+            margin-top: 20px;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 25px;
+        }
+
+        .nav-item {
+            padding: 14px 20px;
+            border-radius: 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-item i {
+            font-size: 18px;
+            width: 24px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 8px 15px rgba(156, 77, 255, 0.25);
+        }
+
+        /* Form Content */
+        .settings-content-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 45px;
+            box-shadow: var(--shadow-lg), var(--card-glow);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-left: 5px;
+        }
+
+        .form-control {
+            background: rgba(10, 15, 29, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 16px 20px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(10, 15, 29, 0.9);
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.15), 0 0 15px rgba(168, 85, 247, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-control:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-update {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: fit-content;
+        }
+
+        .btn-update:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(156, 77, 255, 0.3);
+        }
+
+        .btn-update:active {
+            transform: translateY(0);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 24px;
+            }
+
+            .settings-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-cog" style="color: var(--primary); margin-right: 15px;"></i>Settings</h1>
+        </div>
+
+        <div class="settings-layout">
+            <!-- Side Navigation Panel -->
+            <div class="profile-side-card">
+                <div class="profile-photo-container">
+                    <img id="displayPhoto" src="" alt="Profile" class="profile-photo">
+                    <label for="photoInput" class="photo-upload-btn">
+                        <i class="fas fa-camera"></i>
+                    </label>
+                    <input type="file" id="photoInput" accept="image/*" style="display: none;">
+                </div>
+                <h2 id="displayName" class="profile-name">Admin User</h2>
+                <div id="displayRole" class="profile-role">Administrator</div>
+
+                <div class="profile-nav">
+                    <div class="nav-item active" onclick="switchTab('personal', this)">
+                        <i class="fas fa-user-edit"></i> Personal Info
+                    </div>
+                    <div class="nav-item" onclick="switchTab('security', this)">
+                        <i class="fas fa-shield-alt"></i> Security
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content Panel -->
+            <div class="settings-content-card">
+
+                <!-- Personal Tab -->
+                <div id="personal" class="tab-content active">
+                    <h2 class="tab-title">Personal Information</h2>
+                    <form id="profileForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Username (Fixed)</label>
+                                <input type="text" id="username" class="form-control" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>Role</label>
+                                <input type="text" id="role" class="form-control" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="full_name" class="form-control" placeholder="Enter full name"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" id="email" class="form-control" placeholder="example@mail.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="tel" id="phone" class="form-control" placeholder="+123 456 7890">
+                            </div>
+                            <div class="form-group">
+                                <label>Position / Title</label>
+                                <input type="text" id="position" class="form-control" placeholder="Head Librarian">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-update">
+                            <i class="fas fa-save"></i> Update Profile
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Security Tab -->
+                <div id="security" class="tab-content">
+                    <h2 class="tab-title">Security & Password</h2>
+                    <form id="passwordForm">
+                        <div class="form-grid">
+                            <div class="form-group full">
+                                <label>Current Password</label>
+                                <input type="password" id="currentPassword" class="form-control" placeholder="••••••••"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <input type="password" id="newPassword" class="form-control"
+                                    placeholder="Min 6 characters" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm New Password</label>
+                                <input type="password" id="confirmPassword" class="form-control"
+                                    placeholder="Repeat new password" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-update">
+                            <i class="fas fa-key"></i> Change Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Scripts -->
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        // Initialize Sidebar
+        fetch('/admin/sidebar.html')
+            .then(res => res.text())
+            .then(data => {
+                document.getElementById('sidebar-container').innerHTML = data;
+                if (typeof initSidebar === 'function') initSidebar();
+            });
+
+        protectRoute();
+
+        // Load complete data from API on entry
+        async function loadProfileData() {
+            try {
+                const response = await apiRequest('/admin/profile');
+                if (response.success && response.admin) {
+                    const admin = response.admin;
+
+                    // Fill profile card
+                    document.getElementById('displayName').textContent = admin.full_name || '@' + admin.username;
+                    document.getElementById('displayRole').textContent = admin.role;
+
+                    const photoEl = document.getElementById('displayPhoto');
+                    if (admin.profile_photo) {
+                        photoEl.src = `/uploads/users/${admin.profile_photo}`;
+                    } else {
+                        // Generate Initials SVG Fallback
+                        const name = admin.full_name || admin.username || 'A';
+                        const names = name.trim().split(' ');
+                        const initials = names.length >= 2 ? names[0][0] + names[1][0] : names[0].substring(0, 2);
+                        const svg = `<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg"><rect width="150" height="150" fill="#9c4dff"/><text x="50%" y="50%" text-anchor="middle" dy=".35em" fill="white" font-size="60" font-family="sans-serif" font-weight="700">${initials.toUpperCase()}</text></svg>`;
+                        photoEl.src = 'data:image/svg+xml;base64,' + btoa(svg);
+                    }
+
+                    // Fill form fields
+                    document.getElementById('username').value = admin.username;
+                    document.getElementById('role').value = admin.role;
+                    document.getElementById('full_name').value = admin.full_name || '';
+                    document.getElementById('email').value = admin.email || '';
+                    document.getElementById('phone').value = admin.phone || '';
+                    document.getElementById('position').value = admin.position || '';
+
+                    // Sync localStorage case it's outdated
+                    const cached = JSON.parse(localStorage.getItem('user') || '{}');
+                    localStorage.setItem('user', JSON.stringify({ ...cached, ...admin }));
+                }
+            } catch (error) {
+                console.error('Failed to load profile:', error);
+                showToast('Could not fetch server profile data', 'error');
+            }
+        }
+
+        loadProfileData();
+
+        // Multi-tab Management
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            el.classList.add('active');
+        }
+
+        // Handle Profile Form Submit
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+
+            const payload = {
+                full_name: document.getElementById('full_name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                position: document.getElementById('position').value
+            };
+
+            try {
+                showLoading(btn, 'Saving...');
+                const res = await apiRequest('/admin/profile', {
+                    method: 'PUT',
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.success) {
+                    showToast('Profile updated successfully!', 'success');
+                    // Refresh identity on sidebar/header
+                    setTimeout(() => window.location.reload(), 1500);
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            } finally {
+                hideLoading(btn);
+            }
+        });
+
+        // Handle Photo Upload
+        document.getElementById('photoInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Preview local
+            const reader = new FileReader();
+            reader.onload = (e) => document.getElementById('displayPhoto').src = e.target.result;
+            reader.readAsDataURL(file);
+
+            const formData = new FormData();
+            formData.append('profile_photo', file);
+
+            try {
+                showToast('Uploading photo...', 'info');
+                const res = await uploadFile('/admin/profile/photo', formData, { method: 'PUT' });
+                if (res.success) {
+                    showToast('Photo updated successfully!', 'success');
+                    // Update photo path in display case it was different from preview
+                    document.getElementById('displayPhoto').src = `/uploads/users/${res.photo}`;
+
+                    // Update identity in LS for other pages
+                    const cached = JSON.parse(localStorage.getItem('user') || '{}');
+                    localStorage.setItem('user', JSON.stringify({ ...cached, profile_photo: res.photo }));
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        });
+
+        // Handle Security Form Submit
+        document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const current = document.getElementById('currentPassword').value;
+            const fresh = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            const btn = e.target.querySelector('button');
+
+            if (fresh !== confirm) return showToast('New passwords do not match!', 'error');
+            if (fresh.length < 6) return showToast('Password is too short!', 'warning');
+
+            try {
+                showLoading(btn, 'Updating...');
+                const res = await apiRequest('/admin/profile/password', {
+                    method: 'PUT',
+                    body: JSON.stringify({ current_password: current, new_password: fresh })
+                });
+
+                if (res.success) {
+                    showToast('Password changed successfully!', 'success');
+                    e.target.reset();
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            } finally {
+                hideLoading(btn);
+            }
+        });
+    </script>
+</body>
+
+</html>

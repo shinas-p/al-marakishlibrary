@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Logging out...</title>
+    <script>
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/student/login.html';
+    </script>
+</head>
+<body>
+    <h1>Logging out...</h1>
+    <p>Please wait... <a href="/student/login.html">Click here if not redirected</a></p>
+</body>
+</html>

@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Students | Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --primary-light: #b785ff;
+            --primary-dark: #7b2cff;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --bg-body: #080c14;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --bg-sidebar: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(30, 41, 59, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) transparent;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(156, 77, 255, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.1) 0, transparent 50%);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        .heading-font {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(156, 77, 255, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: rgba(156, 77, 255, 0.15);
+            color: var(--primary-light);
+            border: 1px solid rgba(156, 77, 255, 0.2);
+        }
+
+        .stat-info .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-info .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Header Section */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header-title h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 14px;
+            border: none;
+            font-weight: 600;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px -5px rgba(156, 77, 255, 0.4);
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -5px rgba(156, 77, 255, 0.5);
+            filter: brightness(1.1);
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 32px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 14px 14px 14px 48px;
+            color: white;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 0 4px rgba(156, 77, 255, 0.1);
+        }
+
+        .filter-select {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 12px 20px;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 160px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Table Card */
+        .table-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 1000px;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.4);
+            padding: 18px 24px;
+            text-align: left;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        td {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--glass-border);
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr {
+            transition: all 0.2s ease;
+        }
+
+        tr:hover td {
+            background: rgba(156, 77, 255, 0.03);
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .student-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 18px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .student-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: white;
+            display: block;
+            font-size: 16px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .student-name:hover {
+            color: var(--primary-light);
+        }
+
+        .student-email {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .badge {
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-active {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-inactive {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-action:hover {
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-view:hover {
+            background: rgba(156, 77, 255, 0.2);
+            border-color: var(--primary);
+            color: var(--primary-light);
+        }
+
+        .btn-edit:hover {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* Loading & Empty State */
+        .loading-shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        .empty-state {
+            padding: 80px 24px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .page-info {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .page-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-btn {
+            padding: 8px 16px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 24px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .btn-primary {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+        }
+
+        /* Mobile sidebar toggle */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            color: white;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <!-- Dashboard Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+                <div class="stat-info">
+                    <div class="stat-value" id="totalStudentsCount">0</div>
+                    <div class="stat-label">Total Students</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"
+                    style="background: rgba(16, 185, 129, 0.1); color: #10b981; border-color: rgba(16, 185, 129, 0.20);">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="activeStudentsCount">0</div>
+                    <div class="stat-label">Active Now</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"
+                    style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-color: rgba(245, 158, 11, 0.2);">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="newStudentsCount">0</div>
+                    <div class="stat-label">New This Month</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="header-title">
+                <div style="display: flex; align-items: center;">
+                    <div class="mobile-menu-btn" id="mobileMenuToggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                    <h1>👨‍🎓 Students Directory</h1>
+                </div>
+                <p>Manage member records, enrollment, and account status</p>
+            </div>
+            <div class="header-actions">
+                <a href="add_student.html" class="btn-primary">
+                    <i class="fas fa-user-plus"></i> Add New Student
+                </a>
+                <button class="btn-action" style="width: auto; padding: 0 16px;" onclick="loadUsers()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" class="search-input"
+                    placeholder="Search by name, ID number, contact or section...">
+            </div>
+            <select id="statusFilter" class="filter-select" onchange="loadUsers()">
+                <option value="">All Status</option>
+                <option value="active">Active Members</option>
+                <option value="inactive">Suspended</option>
+            </select>
+            <select id="sectionFilter" class="filter-select" onchange="loadUsers()">
+                <option value="">All Sections</option>
+            </select>
+        </div>
+
+        <!-- Table Card -->
+        <div class="table-card">
+            <div class="table-container">
+                <table id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>Student / Profile</th>
+                            <th>Admission No</th>
+                            <th>Grade/Section</th>
+                            <th>Contact Info</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Rows will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="loadingState" style="display: none; padding: 40px; text-align: center;">
+                <i class="fas fa-circle-notch fa-spin"
+                    style="font-size: 32px; color: var(--primary); margin-bottom: 16px;"></i>
+                <p style="color: var(--text-muted)">Fetching student records...</p>
+            </div>
+
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-users-slash"></i>
+                <h3>No Students Found</h3>
+                <p>Try adjusting your search filters or add a new student.</p>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <div class="page-info" id="paginationInfo">
+                    Showing 0 to 0 of 0 students
+                </div>
+                <div class="page-controls">
+                    <button class="page-btn" id="prevPage" disabled><i class="fas fa-chevron-left"></i></button>
+                    <button class="page-btn" id="nextPage" disabled><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        // Protect route
+        protectRoute('assistant');
+
+        // Store current data
+        let currentUsers = [];
+        let currentPage = 1;
+        const limit = 10;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadUsers();
+            setupSearch();
+        });
+
+
+        async function loadStats() {
+            try {
+                const response = await apiRequest('/admin/users/stats');
+                if (response.success) {
+                    const stats = response.stats;
+                    animateValue("totalStudentsCount", 0, stats.total, 1000);
+                    animateValue("activeStudentsCount", 0, stats.active, 1000);
+                    animateValue("newStudentsCount", 0, stats.newStudents, 1000);
+                }
+            } catch (error) {
+                console.error('Stats error:', error);
+            }
+        }
+
+        async function loadUsers() {
+            const tableBody = document.getElementById('usersTableBody');
+            const loadingState = document.getElementById('loadingState');
+            const emptyState = document.getElementById('emptyState');
+            const search = document.getElementById('searchInput').value;
+            const status = document.getElementById('statusFilter').value;
+
+            tableBody.innerHTML = '';
+            loadingState.style.display = 'block';
+            emptyState.style.display = 'none';
+
+            try {
+                const response = await apiRequest(`/admin/users?search=${encodeURIComponent(search)}&status=${status}`);
+                loadingState.style.display = 'none';
+
+                if (response.success && response.users && response.users.length > 0) {
+                    currentUsers = response.users;
+                    renderTable();
+                    updatePagination(response.users.length);
+
+                    // Extract sections for filter if not already populated
+                    populateSections(response.users);
+                } else {
+                    emptyState.style.display = 'block';
+                    updatePagination(0);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                loadingState.innerHTML = `<p style="color: var(--danger)">Error loading data. Please try again.</p>`;
+            }
+        }
+
+        function renderTable() {
+            const tableBody = document.getElementById('usersTableBody');
+            tableBody.innerHTML = '';
+
+            const start = (currentPage - 1) * limit;
+            const end = start + limit;
+            const pageData = currentUsers.slice(start, end);
+
+            pageData.forEach(user => {
+                const initials = user.full_name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                const statusClass = user.status === 'active' ? 'badge-active' : 'badge-inactive';
+                const photoHtml = user.profile_photo
+                    ? `<img src="/uploads/student_photos/${user.profile_photo}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&background=random'">`
+                    : `<span>${initials}</span>`;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div class="student-item">
+                            <div class="student-avatar">${photoHtml}</div>
+                            <div>
+                                <a href="user_details.html?id=${user.id}" class="student-name">${escapeHtml(user.full_name)}</a>
+                                <div class="student-email">${escapeHtml(user.email || 'No email provided')}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><code style="background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px; color: var(--primary-light); font-weight: 600;">${escapeHtml(user.ad_no)}</code></td>
+                    <td><span style="color: var(--text-main); font-weight: 500;">${escapeHtml(user.section || 'N/A')}</span></td>
+                    <td>
+                        <div style="font-size: 14px;">${escapeHtml(user.phone || '—')}</div>
+                    </td>
+                    <td>
+                        <span class="badge ${statusClass}">${user.status || 'Active'}</span>
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            <a href="user_details.html?id=${user.id}" class="btn-action btn-view" title="View Profile">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="add_student.html?edit=${user.id}" class="btn-action btn-edit" title="Edit Student">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button class="btn-action btn-delete" onclick="handleDelete(${user.id}, '${escapeHtml(user.full_name)}')" title="Archive student">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function populateSections(users) {
+            const select = document.getElementById('sectionFilter');
+            if (select.options.length > 1) return;
+
+            const sections = [...new Set(users.map(u => u.section).filter(Boolean))];
+            sections.sort().forEach(section => {
+                const opt = document.createElement('option');
+                opt.value = section;
+                opt.textContent = section;
+                select.appendChild(opt);
+            });
+        }
+
+        function updatePagination(total) {
+            const info = document.getElementById('paginationInfo');
+            const start = total === 0 ? 0 : (currentPage - 1) * limit + 1;
+            const end = Math.min(currentPage * limit, total);
+
+            info.textContent = `Showing ${start} to ${end} of ${total} students`;
+
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = end >= total;
+        }
+
+        function setupSearch() {
+            let timeout;
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    currentPage = 1;
+                    loadUsers();
+                }, 400);
+            });
+
+            document.getElementById('prevPage').onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable();
+                    updatePagination(currentUsers.length);
+                }
+            };
+
+            document.getElementById('nextPage').onclick = () => {
+                if (currentPage * limit < currentUsers.length) {
+                    currentPage++;
+                    renderTable();
+                    updatePagination(currentUsers.length);
+                }
+            };
+        }
+
+        async function handleDelete(id, name) {
+            if (!confirm(`Are you sure you want to archive student "${name}"? This will move them to the inactive list.`)) return;
+
+            try {
+                const response = await apiRequest(`/admin/users/${id}`, { method: 'DELETE' });
+                if (response.success) {
+                    showToast('Student archived successfully', 'success');
+                    loadUsers();
+                    loadStats();
+                } else {
+                    showToast(response.error || 'Failed to archive student', 'error');
+                }
+            } catch (error) {
+                showToast('Network error', 'error');
+            }
+        }
+
+        function animateValue(id, start, end, duration) {
+            if (start === end) {
+                document.getElementById(id).innerHTML = end;
+                return;
+            }
+            let range = end - start;
+            let current = start;
+            let increment = end > start ? 1 : -1;
+            let stepTime = Math.abs(Math.floor(duration / range));
+            let obj = document.getElementById(id);
+            let timer = setInterval(function () {
+                current += increment;
+                obj.innerHTML = current;
+                if (current == end) {
+                    clearInterval(timer);
+                }
+            }, stepTime || 10);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
+        }
+    </script>
+</body>
+
+</html>

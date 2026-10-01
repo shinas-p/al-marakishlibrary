@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash Fine Payment | Admin Panel</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --primary-light: #b785ff;
+            --primary-dark: #7b2cff;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --bg-body: #080c14;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --bg-sidebar: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(30, 41, 59, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+            /* Retaining local variables for existing elements */
+            --local-accent: #cf9d7c;
+            --card-radius: 20px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(156, 77, 255, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.1) 0, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: all 0.4s ease;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            color: white;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-toggle {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar will be loaded here -->
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="dashboard-container">
+            <!-- Header -->
+            <header>
+                <div class="header-content">
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <button id="mobileMenuToggle" class="mobile-toggle">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <a href="../dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+                    </div>
+                    <div class="title-group">
+                        <h1 style="font-family: 'Outfit', sans-serif;">Cash Fine Payment</h1>
+                        <p>Process instant library fine settlements</p>
+                    </div>
+                </div>
+
+                <div style="margin-left: auto; display: flex; gap: 15px; align-items: center;">
+                    <a href="verify_payments.html" class="neon-btn"
+                        style="text-decoration: none; padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 8px; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent); color: var(--accent);">
+                        <i class="fas fa-check-double"></i> Verify Payments
+                    </a>
+                    <a href="payment_history.html" class="neon-btn"
+                        style="text-decoration: none; padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; color: #3b82f6;">
+                        <i class="fas fa-history"></i> History
+                    </a>
+                    <a href="create_custom_fine.html" class="neon-btn"
+                        style="text-decoration: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 10px; background: rgba(156, 77, 255, 0.1); border: 1px solid var(--primary); color: var(--primary);">
+                        <i class="fas fa-plus-circle"></i> Create Custom Fine
+                    </a>
+                </div>
+
+                <div class="admin-profile">
+                    <img id="adminPhoto" src="" alt="" class="admin-avatar" style="display: none;">
+                    <span id="adminName">Loading...</span>
+                    <div class="status-indicator"></div>
+                </div>
+            </header>
+
+            <main class="content-grid">
+                <!-- Left Side: Form Section -->
+                <section class="form-section">
+                    <div class="glass-card main-form">
+                        <div class="card-header">
+                            <i class="fas fa-user-graduate"></i>
+                            <h2>Step 1: Identify Student</h2>
+                        </div>
+
+                        <div class="input-group search-container">
+                            <label for="studentSearch">Student Admission No / ID</label>
+                            <div class="search-wrapper">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="studentSearch" placeholder="Type Admission No (e.g. 2024001)"
+                                    autocomplete="off">
+                                <div id="searchDropdown" class="autocomplete-dropdown hidden"></div>
+                            </div>
+                        </div>
+
+                        <div id="studentDetails" class="student-info-grid hidden">
+                            <div class="info-item">
+                                <span class="label">Name</span>
+                                <span class="value" id="fillName">--</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Class/Section</span>
+                                <span class="value" id="fillClass">--</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Phone</span>
+                                <span class="value" id="fillPhone">--</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Email</span>
+                                <span class="value" id="fillEmail">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card book-section hidden" id="bookSelectionCard">
+                        <div class="card-header">
+                            <i class="fas fa-book"></i>
+                            <h2>Step 2: Select Borrowed Book</h2>
+                        </div>
+                        <p class="subtitle">Select the book for which the fine is being paid</p>
+                        <div class="book-grid" id="borrowedBooksList">
+                            <!-- Book cards will be injected here -->
+                        </div>
+                        <!-- Option for general fine not linked to a book -->
+                        <div id="noBookOption" class="no-book-btn">
+                            <i class="fas fa-times-circle"></i> General / No specific book
+                        </div>
+                    </div>
+
+                    <div class="glass-card payment-details-card hidden" id="paymentFormCard">
+                        <div class="card-header">
+                            <i class="fas fa-receipt"></i>
+                            <h2>Step 3: Fine Details</h2>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label for="fineAmount">Fine Amount (₹)</label>
+                                <div class="amount-wrapper">
+                                    <span>₹</span>
+                                    <input type="number" id="fineAmount" placeholder="0.00" min="0" step="0.01">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="paymentDate">Payment Date</label>
+                                <input type="date" id="paymentDate">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="paymentMode">Payment Mode</label>
+                            <select id="paymentMode" disabled>
+                                <option value="Cash" selected>Cash</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="paymentNotes">Reason / Notes</label>
+                            <textarea id="paymentNotes"
+                                placeholder="Describe why this fine is being charged (e.g. Late Return, Lost Book, Damage)"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Right Side: Preview Section -->
+                <section class="preview-section">
+                    <div class="sticky-wrapper">
+                        <div class="glass-card preview-card">
+                            <div class="preview-header">
+                                <h3>Payment Summary</h3>
+                                <span class="badge">Live Preview</span>
+                            </div>
+
+                            <div class="preview-body">
+                                <div class="preview-row">
+                                    <span class="p-label">Student</span>
+                                    <span class="p-value" id="prevStudent">None Selected</span>
+                                </div>
+                                <div class="preview-row">
+                                    <span class="p-label">ID</span>
+                                    <span class="p-value" id="prevID">--</span>
+                                </div>
+                                <hr>
+                                <div class="preview-row">
+                                    <span class="p-label">Book</span>
+                                    <span class="p-value" id="prevBook">None</span>
+                                </div>
+                                <div class="preview-row">
+                                    <span class="p-label">Book No</span>
+                                    <span class="p-value" id="prevBookID">--</span>
+                                </div>
+                                <div class="preview-row">
+                                    <span class="p-label">Days Late</span>
+                                    <span class="p-value" id="prevDays">0</span>
+                                </div>
+                                <hr>
+                                <div class="preview-total">
+                                    <span class="p-label">Grand Total</span>
+                                    <span class="p-total" id="prevTotal">₹ 0.00</span>
+                                </div>
+                                <div class="preview-row">
+                                    <span class="p-label">Date</span>
+                                    <span class="p-value" id="prevDate">--</span>
+                                </div>
+                                <div class="preview-notes">
+                                    <span class="p-label">Remarks</span>
+                                    <p id="prevNotes">No notes added.</p>
+                                </div>
+                            </div>
+
+                            <button id="submitBtn" class="floating-submit-btn">
+                                <span>Record Payment</span>
+                                <i class="fas fa-check-double"></i>
+                            </button>
+                        </div>
+
+                        <div class="branding-card glass-card">
+                            <div class="library-logo">
+                                <i class="fas fa-university"></i>
+                            </div>
+                            <h2 id="libraryName">Al Marakish Library</h2>
+                            <p>Official Fine Collection Module</p>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal-overlay hidden">
+        <div class="modal-content glass-card">
+            <div class="success-icon">
+                <div class="checkmark-circle">
+                    <div class="checkmark draw"></div>
+                </div>
+            </div>
+            <h2>Cash Payment Successful!</h2>
+            <p>The fine has been recorded and student account updated.</p>
+
+            <div class="modal-actions">
+                <button id="downloadReceiptBtn" class="neon-btn">
+                    <i class="fas fa-file-pdf"></i>
+                    Download Receipt (PDF)
+                </button>
+                <button id="newPaymentBtn" class="text-btn">
+                    Record New Payment
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../assets/js/api-helper.js?v=1.1"></script>
+    <script src="../../assets/js/sidebar.js"></script>
+    <script src="script.js?v=1.1"></script>
+    <script>
+        // Initialize Sidebar Protection
+        if (typeof protectRoute === 'function') {
+            protectRoute('assistant');
+        }
+    </script>
+</body>
+
+</html>

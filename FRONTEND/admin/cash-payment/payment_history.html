@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History - Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --primary-light: #b380ff;
+            --accent: #cf9d7c;
+            --gold: #ddc9b4;
+            --bg-dark: #0f1724;
+            --card-bg: #1e293b;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --border: #334155;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --sidebar-width: 240px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(156, 77, 255, 0.05) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(207, 157, 124, 0.05) 0, transparent 50%);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-icon.revenue {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .stat-icon.pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .stat-icon.count {
+            background: rgba(156, 77, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .stat-info h3 {
+            font-size: 24px;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Filters Bar */
+        .filters-bar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            padding: 24px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-input {
+            background: rgba(15, 23, 36, 0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .filter-input:focus {
+            border-color: var(--primary);
+            background: rgba(15, 23, 36, 0.8);
+        }
+
+        .btn-search {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: 45px;
+        }
+
+        .btn-search:hover {
+            filter: brightness(1.1);
+            transform: scale(1.02);
+        }
+
+        /* Table Section */
+        .table-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 0;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 20px 24px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        td {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--glass-border);
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .student-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+        }
+
+        .student-details .name {
+            display: block;
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+        }
+
+        .student-details .adno {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .amount-cell {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--success);
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-Success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-Rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .status-Pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .payment-id {
+            font-family: monospace;
+            color: var(--accent);
+            background: rgba(207, 157, 124, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .date-cell {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .btn-view {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-view:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Loading State */
+        .loading-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(156, 77, 255, 0.1);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        /* Export Dropdown */
+        .export-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .export-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 10px);
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            min-width: 180px;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .export-menu.show {
+            display: flex;
+            animation: fadeInDown 0.3s ease;
+        }
+
+        .export-item {
+            padding: 12px 16px;
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .export-item:hover {
+            background: rgba(156, 77, 255, 0.1);
+            color: var(--primary-light);
+        }
+
+        .export-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <header class="page-header">
+            <div class="header-title">
+                <div style="margin-bottom: 12px;">
+                    <a href="index.html"
+                        style="color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-arrow-left"></i> Fine Collection Dashboard
+                    </a>
+                </div>
+                <h1>Payment History</h1>
+                <p>Track and manage all library fine transactions</p>
+            </div>
+            <div class="header-actions">
+                <div class="export-dropdown">
+                    <button class="btn-search" onclick="toggleExportMenu(event)">
+                        <i class="fas fa-file-export"></i> Export Report <i class="fas fa-chevron-down"
+                            style="font-size: 10px; margin-left: 5px;"></i>
+                    </button>
+                    <div id="exportMenu" class="export-menu">
+                        <button class="export-item" onclick="exportToExcel()">
+                            <i class="fas fa-file-excel" style="color: #10b981;"></i> Excel (CSV)
+                        </button>
+                        <button class="export-item" onclick="exportToPDF()">
+                            <i class="fas fa-file-pdf" style="color: #ef4444;"></i> PDF Document
+                        </button>
+                        <button class="export-item" onclick="exportToImage()">
+                            <i class="fas fa-file-image" style="color: #3b82f6;"></i> PNG Image
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon revenue"><i class="fas fa-sack-dollar"></i></div>
+                <div class="stat-info">
+                    <h3 id="statTotalCollected">₹0.00</h3>
+                    <p>Total Collected</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon pending"><i class="fas fa-clock-rotate-left"></i></div>
+                <div class="stat-info">
+                    <h3 id="statPendingVerify">₹0.00</h3>
+                    <p>Pending Verification</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon count"><i class="fas fa-receipt"></i></div>
+                <div class="stat-info">
+                    <h3 id="statTotalCount">0</h3>
+                    <p>Total Transactions</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="filters-bar">
+            <div class="filter-group">
+                <label>Status</label>
+                <select id="statusFilter" class="filter-input" onchange="loadPayments()">
+                    <option value="">All Statuses</option>
+                    <option value="Success">Success</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Pending">Pending</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Search Student</label>
+                <input type="text" id="studentSearch" class="filter-input" placeholder="Name or Admission No..."
+                    onkeyup="debounceSearch()">
+            </div>
+            <div class="filter-group">
+                <label>Limit</label>
+                <select id="limitFilter" class="filter-input" onchange="loadPayments()">
+                    <option value="20">Latest 20</option>
+                    <option value="50">Latest 50</option>
+                    <option value="100">Latest 100</option>
+                    <option value="500">All Recent</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Amount</th>
+                            <th>Reference ID</th>
+                            <th>Payment For</th>
+                            <th>Payment Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentsTableBody">
+                        <!-- Table rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="loadingState" class="loading-overlay" style="display: none;">
+                <div class="spinner"></div>
+                <p>Loading transactions...</p>
+            </div>
+            <div id="emptyState" class="loading-overlay" style="display: none;">
+                <i class="fas fa-folder-open" style="font-size: 40px; margin-bottom: 20px; opacity: 0.3;"></i>
+                <p>No transactions found</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        // Check Authentication
+        protectRoute();
+
+        // Load Sidebar
+        fetch('/admin/sidebar.html').then(res => res.text()).then(data => {
+            document.getElementById('sidebar-container').innerHTML = data;
+            if (typeof initSidebar === 'function') initSidebar();
+        });
+
+        // Initialize state
+        let allPayments = [];
+        let searchTimeout;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadPayments();
+        });
+
+        function debounceSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                filterTable();
+            }, 300);
+        }
+
+        async function loadPayments() {
+            const tbody = document.getElementById('paymentsTableBody');
+            const loading = document.getElementById('loadingState');
+            const empty = document.getElementById('emptyState');
+            const status = document.getElementById('statusFilter').value;
+            const limit = document.getElementById('limitFilter').value;
+
+            tbody.innerHTML = '';
+            loading.style.display = 'flex';
+            empty.style.display = 'none';
+
+            try {
+                let url = `/admin/payments?limit=${limit}`;
+                if (status) url += `&status=${status}`;
+
+                const response = await apiRequest(url);
+                loading.style.display = 'none';
+
+                if (response.success && response.payments.length > 0) {
+                    allPayments = response.payments;
+                    updateStats(allPayments);
+                    renderTable(allPayments);
+                } else {
+                    empty.style.display = 'flex';
+                    updateStats([]);
+                }
+            } catch (err) {
+                loading.style.display = 'none';
+                showToast('Failed to load payments', 'error');
+            }
+        }
+
+        function updateStats(payments) {
+            const totalCollected = payments
+                .filter(p => p.status === 'Approved' || p.status === 'Success')
+                .reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
+
+            const totalPending = payments
+                .filter(p => p.status === 'Pending')
+                .reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
+
+            document.getElementById('statTotalCollected').textContent = `₹${totalCollected.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+            document.getElementById('statPendingVerify').textContent = `₹${totalPending.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+            document.getElementById('statTotalCount').textContent = payments.length;
+        }
+
+        function filterTable() {
+            const query = document.getElementById('studentSearch').value.toLowerCase();
+            const filtered = allPayments.filter(p =>
+                p.full_name.toLowerCase().includes(query) ||
+                p.ad_no.toLowerCase().includes(query) ||
+                (p.payment_id && p.payment_id.toLowerCase().includes(query))
+            );
+            renderTable(filtered);
+        }
+
+        function renderTable(payments) {
+            const tbody = document.getElementById('paymentsTableBody');
+            const empty = document.getElementById('emptyState');
+
+            if (payments.length === 0) {
+                tbody.innerHTML = '';
+                empty.style.display = 'flex';
+                return;
+            }
+
+            empty.style.display = 'none';
+            tbody.innerHTML = payments.map(p => {
+                let paymentFor = 'General Fine';
+                if (p.custom_fine_type) {
+                    paymentFor = `<div style="font-weight: 600; color: var(--accent)">${p.custom_fine_type}</div>`;
+                } else if (p.transaction_id) {
+                    paymentFor = `<div style="font-weight: 600; color: #94a3b8">Late Return</div>`;
+                }
+
+                if (p.book_title) {
+                    paymentFor += `<div style="font-size: 11px; opacity: 0.7; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.book_title}</div>`;
+                }
+
+                return `
+                <tr>
+                    <td>
+                        <div class="student-info">
+                            <div class="student-avatar" style="background: ${p.status === 'Approved' ? 'var(--success)' : 'var(--primary)'}">${p.full_name.charAt(0)}</div>
+                            <div class="student-details">
+                                <span class="name">${p.full_name}</span>
+                                <span class="adno">${p.ad_no}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="amount-cell">₹${parseFloat(p.amount).toFixed(2)}</td>
+                    <td><span class="payment-id">${p.payment_reference || 'N/A'}</span></td>
+                    <td>${paymentFor}</td>
+                    <td class="date-cell">${formatDateTime(p.submitted_at)}</td>
+                    <td><span class="status-badge status-${p.status}">${p.status}</span></td>
+                    <td>
+                        <button class="btn-view" onclick="viewDetails(${p.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        function formatDateTime(dateStr) {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) +
+                ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        async function viewDetails(id) {
+            const payment = allPayments.find(p => p.id === id);
+
+            // Build nice HTML content
+            const htmlContent = `
+                <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 13px;">
+                        <div>
+                            <div style="color: #94a3b8; margin-bottom: 2px;">Student</div>
+                            <div style="color: white; font-weight: 600;">${payment.full_name}</div>
+                            <div style="color: #64748b; font-size: 11px;">${payment.ad_no}</div>
+                        </div>
+                        <div>
+                            <div style="color: #94a3b8; margin-bottom: 2px;">Amount</div>
+                            <div style="color: #10b981; font-weight: 700; font-size: 16px;">₹${parseFloat(payment.amount).toFixed(2)}</div>
+                        </div>
+                        <div>
+                            <div style="color: #94a3b8; margin-bottom: 2px;">Reference ID</div>
+                            <div style="font-family: monospace; color: #cf9d7c; background: rgba(207, 157, 124, 0.1); padding: 2px 6px; border-radius: 4px; display: inline-block;">${payment.payment_reference || 'N/A'}</div>
+                        </div>
+                        <div>
+                            <div style="color: #94a3b8; margin-bottom: 2px;">Status</div>
+                            <div style="display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; background: ${payment.status === 'Approved' ? 'rgba(16, 185, 129, 0.1); color: #10b981;' : (payment.status === 'Rejected' ? 'rgba(239, 68, 68, 0.1); color: #ef4444;' : 'rgba(245, 158, 11, 0.1); color: #f59e0b;')}">${payment.status}</div>
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <div style="color: #94a3b8; margin-bottom: 2px;">Payment For</div>
+                            <div style="color: white;">${payment.custom_fine_type ? `Custom Fine: ${payment.custom_fine_type}` : 'Late Return Fine'}</div>
+                            ${payment.book_title ? `<div style="color: #94a3b8; font-size: 11px; margin-top: 2px;">Book: ${payment.book_title}</div>` : ''}
+                            ${payment.custom_fine_reason ? `<div style="color: #94a3b8; font-size: 11px; margin-top: 2px;">Reason: ${payment.custom_fine_reason}</div>` : ''}
+                        </div>
+                         <div style="grid-column: span 2;">
+                            <div style="color: #94a3b8; margin-bottom: 2px;">Date</div>
+                            <div style="color: white;">${formatDateTime(payment.submitted_at)}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (payment.status === 'Pending') {
+                const confirmed = await showModal({
+                    title: 'Payment Details',
+                    message: htmlContent + `<p style="margin-top: 20px; color: #f59e0b; font-size: 14px; background: rgba(245, 158, 11, 0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(245, 158, 11, 0.2);"><i class="fas fa-exclamation-triangle"></i> This payment is pending verification.</p>`,
+                    type: 'confirm',
+                    confirmText: 'Go to Verification',
+                    cancelText: 'Close'
+                });
+
+                if (confirmed) {
+                    window.location.href = 'verify_payments.html';
+                }
+            } else {
+                await showModal({
+                    title: 'Payment Details',
+                    message: htmlContent,
+                    type: 'alert',
+                    confirmText: 'Close'
+                });
+            }
+        }
+
+        function toggleExportMenu(e) {
+            e.stopPropagation();
+            document.getElementById('exportMenu').classList.toggle('show');
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', () => {
+            document.getElementById('exportMenu').classList.remove('show');
+        });
+
+        function exportToExcel() {
+            if (allPayments.length === 0) {
+                showToast('No data to export', 'warning');
+                return;
+            }
+
+            const headers = ["Student", "Admission No", "Amount", "Reference", "Type", "Book", "Date", "Status"];
+            const rows = allPayments.map(p => [
+                p.full_name,
+                p.ad_no,
+                p.amount,
+                p.payment_reference || 'N/A',
+                p.custom_fine_type || (p.transaction_id ? 'Late Return' : 'General'),
+                p.book_title || 'N/A',
+                new Date(p.submitted_at).toLocaleDateString(),
+                p.status
+            ]);
+
+            let csvContent = "data:text/csv;charset=utf-8,"
+                + headers.join(",") + "\n"
+                + rows.map(e => e.map(cell => `"${cell}"`).join(",")).join("\n");
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `payment_history_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        async function exportToPDF() {
+            if (allPayments.length === 0) {
+                showToast('No data to export', 'warning');
+                return;
+            }
+
+            showToast('Generating professional PDF report...', 'info');
+
+            // Get date range for cover
+            const dates = allPayments.map(p => new Date(p.submitted_at));
+            const minDate = new Date(Math.min(...dates)).toLocaleDateString('en-GB');
+            const maxDate = new Date(Math.max(...dates)).toLocaleDateString('en-GB');
+
+            // Create container
+            const container = document.createElement('div');
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.width = '1000px';
+            container.style.fontFamily = "'Times New Roman', serif";
+
+            // Cover Page + Report Content
+            container.innerHTML = `
+                <!-- COVER PAGE -->
+                <div style="width: 297mm; height: 210mm; background: linear-gradient(135deg, #FFE8D6 0%, #FFF5EB 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; page-break-after: always; position: relative; overflow: hidden;">
+                    <!-- Decorative Background Pattern -->
+                    <div style="position: absolute; width: 100%; height: 100%; opacity: 0.03;">
+                        <div style="position: absolute; top: 20%; left: 10%; width: 200px; height: 200px; border: 3px solid #1E3A34; border-radius: 50%;"></div>
+                        <div style="position: absolute; bottom: 15%; right: 15%; width: 150px; height: 150px; border: 3px solid #D4B499; border-radius: 50%;"></div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div style="text-align: center; z-index: 1;">
+                        <!-- Library Logo SVG -->
+                        <svg width="180" height="180" viewBox="0 0 200 200" style="margin-bottom: 40px;">
+                            <!-- Arch Logo Design -->
+                            <path d="M100 180 L100 80 Q100 40 140 40 Q180 40 180 80 L180 180" 
+                                  fill="none" stroke="#1E3A34" stroke-width="12" stroke-linecap="round"/>
+                            <path d="M120 180 L120 90 Q120 60 140 60 Q160 60 160 90 L160 180" 
+                                  fill="none" stroke="#1E3A34" stroke-width="12" stroke-linecap="round"/>
+                            <path d="M140 180 L140 100 Q140 80 140 80 Q140 80 140 100 L140 180" 
+                                  fill="none" stroke="#D4B499" stroke-width="12" stroke-linecap="round"/>
+                            
+                            <!-- Left Side Mirror -->
+                            <path d="M100 180 L100 80 Q100 40 60 40 Q20 40 20 80 L20 180" 
+                                  fill="none" stroke="#1E3A34" stroke-width="12" stroke-linecap="round"/>
+                            <path d="M80 180 L80 90 Q80 60 60 60 Q40 60 40 90 L40 180" 
+                                  fill="none" stroke="#1E3A34" stroke-width="12" stroke-linecap="round"/>
+                            
+                            <!-- Base Lines -->
+                            <line x1="20" y1="185" x2="180" y2="185" stroke="#1E3A34" stroke-width="8"/>
+                            <line x1="30" y1="195" x2="170" y2="195" stroke="#1E3A34" stroke-width="4"/>
+                        </svg>
+
+                        <!-- Title -->
+                        <h1 style="font-size: 52px; color: #1E3A34; margin: 0 0 10px 0; font-weight: 700; letter-spacing: 2px; font-family: 'Times New Roman', serif;">
+                            AL MARAKISH
+                        </h1>
+                        <h2 style="font-size: 48px; color: #1E3A34; margin: 0 0 15px 0; font-weight: 700; letter-spacing: 1px;">
+                            REFERENCE LIBRARY
+                        </h2>
+                        
+                        <!-- Report Type -->
+                        <div style="background: #1E3A34; color: #D4B499; padding: 18px 60px; display: inline-block; margin: 30px 0; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                            <h3 style="margin: 0; font-size: 36px; font-weight: 700; letter-spacing: 3px;">FINE REPORT</h3>
+                        </div>
+
+                        <!-- Date Range -->
+                        <p style="font-size: 24px; color: #1E3A34; margin: 30px 0 0 0; font-weight: 600;">
+                            From ${minDate} - Till ${maxDate}
+                        </p>
+
+                        <!-- Address Footer -->
+                        <div style="position: absolute; bottom: 40px; width: 100%; text-align: center;">
+                            <p style="font-size: 16px; color: #1E3A34; margin: 0; opacity: 0.8;">
+                                Gejjihalli, Dist. Haveri, Karnataka, India - 581104
+                            </p>
+                            <p style="font-size: 14px; color: #1E3A34; margin: 5px 0 0 0; opacity: 0.7;">
+                                ☎ +91 9847411637 | 🌐 www.almarakish.gt.tc
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REPORT CONTENT -->
+                <div style="background: #FFF5EB; padding: 40px; position: relative; color: #1E3A34;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h2 style="font-size: 28px; margin: 0; color: #1E3A34; border-bottom: 3px solid #1E3A34; padding-bottom: 15px; display: inline-block;">
+                            Payment History Details
+                        </h2>
+                    </div>
+
+                    <table style="width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #1E3A34 0%, #2d5249 100%); color: white;">
+                                <th style="padding: 15px 10px; border: 1px solid #D4B499; font-size: 13px; font-weight: 700;">Student Name</th>
+                                <th style="padding: 15px 10px; border: 1px solid #D4B499; font-size: 13px; font-weight: 700;">Amount</th>
+                                <th style="padding: 15px 10px; border: 1px solid #D4B499; font-size: 13px; font-weight: 700;">Category</th>
+                                <th style="padding: 15px 10px; border: 1px solid #D4B499; font-size: 13px; font-weight: 700;">Book Title</th>
+                                <th style="padding: 15px 10px; border: 1px solid #D4B499; font-size: 13px; font-weight: 700;">Date</th>
+                                <th style="padding: 15px 10px; border: 1px solid #D4B499; font-size: 13px; font-weight: 700;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${allPayments.map((p, index) => `
+                                <tr style="background: ${index % 2 === 0 ? '#FFF5EB' : 'white'};">
+                                    <td style="padding: 12px 10px; border: 1px solid #D4B499; font-size: 12px;">${p.full_name}</td>
+                                    <td style="padding: 12px 10px; border: 1px solid #D4B499; font-size: 12px; font-weight: bold; color: #1E3A34;">₹${parseFloat(p.amount).toFixed(2)}</td>
+                                    <td style="padding: 12px 10px; border: 1px solid #D4B499; font-size: 11px;">${p.custom_fine_type || (p.transaction_id ? 'Late Return' : 'General')}</td>
+                                    <td style="padding: 12px 10px; border: 1px solid #D4B499; font-size: 12px;">${p.book_title || 'N/A'}</td>
+                                    <td style="padding: 12px 10px; border: 1px solid #D4B499; font-size: 12px;">${new Date(p.submitted_at).toLocaleDateString('en-GB')}</td>
+                                    <td style="padding: 12px 10px; border: 1px solid #D4B499; font-size: 11px;">
+                                        <span style="background: ${p.status === 'Paid' ? '#27ae60' : '#e74c3c'}; color: white; padding: 4px 8px; border-radius: 3px; font-weight: 600;">
+                                            ${p.status}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: #1E3A34; color: white; font-weight: bold;">
+                                <td style="padding: 15px 10px; border: 1px solid #D4B499; text-align: right; font-size: 14px;">TOTAL:</td>
+                                <td style="padding: 15px 10px; border: 1px solid #D4B499; font-size: 15px; color: #D4B499;">
+                                    ₹${allPayments.reduce((sum, p) => sum + parseFloat(p.amount), 0).toFixed(2)}
+                                </td>
+                                <td colspan="4" style="padding: 15px 10px; border: 1px solid #D4B499; text-align: right; font-size: 12px; color: #D4B499;">
+                                    Total Records: ${allPayments.length}
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <!-- Footer -->
+                    <div style="margin-top: 50px; background: linear-gradient(135deg, #1E3A34 0%, #2d5249 100%); color: white; padding: 20px; border-radius: 8px; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin: 5px;">
+                            <span style="background: #D4B499; color: #1E3A34; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 11px;">📞</span>
+                            <span style="font-size: 12px;">+91 9847411637</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin: 5px;">
+                            <span style="background: #D4B499; color: #1E3A34; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 11px;">🌐</span>
+                            <span style="font-size: 12px;">www.almarakish.gt.tc</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin: 5px;">
+                            <span style="background: #D4B499; color: #1E3A34; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 11px;">📷</span>
+                            <span style="font-size: 12px;">@almarakish_library</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin: 5px;">
+                            <span style="background: #D4B499; color: #1E3A34; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 11px;">👍</span>
+                            <span style="font-size: 12px;">AL MARAKIS LIBRARY</span>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #D4B499;">
+                        <p style="font-size: 11px; color: #1E3A34; margin: 5px 0; opacity: 0.7;">
+                            Generated on ${new Date().toLocaleDateString('en-GB')} at ${new Date().toLocaleTimeString('en-GB')} | Al Marakish Reference Library Management System
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            // Append to body temporarily for rendering
+            document.body.appendChild(container);
+
+            const opt = {
+                margin: 0,
+                filename: `AlMarakish_Fine_Report_${new Date().toISOString().split('T')[0]}.pdf`,
+                image: { type: 'jpeg', quality: 0.95 },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: '#FFF5EB'
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'landscape',
+                    compress: true
+                },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            try {
+                await html2pdf().set(opt).from(container).save();
+                showToast('✅ PDF Generated Successfully!', 'success');
+            } catch (err) {
+                console.error('PDF Generation Error:', err);
+                showToast('❌ PDF generation failed. Please try again.', 'error');
+            } finally {
+                // Clean up
+                document.body.removeChild(container);
+            }
+        }
+
+        async function exportToImage() {
+            if (allPayments.length === 0) {
+                showToast('No data to export', 'warning');
+                return;
+            }
+
+            const table = document.querySelector('.table-card');
+            showToast('Capturing image...', 'info');
+
+            try {
+                const canvas = await html2canvas(table, {
+                    backgroundColor: '#0f1724',
+                    scale: 2, // Higher quality
+                    logging: false
+                });
+
+                const link = document.createElement('a');
+                link.download = `Payment_History_${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showToast('Image saved successfully', 'success');
+            } catch (err) {
+                console.error(err);
+                showToast('Failed to generate image', 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+BACKEND/node_modules/
+FRONTEND/node_modules/
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+BACKEND/.env
+BACKEND/.env.*
+!BACKEND/.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor & Tooling
+.vscode/
+.idea/
+*.swp
+*.swo
+*.code-workspace
+.gemini/
+.orchids/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Uploads & Backups
+BACKEND/uploads/*
+!BACKEND/uploads/.gitkeep
+!BACKEND/uploads/covers/.gitkeep
+!BACKEND/uploads/ebooks/.gitkeep
+!BACKEND/uploads/users/.gitkeep
+!BACKEND/uploads/student_photos/.gitkeep
+BACKEND/backups/
+
+# Test output, temp dumps & logs
+BACKEND/*.txt
+BACKEND/*_dump.json
+BACKEND/audit_tables_check.json
+BACKEND/books_schema.json
+BACKEND/tables.json
+BACKEND/npm
+almarakish-library-backend@*
+
+

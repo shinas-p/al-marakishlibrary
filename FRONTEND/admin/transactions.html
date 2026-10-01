@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Transactions | Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --primary-light: #b785ff;
+            --primary-dark: #7b2cff;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --bg-body: #080c14;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --bg-sidebar: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(30, 41, 59, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) transparent;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(156, 77, 255, 0.1) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.05) 0, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        .heading-font {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .stat-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: rgba(156, 77, 255, 0.1);
+            color: var(--primary-light);
+        }
+
+        .stat-info .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: white;
+            line-height: 1.2;
+        }
+
+        .stat-info .stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header-title h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(156, 77, 255, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 32px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 16px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .filter-input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 10px 16px;
+            color: white;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Table Card */
+        .table-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.4);
+            padding: 16px 20px;
+            text-align: left;
+            color: var(--text-muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-borrowed {
+            background: rgba(156, 77, 255, 0.1);
+            color: var(--primary-light);
+        }
+
+        .status-returned {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+        }
+
+        .status-overdue {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            font-weight: 900;
+        }
+
+        .book-link,
+        .user-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            display: block;
+        }
+
+        .book-link:hover,
+        .user-link:hover {
+            color: var(--primary-light);
+        }
+
+        .sub-text {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 24px;
+            }
+
+            .filter-section {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <!-- Stats Section -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-arrow-up"></i></div>
+                <div class="stat-info">
+                    <div class="stat-value" id="issuesToday">0</div>
+                    <div class="stat-label">Issues Today</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="color: var(--accent); background: rgba(16, 185, 129, 0.1);"><i
+                        class="fas fa-arrow-down"></i></div>
+                <div class="stat-info">
+                    <div class="stat-value" id="returnsToday">0</div>
+                    <div class="stat-label">Returns Today</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="color: var(--danger); background: rgba(239, 68, 68, 0.1);"><i
+                        class="fas fa-exclamation-triangle"></i></div>
+                <div class="stat-info">
+                    <div class="stat-value" id="overdueCount">0</div>
+                    <div class="stat-label">Total Overdue</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="color: var(--secondary); background: rgba(245, 158, 11, 0.1);"><i
+                        class="fas fa-money-bill-wave"></i></div>
+                <div class="stat-info">
+                    <div class="stat-value" id="pendingFines">₹0</div>
+                    <div class="stat-label">Pending Fines</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="header-title">
+                <h1>🔄 Circulation Transactions</h1>
+            </div>
+            <div class="header-actions">
+                <a href="smart_circulation.html" class="btn btn-primary"><i class="fas fa-bolt"></i> Smart
+                    Circulation</a>
+                <button class="btn btn-outline" onclick="exportToCSV()"><i class="fas fa-file-export"></i> Export
+                    CSV</button>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-group">
+                <span class="filter-label">Search</span>
+                <input type="text" id="searchInput" class="filter-input" placeholder="Student or book title...">
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">Status</span>
+                <select id="statusFilter" class="filter-input">
+                    <option value="">All Status</option>
+                    <option value="Borrowed">Borrowed</option>
+                    <option value="Returned">Returned</option>
+                    <option value="Overdue">Overdue</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">From Date</span>
+                <input type="date" id="startDate" class="filter-input">
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">To Date</span>
+                <input type="date" id="endDate" class="filter-input">
+            </div>
+            <div class="filter-group">
+                <button class="btn btn-primary" onclick="loadTransactions()" style="padding: 10px 24px;"><i
+                        class="fas fa-search"></i></button>
+            </div>
+        </div>
+
+        <!-- Table Card -->
+        <div class="table-card">
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Student Details</th>
+                            <th>Book Details</th>
+                            <th>Dates (Borrow/Due)</th>
+                            <th>Status</th>
+                            <th>Return Info</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTableBody">
+                        <!-- Rows -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="loading" style="padding: 50px; text-align: center;">
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 32px; color: var(--primary);"></i>
+            </div>
+
+            <div class="pagination">
+                <div class="pagination-info" id="paginationInfo">Showing 0 to 0 of 0</div>
+                <div class="pagination-btns">
+                    <button class="btn btn-outline" id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
+                    <button class="btn btn-outline" id="nextBtn" disabled><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        // Protect route
+        protectRoute('assistant');
+
+        let currentPage = 1;
+        const limit = 20;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadTransactions();
+
+            // Add Enter key listener for search
+            document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') loadTransactions();
+            });
+        });
+
+
+        async function loadStats() {
+            try {
+                const response = await apiRequest('/transactions/stats');
+                if (response.success) {
+                    const stats = response.stats;
+                    document.getElementById('issuesToday').textContent = stats.issuesToday;
+                    document.getElementById('returnsToday').textContent = stats.returnsToday;
+                    document.getElementById('overdueCount').textContent = stats.overdue;
+                    document.getElementById('pendingFines').textContent = `₹${stats.pendingFines}`;
+                }
+            } catch (error) { console.error('Stats error:', error); }
+        }
+
+        async function loadTransactions() {
+            const tbody = document.getElementById('transactionsTableBody');
+            const loading = document.getElementById('loading');
+            const search = document.getElementById('searchInput').value;
+            const status = document.getElementById('statusFilter').value;
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+
+            tbody.innerHTML = '';
+            loading.style.display = 'block';
+
+            try {
+                const queryParams = new URLSearchParams({
+                    page: currentPage,
+                    limit: limit,
+                    search: search,
+                    status: status,
+                    start_date: start,
+                    end_date: end
+                });
+
+                const response = await apiRequest(`/transactions?${queryParams}`);
+                loading.style.display = 'none';
+
+                if (response.success && response.transactions.length > 0) {
+                    response.transactions.forEach(row => {
+                        const tr = document.createElement('tr');
+
+                        // Status styling
+                        let statusClass = 'status-borrowed';
+                        let rowStatus = row.status;
+
+                        if (rowStatus === 'Returned') {
+                            statusClass = 'status-returned';
+                        } else {
+                            const dueDate = new Date(row.due_date);
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            if (today > dueDate) {
+                                statusClass = 'status-overdue';
+                                rowStatus = 'Overdue';
+                            }
+                        }
+
+                        tr.innerHTML = `
+                            <td><code style="color: var(--primary-light)">#TX-${row.id}</code></td>
+                            <td>
+                                <a href="user_details.html?id=${row.user_id}" class="user-link">${escapeHtml(row.student_name)}</a>
+                                <span class="sub-text">${row.student_ad_no}</span>
+                            </td>
+                            <td>
+                                <a href="book_details.html?id=${row.book_id}" class="book-link">${escapeHtml(row.book_title)}</a>
+                                <span class="sub-text">Acc: ${row.accession_number}</span>
+                            </td>
+                            <td>
+                                <div style="font-weight: 600;">${formatDate(row.borrow_date)}</div>
+                                <div class="sub-text">Due: ${formatDate(row.due_date)}</div>
+                            </td>
+                            <td><span class="status-badge ${statusClass}">${rowStatus}</span></td>
+                            <td>
+                                ${row.return_date ? `
+                                    <div style="font-weight: 600;">${formatDate(row.return_date)}</div>
+                                    <div class="sub-text">Fine: ₹${row.fine || 0}</div>
+                                ` : `
+                                    <span style="color: var(--text-muted)">—</span>
+                                `}
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    updatePagination(response.pagination);
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted)">No transactions found for the given criteria.</td></tr>';
+                }
+            } catch (error) {
+                console.error('Transactions load error:', error);
+                loading.innerHTML = '<span style="color: var(--danger)">Failed to load data.</span>';
+            }
+        }
+
+        function updatePagination(p) {
+            const start = ((p.page - 1) * p.limit) + 1;
+            const end = Math.min(p.page * p.limit, p.total);
+            document.getElementById('paginationInfo').textContent = `Showing ${start} to ${end} of ${p.total}`;
+
+            const prev = document.getElementById('prevBtn');
+            const next = document.getElementById('nextBtn');
+
+            prev.disabled = p.page <= 1;
+            next.disabled = p.page >= p.pages;
+
+            prev.onclick = () => { currentPage--; loadTransactions(); };
+            next.onclick = () => { currentPage++; loadTransactions(); };
+        }
+
+        function formatDate(d) {
+            if (!d) return '—';
+            return new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
+        }
+
+        async function exportToCSV() {
+            const search = document.getElementById('searchInput').value;
+            const status = document.getElementById('statusFilter').value;
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+
+            try {
+                showToast('Preparing report data...', 'info');
+
+                // Fetch all matching data (large limit to get everything filtered)
+                const queryParams = new URLSearchParams({
+                    page: 1,
+                    limit: 2000,
+                    search: search,
+                    status: status,
+                    start_date: start,
+                    end_date: end
+                });
+
+                const response = await apiRequest(`/transactions?${queryParams}`);
+
+                if (!response.success || !response.transactions || response.transactions.length === 0) {
+                    return showToast('No data found to export!', 'warning');
+                }
+
+                // Prepare CSV content
+                const headers = ['Transaction ID', 'Student Name', 'Ad No', 'Book Title', 'Accession No', 'Borrow Date', 'Due Date', 'Status', 'Return Date', 'Fine'];
+                const rows = response.transactions.map(t => [
+                    `TX-${t.id}`,
+                    t.student_name,
+                    t.student_ad_no,
+                    t.book_title,
+                    t.accession_number,
+                    formatDate(t.borrow_date),
+                    formatDate(t.due_date),
+                    t.status,
+                    formatDate(t.return_date),
+                    t.fine || 0
+                ]);
+
+                // Convert to CSV string with proper escaping
+                const csvString = [
+                    headers.join(','),
+                    ...rows.map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(','))
+                ].join('\n');
+
+                // Create Blob and Download
+                const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', `Transactions_Report_${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                showToast('Report generated and downloaded!', 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showToast('Failed to generate report.', 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

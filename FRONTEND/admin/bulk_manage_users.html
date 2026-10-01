@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Manage Patrons - Al Marakish Library</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/bulk-selection.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/bulk-selection.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.4);
+            --bg-dark: #080c14;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.05) 0, transparent 50%);
+            color: white;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-title h1 i {
+            background: linear-gradient(135deg, var(--primary) 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .filter-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .filter-group label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            outline: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .btn-filter {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            height: 46px;
+        }
+
+        .btn-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px var(--primary-glow);
+        }
+
+        .table-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: left;
+        }
+
+        td {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            color: #e2e8f0;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .patron-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .patron-img-wrapper {
+            position: relative;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+            background: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .patron-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .patron-initial {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--primary);
+        }
+
+        .patron-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .patron-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: white;
+        }
+
+        .patron-contact {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .ad-no-badge {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        /* Bulk Toolbar */
+        .bulk-toolbar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            padding: 12px 24px;
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary);
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .bulk-toolbar.active {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .bulk-selection-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-right: 20px;
+            border-right: 1px solid var(--border);
+            color: #e2e8f0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .bulk-selection-info i {
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .bulk-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .bulk-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px var(--primary-glow);
+        }
+
+        .bulk-btn-danger {
+            background: var(--danger);
+        }
+
+        .bulk-btn-secondary {
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 30px;
+            }
+
+            .filter-section {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div class="header-title">
+                <h1><i class="fas fa-users-gear"></i> Bulk Manage Patrons</h1>
+                <p style="color: var(--text-muted); margin-top: 5px;">Manage student accounts in bulk - activate,
+                    deactivate, or delete.</p>
+            </div>
+            <div class="header-actions">
+                <button class="bulk-btn bulk-btn-secondary" onclick="window.location.reload()">
+                    <i class="fas fa-sync-alt"></i> Refresh List
+                </button>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <div class="filter-group">
+                <label>Search Patrons</label>
+                <input type="text" id="searchInput" placeholder="Name, Admission No, Contact...">
+            </div>
+            <div class="filter-group">
+                <label>Status Filter</label>
+                <select id="statusFilter">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+            <button class="btn-filter" onclick="loadUsers()">
+                <i class="fas fa-filter"></i> Apply Filters
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table class="bulk-table" data-bulk-type="users">
+                <thead>
+                    <tr>
+                        <th style="width: 60px; text-align: center;">
+                            <input type="checkbox" class="bulk-select-all" id="selectAll">
+                        </th>
+                        <th>Patron Details</th>
+                        <th>Ad No</th>
+                        <th>Section</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 60px;">
+                            <i class="fas fa-circle-notch fa-spin"
+                                style="font-size: 24px; color: var(--primary); margin-bottom: 15px;"></i>
+                            <p style="color: var(--text-muted);">Fetching patron records...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bulk Toolbar -->
+    <div class="bulk-toolbar" id="bulkToolbar">
+        <div class="bulk-selection-info">
+            <i class="fas fa-check-circle"></i>
+            <span class="bulk-count">0</span> Selected
+        </div>
+        <div class="bulk-actions">
+            <button class="bulk-btn" onclick="bulkAction('activate')">
+                <i class="fas fa-check"></i> Activate
+            </button>
+            <button class="bulk-btn" onclick="bulkAction('deactivate')" style="background: #475569;">
+                <i class="fas fa-ban"></i> Deactivate
+            </button>
+            <button class="bulk-btn bulk-btn-danger" onclick="confirmBulkDelete()">
+                <i class="fas fa-trash-alt"></i> Delete
+            </button>
+            <button class="bulk-btn bulk-btn-secondary" onclick="clearSelection()">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script src="/assets/js/bulk-selection.js"></script>
+    <script>
+        protectRoute();
+
+        window.addEventListener('DOMContentLoaded', loadUsers);
+
+        async function loadUsers() {
+            const search = document.getElementById('searchInput').value;
+            const status = document.getElementById('statusFilter').value;
+            const tbody = document.getElementById('userTableBody');
+
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 60px;"><i class="fas fa-circle-notch fa-spin"></i> Searching...</td></tr>';
+
+            try {
+                const response = await apiRequest(`/admin/users?search=${encodeURIComponent(search)}&status=${status}`);
+                if (response.success && response.users.length > 0) {
+                    tbody.innerHTML = response.users.map(u => {
+                        const initial = u.full_name.charAt(0).toUpperCase();
+                        const photoUrl = u.profile_photo ? `/uploads/student_photos/${u.profile_photo}` : null;
+
+                        return `
+                            <tr class="bulk-row" data-bulk-id="${u.id}">
+                                <td style="text-align: center;"><input type="checkbox" class="bulk-row-checkbox" value="${u.id}"></td>
+                                <td>
+                                    <div class="patron-info">
+                                        <div class="patron-img-wrapper">
+                                            ${photoUrl ? `<img src="${photoUrl}" class="patron-img" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'patron-initial\\'>${initial}</span>';">` : `<span class="patron-initial">${initial}</span>`}
+                                        </div>
+                                        <div class="patron-details">
+                                            <div class="patron-name">${u.full_name}</div>
+                                            <div class="patron-contact">${u.contact || 'No contact info'}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="ad-no-badge">${u.ad_no}</span></td>
+                                <td>${u.section || '<span style="opacity: 0.3">-</span>'}</td>
+                                <td><span class="status-badge status-${u.status}">${u.status}</span></td>
+                            </tr>
+                        `;
+                    }).join('');
+
+                    if (window.bulkManager) window.bulkManager.refresh();
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 60px;">No patrons found.</td></tr>';
+                }
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 60px; color: var(--danger);">Error loading patrons.</td></tr>';
+            }
+        }
+
+        function clearSelection() {
+            if (window.bulkManager) window.bulkManager.clearSelection();
+        }
+
+        async function confirmBulkDelete() {
+            const ids = window.bulkManager.getSelectedIds();
+            if (ids.length === 0) return;
+
+            if (confirm(`Are you sure you want to delete ${ids.length} selected patrons? This action cannot be undone.`)) {
+                try {
+                    for (const id of ids) {
+                        await apiRequest(`/admin/users/${id}`, { method: 'DELETE' });
+                    }
+                    showToast('Patrons deleted successfully!', 'success');
+                    window.bulkManager.clearSelection();
+                    loadUsers();
+                } catch (err) {
+                    showToast('Failed to delete some patrons.', 'error');
+                }
+            }
+        }
+
+        async function bulkAction(action) {
+            const ids = window.bulkManager.getSelectedIds();
+            if (ids.length === 0) return;
+
+            const confirmMsg = action === 'activate' ?
+                `Activate ${ids.length} users?` :
+                `Deactivate ${ids.length} users?`;
+
+            if (confirm(confirmMsg)) {
+                try {
+                    let successCount = 0;
+                    for (const id of ids) {
+                        const response = await apiRequest(`/admin/users/${id}`, {
+                            method: 'PUT',
+                            body: JSON.stringify({ status: action === 'activate' ? 'active' : 'inactive' })
+                        });
+                        if (response.success) successCount++;
+                    }
+                    showToast(`${successCount} Patrons ${action}d successfully!`, 'success');
+                    window.bulkManager.clearSelection();
+                    loadUsers();
+                } catch (err) {
+                    showToast(`Failed to ${action} some patrons.`, 'error');
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

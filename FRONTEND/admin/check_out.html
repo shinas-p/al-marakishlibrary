@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Out Book - Al Marakish Library</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --bg-dark: #0f1724;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: white;
+            line-height: 1.6;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 32px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        .page-header {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), #f59e0b);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+            background: var(--bg-dark);
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(156, 77, 255, 0.1);
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-top: 5px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .dropdown-item {
+            padding: 12px 18px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+
+        .dropdown-item:hover,
+        .dropdown-item.selected {
+            background: rgba(156, 77, 255, 0.2);
+        }
+
+        .dropdown-item strong {
+            color: var(--primary);
+        }
+
+        .btn-checkout {
+            width: 100%;
+            padding: 16px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary), #6a11cb);
+            color: white;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(156, 77, 255, 0.4);
+        }
+
+        .btn-checkout:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .summary-card {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(156, 77, 255, 0.05);
+            border: 1px dashed var(--primary);
+            border-radius: 12px;
+            display: none;
+        }
+
+        .summary-card h3 {
+            font-size: 16px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .form-container {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-sign-out-alt"></i> Book Check Out</h1>
+            <p style="color: #94a3b8; margin-top: 8px;">Issue a book to a student</p>
+        </div>
+
+        <div class="form-container">
+            <div class="form-group">
+                <label for="studentSearch"><i class="fas fa-user-graduate"></i> Search Student</label>
+                <input type="text" id="studentSearch" placeholder="Type name or Admission No..." autocomplete="off">
+                <input type="hidden" id="studentId">
+                <div id="studentDropdown" class="autocomplete-dropdown"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="bookSearch"><i class="fas fa-book"></i> Search Book</label>
+                <input type="text" id="bookSearch" placeholder="Type title or Accession No..." autocomplete="off">
+                <input type="hidden" id="bookId">
+                <div id="bookDropdown" class="autocomplete-dropdown"></div>
+            </div>
+
+            <div id="checkoutSummary" class="summary-card">
+                <h3>Transaction Summary</h3>
+                <div class="summary-item">
+                    <span>Student:</span>
+                    <strong id="summaryStudent">-</strong>
+                </div>
+                <div class="summary-item">
+                    <span>Book:</span>
+                    <strong id="summaryBook">-</strong>
+                </div>
+                <div class="summary-item">
+                    <span>Due Date:</span>
+                    <strong id="summaryDueDate">-</strong>
+                </div>
+            </div>
+
+            <button id="checkoutBtn" class="btn-checkout" disabled>
+                <i class="fas fa-check-circle"></i> Complete Check Out
+            </button>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        // Load Sidebar
+        fetch('/admin/sidebar.html')
+            .then(res => res.text())
+            .then(data => {
+                document.getElementById('sidebar-container').innerHTML = data;
+                if (typeof initSidebar === 'function') initSidebar();
+            });
+
+        protectRoute();
+
+        const studentSearch = document.getElementById('studentSearch');
+        const studentId = document.getElementById('studentId');
+        const studentDropdown = document.getElementById('studentDropdown');
+
+        const bookSearch = document.getElementById('bookSearch');
+        const bookId = document.getElementById('bookId');
+        const bookDropdown = document.getElementById('bookDropdown');
+
+        const checkoutBtn = document.getElementById('checkoutBtn');
+
+        let studentResults = [];
+        let bookResults = [];
+        let activeStudentIndex = -1;
+        let activeBookIndex = -1;
+
+        // Autocomplete for Student
+        studentSearch.addEventListener('input', async (e) => {
+            const val = e.target.value;
+            if (val.length < 2) {
+                studentDropdown.style.display = 'none';
+                studentResults = [];
+                activeStudentIndex = -1;
+                return;
+            }
+
+            try {
+                const response = await apiRequest(`/admin/users/search?q=${encodeURIComponent(val)}`);
+                if (response.success && response.users.length > 0) {
+                    studentResults = response.users;
+                    activeStudentIndex = -1;
+                    renderStudentDropdown();
+                    studentDropdown.style.display = 'block';
+                } else {
+                    studentDropdown.style.display = 'none';
+                    studentResults = [];
+                }
+            } catch (err) {
+                console.error('Student search error:', err);
+            }
+        });
+
+        function renderStudentDropdown() {
+            studentDropdown.innerHTML = studentResults.map((u, i) => `
+                <div class="dropdown-item ${i === activeStudentIndex ? 'selected' : ''}" onclick="selectStudent(${u.id}, '${u.full_name.replace(/'/g, "\\'")}', '${u.ad_no}')">
+                    <strong>${u.full_name}</strong> (${u.ad_no})
+                </div>
+            `).join('');
+
+            // Scroll into view if needed
+            if (activeStudentIndex >= 0) {
+                const active = studentDropdown.children[activeStudentIndex];
+                if (active) active.scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        studentSearch.addEventListener('keydown', (e) => {
+            if (studentDropdown.style.display === 'none') return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeStudentIndex = (activeStudentIndex + 1) % studentResults.length;
+                renderStudentDropdown();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeStudentIndex = (activeStudentIndex - 1 + studentResults.length) % studentResults.length;
+                renderStudentDropdown();
+            } else if (e.key === 'Enter') {
+                if (activeStudentIndex >= 0) {
+                    e.preventDefault();
+                    const u = studentResults[activeStudentIndex];
+                    selectStudent(u.id, u.full_name, u.ad_no);
+                }
+            } else if (e.key === 'Escape') {
+                studentDropdown.style.display = 'none';
+            }
+        });
+
+        // Autocomplete for Book
+        bookSearch.addEventListener('input', async (e) => {
+            const val = e.target.value;
+            if (val.length < 2) {
+                bookDropdown.style.display = 'none';
+                bookResults = [];
+                activeBookIndex = -1;
+                return;
+            }
+
+            try {
+                const response = await apiRequest(`/books/search?q=${encodeURIComponent(val)}`);
+                if (response.success && response.books.length > 0) {
+                    bookResults = response.books;
+                    activeBookIndex = -1;
+                    renderBookDropdown();
+                    bookDropdown.style.display = 'block';
+                } else {
+                    bookDropdown.style.display = 'none';
+                    bookResults = [];
+                }
+            } catch (err) {
+                console.error('Book search error:', err);
+            }
+        });
+
+        function renderBookDropdown() {
+            bookDropdown.innerHTML = bookResults.map((b, i) => `
+                <div class="dropdown-item ${i === activeBookIndex ? 'selected' : ''}" onclick="selectBook(${b.id}, '${b.title.replace(/'/g, "\\'")}', '${b.accession_number}')">
+                    <strong>${b.title}</strong> [${b.accession_number}]
+                    <div style="font-size: 11px; color: ${b.count > 0 ? '#10b981' : '#ef4444'}">
+                        ${b.count > 0 ? 'Available' : 'Unavailable'}
+                    </div>
+                </div>
+            `).join('');
+
+            if (activeBookIndex >= 0) {
+                const active = bookDropdown.children[activeBookIndex];
+                if (active) active.scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        bookSearch.addEventListener('keydown', (e) => {
+            if (bookDropdown.style.display === 'none') return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeBookIndex = (activeBookIndex + 1) % bookResults.length;
+                renderBookDropdown();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeBookIndex = (activeBookIndex - 1 + bookResults.length) % bookResults.length;
+                renderBookDropdown();
+            } else if (e.key === 'Enter') {
+                if (activeBookIndex >= 0) {
+                    e.preventDefault();
+                    const b = bookResults[activeBookIndex];
+                    selectBook(b.id, b.title, b.accession_number);
+                }
+            } else if (e.key === 'Escape') {
+                bookDropdown.style.display = 'none';
+            }
+        });
+
+        function selectStudent(id, name, adNo) {
+            studentId.value = id;
+            studentSearch.value = `${name} (${adNo})`;
+            studentDropdown.style.display = 'none';
+            updateSummary();
+            // Automatically focus book search
+            bookSearch.focus();
+        }
+
+        function selectBook(id, title, accNo) {
+            bookId.value = id;
+            bookSearch.value = `${title} [${accNo}]`;
+            bookDropdown.style.display = 'none';
+            updateSummary();
+            // Automatically focus checkout button if student is also selected
+            if (studentId.value) {
+                checkoutBtn.focus();
+            }
+        }
+
+        function updateSummary() {
+            if (studentId.value && bookId.value) {
+                document.getElementById('checkoutSummary').style.display = 'block';
+                document.getElementById('summaryStudent').textContent = studentSearch.value;
+                document.getElementById('summaryBook').textContent = bookSearch.value;
+
+                // Set default due date (14 days from now)
+                const due = new Date();
+                due.setDate(due.getDate() + 14);
+                document.getElementById('summaryDueDate').textContent = due.toLocaleDateString();
+
+                checkoutBtn.disabled = false;
+            } else {
+                document.getElementById('checkoutSummary').style.display = 'none';
+                checkoutBtn.disabled = true;
+            }
+        }
+
+        // Allow Enter key to trigger checkout if both are selected
+        document.querySelector('.form-container').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && studentId.value && bookId.value && !checkoutBtn.disabled &&
+                studentDropdown.style.display === 'none' && bookDropdown.style.display === 'none') {
+                checkoutBtn.click();
+            }
+        });
+
+        checkoutBtn.addEventListener('click', async () => {
+            if (!studentId.value || !bookId.value) return;
+
+            checkoutBtn.disabled = true;
+            checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            try {
+                const response = await apiRequest('/transactions/borrow', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        user_id: studentId.value,
+                        book_id: bookId.value
+                    })
+                });
+
+                if (response.success) {
+                    showToast('Book checked out successfully!', 'success');
+                    setTimeout(() => window.location.href = 'transactions.html', 1500);
+                } else {
+                    showToast(response.error || 'Failed to check out book', 'error');
+                    checkoutBtn.disabled = false;
+                    checkoutBtn.innerHTML = '<i class="fas fa-check-circle"></i> Complete Check Out';
+                }
+            } catch (err) {
+                showToast('A network error occurred', 'error');
+                checkoutBtn.disabled = false;
+                checkoutBtn.innerHTML = '<i class="fas fa-check-circle"></i> Complete Check Out';
+            }
+        });
+
+        // Close dropdowns on outside click
+        document.addEventListener('click', (e) => {
+            if (!studentSearch.contains(e.target)) studentDropdown.style.display = 'none';
+            if (!bookSearch.contains(e.target)) bookDropdown.style.display = 'none';
+        });
+    </script>
+</body>
+
+</html>

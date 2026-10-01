@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Reports - Al Marakish Library</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --bg-dark: #0f1724;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: white;
+            line-height: 1.6;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 32px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #3b82f6, #ec4899);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .stat-badge {
+            background: rgba(156, 77, 255, 0.1);
+            color: var(--primary);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .report-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-chart-line"></i> Analytics & Reports</h1>
+            <button class="btn"
+                style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600;"
+                onclick="window.print()">
+                <i class="fas fa-file-pdf"></i> Export PDF
+            </button>
+        </div>
+
+        <div class="report-grid">
+            <!-- Most Borrowed Books -->
+            <div class="card">
+                <h2><i class="fas fa-book" style="color: #10b981;"></i> Most Borrowed Books</h2>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Book Title</th>
+                                <th style="text-align: right;">Times Borrowed</th>
+                            </tr>
+                        </thead>
+                        <tbody id="booksBody">
+                            <tr>
+                                <td colspan="2" style="text-align: center; padding: 20px;">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Best Readers -->
+            <div class="card">
+                <h2><i class="fas fa-medal" style="color: #f59e0b;"></i> Top Readers</h2>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th style="text-align: right;">Books Borrowed</th>
+                            </tr>
+                        </thead>
+                        <tbody id="readersBody">
+                            <tr>
+                                <td colspan="2" style="text-align: center; padding: 20px;">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Category Distribution -->
+            <div class="card">
+                <h2><i class="fas fa-pie-chart" style="color: #3b82f6;"></i> Book Categories</h2>
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Transaction Trends -->
+            <div class="card">
+                <h2><i class="fas fa-history" style="color: #ec4899;"></i> Borrowing Trends</h2>
+                <div class="chart-container">
+                    <canvas id="trendsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        // Load Sidebar
+        fetch('/admin/sidebar.html').then(res => res.text()).then(data => {
+            document.getElementById('sidebar-container').innerHTML = data;
+            if (typeof initSidebar === 'function') initSidebar();
+        });
+
+        protectRoute();
+
+        window.addEventListener('DOMContentLoaded', loadReports);
+
+        async function loadReports() {
+            try {
+                const response = await apiRequest('/admin/reports');
+                if (response.success) {
+                    renderTables(response);
+                    renderCharts(response);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderTables(data) {
+            const booksBody = document.getElementById('booksBody');
+            booksBody.innerHTML = data.mostBorrowed.length > 0 ? data.mostBorrowed.map(b => `
+                <tr>
+                    <td>
+                        <strong>${b.title}</strong><br>
+                        <small style="color: var(--text-muted)">${b.author || 'Unknown Author'}</small>
+                    </td>
+                    <td style="text-align: right;"><span class="stat-badge">${b.borrow_count}</span></td>
+                </tr>
+            `).join('') : '<tr><td colspan="2" style="text-align: center;">No data available</td></tr>';
+
+            const readersBody = document.getElementById('readersBody');
+            readersBody.innerHTML = data.bestReaders.length > 0 ? data.bestReaders.map(r => `
+                <tr>
+                    <td>
+                        <strong>${r.full_name}</strong><br>
+                        <small style="color: var(--text-muted)">AD No: ${r.ad_no}</small>
+                    </td>
+                    <td style="text-align: right;"><span class="stat-badge">${r.borrow_count}</span></td>
+                </tr>
+            `).join('') : '<tr><td colspan="2" style="text-align: center;">No data available</td></tr>';
+        }
+
+        function renderCharts(data) {
+            // Category Distribution Chart
+            new Chart(document.getElementById('categoryChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: data.categoryStats.map(c => c.category),
+                    datasets: [{
+                        data: data.categoryStats.map(c => c.count),
+                        backgroundColor: ['#9c4dff', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#6366f1'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { color: '#94a3b8', boxWidth: 10 } }
+                    }
+                }
+            });
+
+            // Borrowing Trends Chart
+            new Chart(document.getElementById('trendsChart'), {
+                type: 'line',
+                data: {
+                    labels: data.monthlyStats.map(m => m.month),
+                    datasets: [{
+                        label: 'Books Borrowed',
+                        data: data.monthlyStats.map(m => m.count),
+                        borderColor: '#9c4dff',
+                        backgroundColor: 'rgba(156, 77, 255, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

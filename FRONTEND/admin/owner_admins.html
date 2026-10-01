@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High Command | Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/owner-pages.css">
+    <style>
+        .main-content {
+            padding: 40px;
+        }
+
+        .high-command-header {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            border-radius: 16px;
+            padding: 24px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header-info h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-info p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header-info p strong {
+            color: white;
+        }
+
+        /* Card Grid Layout */
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 24px;
+        }
+
+        .admin-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(156, 77, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .admin-card.self-card {
+            border: 1px solid rgba(156, 77, 255, 0.4);
+        }
+
+        /* Card Header */
+        .card-profile {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .avatar-box {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--primary);
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .name-meta h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .handle {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 8px;
+            opacity: 0.7;
+        }
+
+        /* Body Info */
+        .card-details {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .info-row i {
+            width: 18px;
+            color: var(--text-secondary);
+            opacity: 0.6;
+            font-size: 16px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot-active {
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981;
+        }
+
+        .dot-inactive {
+            background: #ef4444;
+        }
+
+        /* Actions */
+        .card-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-card {
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1px solid var(--border);
+            flex: 1;
+        }
+
+        .btn-edit {
+            background: rgba(15, 23, 42, 0.4);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .btn-suspend {
+            background: transparent;
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #f87171;
+        }
+
+        .btn-suspend:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .btn-delete {
+            width: 45px;
+            flex: none;
+            color: #f87171;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .btn-self-label {
+            width: 100%;
+            background: rgba(156, 77, 255, 0.15);
+            border: 1px solid rgba(156, 77, 255, 0.2);
+            color: var(--primary-light);
+            cursor: default;
+        }
+
+        /* Role Badges */
+        .role-tag {
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        .tag-owner {
+            background: rgba(156, 77, 255, 0.2);
+            color: var(--primary-light);
+            border: 1px solid rgba(156, 77, 255, 0.3);
+        }
+
+        .tag-admin {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .tag-assistant {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        /* Floating Action Button */
+        .fab-add {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 10px 20px rgba(156, 77, 255, 0.4);
+            cursor: pointer;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: none;
+            z-index: 100;
+        }
+
+        .fab-add:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 15px 30px rgba(156, 77, 255, 0.5);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(8, 12, 20, 0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-card {
+            background: #1e293b;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            padding: 24px 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-close:hover {
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            padding: 14px 18px;
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(156, 77, 255, 0.15);
+        }
+
+        .modal-footer {
+            padding: 20px 30px 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-full {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: none;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-save {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 20px rgba(156, 77, 255, 0.2);
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(156, 77, 255, 0.3);
+            filter: brightness(1.1);
+        }
+
+        .no-commanders {
+            grid-column: 1 / -1;
+            padding: 100px;
+            text-align: center;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div class="header-title">
+                <h1><i class="fas fa-users-gear" style="color: var(--primary);"></i> Staff Management</h1>
+                <p>Control administrative access and manage staff roles.</p>
+            </div>
+            <button class="btn-save btn-full" style="width: auto; padding: 12px 24px; flex: none;"
+                onclick="openCreateModal()">
+                <i class="fas fa-user-plus"></i> Recruit New Admin
+            </button>
+        </div>
+
+        <!-- Admins Grid -->
+        <div class="admin-grid" id="adminsGrid">
+            <div class="no-commanders">
+                <i class="fas fa-circle-notch fa-spin fa-3x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                <p>Summoning High Command Staff...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="fab-add" onclick="openCreateModal()" title="Recruit New Admin">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Create Admin Modal -->
+    <div class="modal-overlay" id="createAdminModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2><i class="fas fa-id-card-clip" style="color: var(--primary); margin-right: 12px;"></i>Recruit New
+                    Commander</h2>
+                <button class="btn-close" onclick="closeCreateModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="createAdminForm" onsubmit="handleCreateAdmin(event)">
+                <div class="modal-body">
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label>Designation (Username)</label>
+                            <input type="text" name="username" class="form-input" placeholder="e.g. shinas_p" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Full Command Name</label>
+                            <input type="text" name="full_name" class="form-input" placeholder="e.g. Shinas P" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Secure Access Code (Password)</label>
+                        <input type="password" name="password" class="form-input" placeholder="Encryption key..."
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Command Protocol (Role)</label>
+                        <select name="role" class="form-input">
+                            <option value="assistant">Operational Sidekick (Assistant)</option>
+                            <option value="admin">Field Commander (Administrator)</option>
+                            <option value="owner">High Command (Owner)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-full btn-cancel" onclick="closeCreateModal()">Cancel
+                        Action</button>
+                    <button type="submit" class="btn-full btn-save">Execute Recruitment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script src="/assets/js/owner-panel.js"></script>
+    <script>
+        function openCreateModal() {
+            document.getElementById('createAdminModal').style.display = 'flex';
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createAdminModal').style.display = 'none';
+        }
+
+        async function handleCreateAdmin(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            const btn = form.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Executing...';
+
+                const res = await apiRequest('/admin/owner/admins', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                if (res.success) {
+                    showToast('Commander recruited successfully', 'success');
+                    closeCreateModal();
+                    form.reset();
+                    if (typeof loadAdmins === 'function') loadAdmins();
+                } else {
+                    throw new Error(res.error || 'Recruitment failed');
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        // Close modal on click outside
+        window.onclick = function (event) {
+            const modal = document.getElementById('createAdminModal');
+            if (event.target == modal) closeCreateModal();
+        }
+    </script>
+</body>
+
+</html>

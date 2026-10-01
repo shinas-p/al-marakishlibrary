@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Manage Books - Al Marakish Library</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/bulk-selection.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/bulk-selection.css">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --primary-glow: rgba(156, 77, 255, 0.4);
+            --bg-dark: #080c14;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(156, 77, 255, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.05) 0, transparent 50%);
+            color: white;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-title h1 i {
+            background: linear-gradient(135deg, var(--primary) 0%, #7b2cff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .filter-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .filter-group label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            outline: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .btn-filter {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            height: 46px;
+        }
+
+        .btn-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px var(--primary-glow);
+        }
+
+        .table-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: left;
+        }
+
+        td {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            color: #e2e8f0;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .book-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .book-img-wrapper {
+            position: relative;
+            width: 42px;
+            height: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .book-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .book-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .book-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: white;
+        }
+
+        .book-author {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .acc-no-badge {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-Available {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .status-Unavailable {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .status-Reserved {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .status-Lost {
+            background: rgba(148, 163, 184, 0.1);
+            color: #94a3b8;
+        }
+
+        /* Bulk Toolbar Transformation */
+        .bulk-toolbar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            padding: 12px 24px;
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary);
+            z-index: 1000;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+            opacity: 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .bulk-toolbar.active {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .bulk-selection-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-right: 20px;
+            border-right: 1px solid var(--border);
+            color: #e2e8f0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .bulk-selection-info i {
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .bulk-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .bulk-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px var(--primary-glow);
+        }
+
+        .bulk-btn-danger {
+            background: var(--danger);
+        }
+
+        .bulk-btn-secondary {
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Modal Transformation */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(8, 12, 20, 0.9);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: #1e293b;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 28px;
+            padding: 40px;
+            position: relative;
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            transform: scale(0.95);
+            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes modalPop {
+            to {
+                transform: scale(1);
+            }
+        }
+
+        /* Upload Zone Styling */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.02);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: rgba(156, 77, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .upload-zone i {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 5px;
+            filter: drop-shadow(0 0 10px var(--primary-glow));
+        }
+
+        .upload-zone h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .upload-zone p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(156, 77, 255, 0.1);
+        }
+
+        /* Custom Checkbox Styling */
+        input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 7px;
+            background: rgba(15, 23, 42, 0.6);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+        }
+
+        input[type="checkbox"]:checked {
+            background: linear-gradient(135deg, var(--primary) 0%, #7b2cff 100%);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            font-size: 11px;
+            animation: checkmarkPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes checkmarkPop {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        input[type="checkbox"]:indeterminate {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        input[type="checkbox"]:indeterminate::after {
+            content: '';
+            width: 10px;
+            height: 2px;
+            background: white;
+            border-radius: 2px;
+        }
+
+        input[type="checkbox"]:hover {
+            border-color: var(--primary);
+            background: rgba(156, 77, 255, 0.05);
+            transform: translateY(-1px) scale(1.05);
+        }
+
+        input[type="checkbox"]:focus {
+            box-shadow: 0 0 0 3px rgba(156, 77, 255, 0.25);
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 30px;
+            }
+
+            .filter-section {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div class="header-title">
+                <h1><i class="fas fa-layer-group"></i> Bulk Manage Books</h1>
+                <p style="color: var(--text-muted); margin-top: 5px;">Refine and manage your library collection at
+                    scale.</p>
+            </div>
+            <div class="header-actions" style="display: flex; gap: 12px;">
+                <button class="bulk-btn bulk-btn-secondary" onclick="openAssetUpload()">
+                    <i class="fas fa-file-upload"></i> Bulk Upload Assets
+                </button>
+                <button class="bulk-btn bulk-btn-secondary" onclick="window.location.reload()">
+                    <i class="fas fa-sync-alt"></i> Refresh List
+                </button>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <div class="filter-group">
+                <label>Search Collection</label>
+                <input type="text" id="searchInput" placeholder="Title, ISBN, Acc No...">
+            </div>
+            <div class="filter-group">
+                <label>Category</label>
+                <select id="categoryFilter">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Availability</label>
+                <select id="statusFilter">
+                    <option value="">All Status</option>
+                    <option value="Available">Available</option>
+                    <option value="Unavailable">Unavailable</option>
+                    <option value="Reserved">Reserved</option>
+                    <option value="Lost">Lost</option>
+                </select>
+            </div>
+            <button class="btn-filter" onclick="loadBooks()">
+                <i class="fas fa-filter"></i> Apply Filters
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table class="bulk-table" data-bulk-type="books">
+                <thead>
+                    <tr>
+                        <th style="width: 60px; text-align: center;">
+                            <input type="checkbox" class="bulk-select-all" id="selectAll">
+                        </th>
+                        <th>Book Details</th>
+                        <th>Accession No</th>
+                        <th>Classification</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="bookTableBody">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 60px;">
+                            <i class="fas fa-circle-notch fa-spin"
+                                style="font-size: 24px; color: var(--primary); margin-bottom: 15px;"></i>
+                            <p style="color: var(--text-muted);">Fetching your library records...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bulk Toolbar -->
+    <div class="bulk-toolbar" id="bulkToolbar">
+        <div class="bulk-selection-info">
+            <i class="fas fa-check-circle"></i>
+            <span class="bulk-count">0</span> Books Selected
+        </div>
+        <div class="bulk-actions">
+            <button class="bulk-btn" onclick="openBulkEdit()">
+                <i class="fas fa-magic"></i> Quick Edit
+            </button>
+            <button class="bulk-btn bulk-btn-danger" onclick="confirmBulkDelete()">
+                <i class="fas fa-trash-alt"></i> Delete Selected
+            </button>
+            <button class="bulk-btn bulk-btn-secondary" onclick="clearSelection()">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script src="/assets/js/bulk-selection.js"></script>
+    <script>
+
+        protectRoute();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadFilterOptions();
+            loadBooks();
+        });
+
+        async function loadFilterOptions() {
+            try {
+                const response = await apiRequest('/books/filters');
+                if (response.success) {
+                    const catSelect = document.getElementById('categoryFilter');
+                    response.categories.forEach(cat => {
+                        const opt = document.createElement('option');
+                        opt.value = opt.textContent = cat;
+                        catSelect.appendChild(opt);
+                    });
+                }
+            } catch (err) { }
+        }
+
+        async function loadBooks() {
+            const search = document.getElementById('searchInput').value;
+            const category = document.getElementById('categoryFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const tbody = document.getElementById('bookTableBody');
+
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">Searching...</td></tr>';
+
+            try {
+                const response = await apiRequest(`/books?search=${encodeURIComponent(search)}&category=${encodeURIComponent(category)}&status=${status}&limit=5000`);
+                if (response.success && response.books.length > 0) {
+                    tbody.innerHTML = response.books.map(b => `
+                        <tr class="bulk-row" data-bulk-id="${b.id}">
+                            <td style="text-align: center;"><input type="checkbox" class="bulk-row-checkbox" value="${b.id}"></td>
+                            <td>
+                                <div class="book-info">
+                                    <div class="book-img-wrapper">
+                                        <img src="${b.cover_image ? '/uploads/covers/' + b.cover_image : '/assets/images/book-placeholder.png'}" 
+                                             class="book-img" onerror="this.src='/assets/images/book-placeholder.png'">
+                                    </div>
+                                    <div class="book-details">
+                                        <div class="book-title">${b.title}</div>
+                                        <div class="book-author">${b.author || 'Unknown Author'}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="acc-no-badge">${b.accession_number}</span></td>
+                            <td>${b.category || '<span style="opacity: 0.3">-</span>'}</td>
+                            <td><span class="status-badge status-${b.status}">${b.status}</span></td>
+                        </tr>
+                    `).join('');
+
+                    // Re-initialize bulk selection for new rows
+                    if (window.bulkManager) window.bulkManager.refresh();
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">No books found.</td></tr>';
+                }
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #ef4444;">Error loading books.</td></tr>';
+            }
+        }
+
+        function clearSelection() {
+            if (window.bulkManager) window.bulkManager.clearSelection();
+        }
+
+        async function confirmBulkDelete() {
+            const ids = window.bulkManager.getSelectedIds();
+            if (ids.length === 0) return;
+
+            const confirmed = await showModal({
+                title: 'Delete Multiple Books?',
+                message: `Are you sure you want to delete <b>${ids.length}</b> selected books? This action is permanent and will remove all associated data including copies and accession records.`,
+                type: 'confirm',
+                confirmText: 'Yes, Delete All',
+                cancelText: 'Cancel'
+            });
+
+            if (confirmed) {
+                try {
+                    // Using the new bulk delete endpoint
+                    const response = await apiRequest('/books/bulk', {
+                        method: 'DELETE',
+                        body: { ids: ids.map(id => parseInt(id)) }
+                    });
+
+                    if (response.success) {
+                        const { results } = response;
+                        if (results.failed.length > 0) {
+                            const failReasons = [...new Set(results.failed.map(f => f.reason))].join(', ');
+                            if (results.success.length > 0) {
+                                showToast(`Partial success: ${results.success.length} deleted, but ${results.failed.length} failed because: ${failReasons}`, 'warning');
+                            } else {
+                                showToast(`Failed: No books deleted. Reason: ${failReasons}`, 'error');
+                                // Show a detailed modal for failures
+                                showModal({
+                                    title: 'Deletion Failed',
+                                    message: `None of the selected books could be deleted. <br><br><b>Reason:</b> ${failReasons}<br><br><small>Note: Books with past transaction history cannot be deleted to maintain library records.</small>`,
+                                    type: 'alert',
+                                    confirmText: 'I Understand'
+                                });
+                            }
+                        } else {
+                            showToast(`Successfully deleted ${results.success.length} books.`, 'success');
+                        }
+
+                        window.bulkManager.clearSelection();
+                        loadBooks();
+                    }
+                } catch (err) {
+                    showToast('Failed to delete some books.', 'error');
+                    console.error(err);
+                    // Still reload to show actual state
+                    loadBooks();
+                }
+            }
+        }
+
+        function openBulkEdit() {
+            const ids = window.bulkManager.getSelectedIds();
+            if (ids.length === 0) return;
+
+            document.getElementById('editCount').textContent = ids.length;
+            document.getElementById('bulkEditModal').style.display = 'flex';
+        }
+
+        function closeBulkEdit() {
+            document.getElementById('bulkEditModal').style.display = 'none';
+        }
+
+        async function submitBulkEdit() {
+            const ids = window.bulkManager.getSelectedIds();
+            const status = document.getElementById('bulkStatus').value;
+            const btn = document.querySelector('.btn-apply');
+
+            if (!status) {
+                showToast('Please select a status', 'warning');
+                return;
+            }
+
+            try {
+                btn.classList.add('loading');
+                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Applying...';
+
+                // Note: We'll update one by one for now as we don't have a bulk update endpoint
+                // but this could be optimized later with a dedicated bulk API
+                let successCount = 0;
+                for (const id of ids) {
+                    const response = await apiRequest(`/books/${id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({ status: status })
+                    });
+                    if (response.success) successCount++;
+                }
+
+                showToast(`Successfully updated ${successCount} books.`, 'success');
+                closeBulkEdit();
+                window.bulkManager.clearSelection();
+                loadBooks();
+            } catch (err) {
+                showToast('An error occurred during bulk update.', 'error');
+            } finally {
+                btn.classList.remove('loading');
+                btn.innerHTML = 'Apply Changes';
+            }
+        }
+    </script>
+
+    <!-- Modal for Bulk Edit -->
+    <div id="bulkEditModal" class="modal">
+        <div class="modal-content">
+            <h2 style="font-family: 'Outfit', sans-serif; margin-bottom: 20px; color: var(--primary);">
+                <i class="fas fa-magic"></i> Quick Edit Status
+            </h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">
+                Updating <span id="editCount" style="color: white; font-weight: 700;">0</span> selected books.
+            </p>
+
+            <div class="filter-group" style="margin-bottom: 30px;">
+                <label>Set Availability Status</label>
+                <select id="bulkStatus">
+                    <option value="">-- Select New Status --</option>
+                    <option value="Available">Available</option>
+                    <option value="Unavailable">Unavailable</option>
+                    <option value="Reserved">Reserved</option>
+                    <option value="Lost">Lost</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button class="bulk-btn bulk-btn-secondary" onclick="closeBulkEdit()">Cancel</button>
+                <button class="bulk-btn btn-apply" onclick="submitBulkEdit()">Apply Changes</button>
+            </div>
+        </div>
+    </div>
+    <!-- Modal for Bulk Asset Upload -->
+    <div id="bulkAssetModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <h2 style="font-family: 'Outfit', sans-serif; margin-bottom: 20px; color: var(--primary);">
+                <i class="fas fa-file-upload"></i> Bulk Asset Upload
+            </h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">
+                Upload multiple images or PDFs. Files must be named after the <b>Accession Number</b> (e.g.,
+                <code>1500.jpg</code> or <code>1500.pdf</code>).
+            </p>
+
+            <div class="upload-zone" id="bulkAssetDropZone" onclick="document.getElementById('assetFiles').click()"
+                style="margin-bottom: 20px; border-style: dashed; border-width: 2px;">
+                <input type="file" id="assetFiles" multiple accept="image/*,.pdf,.epub" style="display: none;"
+                    onchange="updateAssetList(this)">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h4>Select or Drop Files</h4>
+                <p>Supports JPG, PNG, PDF, EPUB</p>
+                <div id="assetList"
+                    style="margin-top: 15px; font-size: 11px; color: var(--primary); max-height: 100px; overflow-y: auto;">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button class="bulk-btn bulk-btn-secondary" onclick="closeAssetUpload()">Cancel</button>
+                <button class="bulk-btn btn-apply" id="uploadAssetsBtn" onclick="submitBulkAssets()">
+                    <i class="fas fa-upload"></i> Start Upload
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openAssetUpload() {
+            document.getElementById('bulkAssetModal').style.display = 'flex';
+        }
+
+        function closeAssetUpload() {
+            document.getElementById('bulkAssetModal').style.display = 'none';
+        }
+
+        function updateAssetList(input) {
+            const list = document.getElementById('assetList');
+            const files = Array.from(input.files);
+            if (files.length > 0) {
+                list.innerHTML = files.map(f => `<div><i class="fas fa-file"></i> ${f.name}</div>`).join('');
+                document.getElementById('bulkAssetDropZone').classList.add('has-file');
+            }
+        }
+
+        async function submitBulkAssets() {
+            const fileInput = document.getElementById('assetFiles');
+            const files = fileInput.files;
+            const btn = document.getElementById('uploadAssetsBtn');
+
+            if (files.length === 0) {
+                showToast('Please select files to upload', 'warning');
+                return;
+            }
+
+            const formData = new FormData();
+            for (let i = 0; i < files.length; i++) {
+                formData.append('assets', files[i]);
+            }
+
+            try {
+                btn.classList.add('loading');
+                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Uploading...';
+
+                // Using uploadFile from api-helper.js
+                const response = await uploadFile('/admin/books/bulk-assets', formData);
+
+                if (response.success) {
+                    showToast(`Successfully processed ${response.processedCount} files.`, 'success');
+                    closeAssetUpload();
+                    loadBooks();
+                } else {
+                    showToast(response.error || 'Failed to upload assets', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('An error occurred during bulk upload.', 'error');
+            } finally {
+                btn.classList.remove('loading');
+                btn.innerHTML = '<i class="fas fa-upload"></i> Start Upload';
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - AL MARAKISH LIBRARY</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a2e2e;
+            --primary-light: #2d4a4a;
+            --accent: #cf9d7c;
+            --gold: #ddc9b4;
+            --bg-dark: #080c0c;
+            --glass-bg: rgba(26, 46, 46, 0.6);
+            --glass-border: rgba(221, 201, 180, 0.12);
+            --text-main: #e8e3d5;
+            --text-muted: #94a3a3;
+            --card-radius: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(26, 46, 46, 0.4) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(207, 157, 124, 0.1) 0, transparent 50%);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(13, 20, 20, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--gold), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+
+        .nav-btn:hover {
+            background: rgba(221, 201, 180, 0.05);
+            border-color: var(--glass-border);
+            color: var(--accent);
+        }
+
+        .nav-btn.active {
+            background: rgba(207, 157, 124, 0.15);
+            border-color: rgba(207, 157, 124, 0.3);
+            color: var(--accent);
+        }
+
+        .user-meta {
+            margin-left: 20px;
+            padding-left: 20px;
+            border-left: 1px solid var(--glass-border);
+            text-align: left;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 15px;
+            display: block;
+            color: var(--gold);
+        }
+
+        .user-id {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 20px;
+        }
+
+        .page-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .notif-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .notif-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            gap: 20px;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .notif-card:hover {
+            transform: translateX(5px);
+            border-color: var(--accent);
+        }
+
+        .notif-card.unread {
+            background: rgba(45, 74, 74, 0.6);
+            border-left: 4px solid var(--accent);
+        }
+
+        .notif-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            background: rgba(221, 201, 180, 0.05);
+            color: var(--gold);
+        }
+
+        .type-announcement .notif-icon {
+            color: var(--accent);
+        }
+
+        .type-alert .notif-icon {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .notif-content h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .notif-content p {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .notif-date {
+            font-size: 12px;
+            color: var(--text-muted);
+            opacity: 0.7;
+            margin-top: 10px;
+            display: block;
+            font-weight: 600;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 700;
+            border: 1px solid var(--glass-border);
+            color: var(--accent);
+            margin-right: 8px;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-muted);
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .user-meta {
+                margin: 0;
+                padding: 0;
+                border: none;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-book-reader" style="color: var(--accent);"></i>
+            AL MARAKISH LIBRARY
+        </div>
+        <div class="navbar-user">
+            <a href="dashboard.html" class="nav-btn">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="notifications.html" class="nav-btn active">
+                <i class="fas fa-bell"></i> Notifications
+            </a>
+            <a href="profile.html" class="nav-btn">
+                <i class="fas fa-user-circle"></i> Profile
+            </a>
+            <a href="reservations.html" class="nav-btn">
+                <i class="fas fa-bookmark"></i> Reservations
+            </a>
+            <a href="suggestions.html" class="nav-btn">
+                <i class="fas fa-lightbulb"></i> Wishlist
+            </a>
+            <a href="pay_fine.html" class="nav-btn">
+                <i class="fas fa-wallet"></i> Payments
+            </a>
+            <a href="../opac/index.html" class="nav-btn">
+                <i class="fas fa-search"></i> OPAC
+            </a>
+
+            <div class="user-meta">
+                <span class="user-name" id="userName">Student</span>
+                <span class="user-id" id="userAdNo">AD NO: --</span>
+            </div>
+
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-power-off"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Notifications</h1>
+        </div>
+
+        <div id="notifList" class="notif-list">
+            <div class="loading-state">
+                <i class="fas fa-circle-notch fa-spin fa-2x"></i>
+                <p style="margin-top: 15px;">Loading updates...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script>
+        protectRoute('student');
+
+        // User Info
+        const user = getUser();
+        if (user) {
+            document.getElementById('userName').textContent = user.full_name;
+            document.getElementById('userAdNo').textContent = `AD NO: ${user.ad_no || '--'}`;
+        }
+
+        window.addEventListener('DOMContentLoaded', loadNotifications);
+
+        async function loadNotifications() {
+            const list = document.getElementById('notifList');
+            try {
+                const response = await apiRequest('/notifications');
+                if (response.success) {
+                    if (response.notifications.length === 0) {
+                        list.innerHTML = `
+                            <div class="loading-state">
+                                <i class="fas fa-bell-slash fa-3x" style="opacity: 0.2; margin-bottom: 20px;"></i>
+                                <p>You have no new notifications.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    list.innerHTML = response.notifications.map(n => {
+                        const isAnn = n.source === 'announcement';
+                        const typeClass = isAnn ? 'type-announcement' :
+                            (n.type === 'error' || n.type === 'warning' ? 'type-alert' : 'type-info');
+
+                        const icon = isAnn ? 'fa-bullhorn' :
+                            (n.type === 'warning' ? 'fa-exclamation-triangle' :
+                                (n.type === 'success' ? 'fa-check-circle' : 'fa-info-circle'));
+
+                        const date = new Date(n.created_at).toLocaleDateString(undefined, {
+                            weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                        });
+
+                        return `
+                        <div class="notif-card ${typeClass} ${!n.is_read ? 'unread' : ''}">
+                            <div class="notif-icon">
+                                <i class="fas ${icon}"></i>
+                            </div>
+                            <div class="notif-content">
+                                <h3>
+                                    ${isAnn ? `<span class="badge">Announcement</span>` : ''}
+                                    ${n.title}
+                                </h3>
+                                <p>${n.message}</p>
+                                <span class="notif-date">${date}</span>
+                            </div>
+                        </div>
+                        `;
+                    }).join('');
+
+                    // Mark as read logic
+                    if (response.notifications.some(n => !n.is_read)) {
+                        setTimeout(async () => {
+                            await apiRequest('/notifications/mark-all-read', { method: 'PUT', noRedirect: true });
+                            updateNotificationBadge(); // Refresh badge count
+                        }, 2000);
+                    }
+                }
+            } catch (err) {
+                list.innerHTML = `<div class="loading-state"><p style="color: #ef4444;">Failed to load notifications.</p></div>`;
+            }
+        }
+    </script>
+</body>
+
+</html>

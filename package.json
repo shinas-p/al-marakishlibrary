@@ -1,0 +1,13 @@
+{
+    "name": "almarakish-library-system",
+    "version": "1.0.0",
+    "description": "Unified Library Management System",
+    "main": "BACKEND/server.js",
+    "scripts": {
+        "start": "node BACKEND/server.js",
+        "build": "cd BACKEND && npm install",
+        "dev": "cd BACKEND && npm run dev"
+    },
+    "author": "",
+    "license": "ISC"
+}

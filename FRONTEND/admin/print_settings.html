@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Label Settings - Al Marakish Library</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --bg-dark: #0f1724;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: white;
+            line-height: 1.6;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 32px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #f59e0b, #9c4dff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            max-width: 800px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn-secondary {
+            background: #334155;
+        }
+
+        .preview-pane {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .label-simulation {
+            border: 1px dashed #ccc;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            text-align: center;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: 0.2s;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-cog"></i> Label Printing Settings</h1>
+            <a href="select_labels.html" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Selection
+            </a>
+        </div>
+
+        <div class="card">
+            <form id="settingsForm">
+                <h3 style="margin-bottom: 20px; font-size: 18px; color: #f59e0b;">Page Layout (Dimensions in mm)</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Page Size</label>
+                        <select name="page_size" class="form-control">
+                            <option value="A4">A4 (210 x 297mm)</option>
+                            <option value="Letter">Letter (215.9 x 279.4mm)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Barcode Scale</label>
+                        <input type="number" name="barcode_scale" step="0.1" class="form-control" value="2">
+                    </div>
+                    <div class="form-group">
+                        <label>Top Margin (mm)</label>
+                        <input type="number" name="top_margin_mm" step="0.5" class="form-control" value="12">
+                    </div>
+                    <div class="form-group">
+                        <label>Side Margin (mm)</label>
+                        <input type="number" name="side_margin_mm" step="0.5" class="form-control" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label>Vertical Pitch (mm)</label>
+                        <input type="number" name="vertical_pitch_mm" step="0.5" class="form-control" value="21">
+                    </div>
+                    <div class="form-group">
+                        <label>Horizontal Pitch (mm)</label>
+                        <input type="number" name="horizontal_pitch_mm" step="0.5" class="form-control" value="40">
+                    </div>
+                </div>
+
+                <h3 style="margin: 30px 0 20px; font-size: 18px; color: #f59e0b;">Label Grid</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Columns</label>
+                        <input type="number" name="label_columns" class="form-control" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label>Rows per Page</label>
+                        <input type="number" name="label_rows" class="form-control" value="13">
+                    </div>
+                    <div class="form-group">
+                        <label>Label Width (mm)</label>
+                        <input type="number" name="label_width_mm" step="0.5" class="form-control" value="38">
+                    </div>
+                    <div class="form-group">
+                        <label>Label Height (mm)</label>
+                        <input type="number" name="label_height_mm" step="0.5" class="form-control" value="21">
+                    </div>
+                </div>
+
+                <h3 style="margin: 30px 0 20px; font-size: 18px; color: #f59e0b;">Typography & Barcode Styles (pt/mm)
+                </h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Lib Name Font Size (pt)</label>
+                        <input type="number" name="label_lib_font_size" step="0.5" class="form-control" value="8">
+                    </div>
+                    <div class="form-group">
+                        <label>Title Font Size (pt)</label>
+                        <input type="number" name="label_title_font_size" step="0.5" class="form-control" value="7">
+                    </div>
+                    <div class="form-group">
+                        <label>Acc No Font Size (pt)</label>
+                        <input type="number" name="label_acc_font_size" step="0.5" class="form-control" value="9">
+                    </div>
+                    <div class="form-group">
+                        <label>Barcode Height (mm)</label>
+                        <input type="number" name="label_barcode_height" step="0.5" class="form-control" value="10">
+                    </div>
+                </div>
+
+                <h3 style="margin: 30px 0 20px; font-size: 18px; color: #f59e0b;">Display Fields</h3>
+                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" name="label_show_lib_name" value="true" checked>
+                        <label style="margin:0;">Library Name</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" name="label_show_title" value="true" checked>
+                        <label style="margin:0;">Book Title</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" name="label_show_author" value="true">
+                        <label style="margin:0;">Author</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" name="label_show_isbn" value="true">
+                        <label style="margin:0;">ISBN</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" name="label_show_publisher" value="true">
+                        <label style="margin:0;">Publisher</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" name="label_show_call_no" value="true">
+                        <label style="margin:0;">Call Number</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" name="label_show_barcode" value="true" checked>
+                        <label style="margin:0;">Barcode (Scannable)</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" name="label_show_acc_no" value="true" checked>
+                        <label style="margin:0;">Accession Text</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" name="label_multiline_call" value="true" checked>
+                        <label style="margin:0;">4-Line Call Number Format</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; grid-column: span 2;">
+                        <label style="margin:0; white-space: nowrap;">Call Number Prefix:</label>
+                        <input type="text" name="label_call_prefix" class="form-control" placeholder="e.g. AML"
+                            value="AML" style="width: 100px;">
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h3 style="margin-bottom: 15px; font-size: 16px; color: var(--text-muted);">Live Preview
+                        (Approximate)</h3>
+                    <div class="preview-pane">
+                        <div id="labelPreview" class="label-simulation">
+                            <div id="prevLib" style="font-weight: bold; text-transform: uppercase;">AL MARAKISH LIBRARY
+                            </div>
+                            <div id="prevTitle" style="line-height:1.1; overflow:hidden;">Great Classics of History
+                            </div>
+                            <div id="prevAuthor" style="font-size: 6px; color: #666;">By Leonardo Da Vinci</div>
+                            <div id="prevIsbn" style="font-size: 6px; color: #666;">ISBN: 978-0123456789</div>
+                            <div id="prevPub" style="font-size: 6px; color: #666;">Oxford Press</div>
+                            <div id="prevCall" style="font-size: 6px; color: #666; font-weight: bold;">
+                                <div id="callLine1">AML/UR</div>
+                                <div id="callLine2">786.1</div>
+                                <div id="callLine3">AUT/B</div>
+                                <div id="callLine4">100</div>
+                            </div>
+                            <svg id="barcodePreview"></svg>
+                            <div id="prevAcc" style="font-weight: bold;">1001</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;">
+                    <button type="button" class="btn btn-secondary" onclick="resetDefaults()">Reset to Defaults</button>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-save"></i> Save Layout Settings
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        // Load Sidebar
+        fetch('/admin/sidebar.html').then(res => res.text()).then(data => {
+            document.getElementById('sidebar-container').innerHTML = data;
+            if (typeof initSidebar === 'function') initSidebar();
+        });
+
+        protectRoute();
+
+        const form = document.getElementById('settingsForm');
+        const preview = document.getElementById('labelPreview');
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await apiRequest('/admin/labels/books?limit=1');
+                if (response.success && response.settings) {
+                    const s = response.settings;
+
+                    const mapping = {
+                        'top_margin_mm': s.top_margin,
+                        'side_margin_mm': s.side_margin,
+                        'vertical_pitch_mm': s.vertical_pitch,
+                        'horizontal_pitch_mm': s.horizontal_pitch,
+                        'label_width_mm': s.label_width,
+                        'label_height_mm': s.label_height,
+                        'label_columns': s.columns,
+                        'label_rows': s.rows,
+                        'page_size': s.page_size,
+                        'barcode_scale': s.barcode_scale,
+                        'label_lib_font_size': s.lib_font_size,
+                        'label_title_font_size': s.title_font_size,
+                        'label_acc_font_size': s.acc_font_size,
+                        'label_barcode_height': s.barcode_height,
+                        'label_show_lib_name': s.show_lib_name,
+                        'label_show_title': s.show_title,
+                        'label_show_author': s.show_author,
+                        'label_show_isbn': s.show_isbn,
+                        'label_show_publisher': s.show_publisher,
+                        'label_show_call_no': s.show_call_no,
+                        'label_show_barcode': s.show_barcode,
+                        'label_show_acc_no': s.show_acc_no,
+                        'label_multiline_call': s.multiline_call,
+                        'label_call_prefix': s.call_prefix
+                    };
+
+                    Object.keys(mapping).forEach(key => {
+                        const input = form.querySelector(`[name="${key}"]`);
+                        if (input) {
+                            if (input.type === 'checkbox') input.checked = mapping[key];
+                            else input.value = mapping[key];
+                        }
+                    });
+
+                    updatePreview();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        // Add event listeners for live updates
+        form.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('input', updatePreview);
+            if (input.type === 'checkbox') input.addEventListener('change', updatePreview);
+        });
+
+        function updatePreview() {
+            const formData = new FormData(form);
+            const s = {};
+            // Special handling for checkboxes in FormData
+            form.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                s[cb.name] = cb.checked;
+            });
+            formData.forEach((value, key) => {
+                if (!s.hasOwnProperty(key)) s[key] = value;
+            });
+
+            // Update Simulation Size (scaling mm to px for visual representation, e.g., 1mm = 4px)
+            const scale = 4;
+            preview.style.width = (parseFloat(s.label_width_mm) * scale) + 'px';
+            preview.style.height = (parseFloat(s.label_height_mm) * scale) + 'px';
+
+            // Update Visibility
+            document.getElementById('prevLib').style.display = s.label_show_lib_name ? 'block' : 'none';
+            document.getElementById('prevTitle').style.display = s.label_show_title ? 'block' : 'none';
+            document.getElementById('prevAuthor').style.display = s.label_show_author ? 'block' : 'none';
+            document.getElementById('prevIsbn').style.display = s.label_show_isbn ? 'block' : 'none';
+            document.getElementById('prevPub').style.display = s.label_show_publisher ? 'block' : 'none';
+            document.getElementById('prevCall').style.display = s.label_show_call_no ? 'block' : 'none';
+            document.getElementById('barcodePreview').style.display = s.label_show_barcode ? 'block' : 'none';
+            document.getElementById('prevAcc').style.display = s.label_show_acc_no ? 'block' : 'none';
+
+            // Preview Multiline Call
+            if (s.label_multiline_call) {
+                document.getElementById('callLine1').textContent = (s.label_call_prefix || 'AML') + '/UR';
+                document.getElementById('callLine2').style.display = 'block';
+                document.getElementById('callLine3').style.display = 'block';
+                document.getElementById('callLine4').style.display = 'block';
+                document.getElementById('prevCall').style.fontSize = '8px';
+            } else {
+                document.getElementById('prevCall').textContent = (s.label_call_prefix || '') + ' UR 786.1 AUT/B 100';
+                document.getElementById('prevCall').style.fontSize = '6px';
+            }
+
+            // Update Fonts (converting mm/pt style to approximate px)
+            document.getElementById('prevLib').style.fontSize = (parseFloat(s.label_lib_font_size) * 1.5) + 'px';
+            document.getElementById('prevTitle').style.fontSize = (parseFloat(s.label_title_font_size) * 1.5) + 'px';
+            document.getElementById('prevAcc').style.fontSize = (parseFloat(s.label_acc_font_size) * 1.5) + 'px';
+
+            // Generate Preview Barcode
+            if (s.label_show_barcode) {
+                try {
+                    JsBarcode("#barcodePreview", "1001", {
+                        format: "CODE128",
+                        width: parseFloat(s.barcode_scale) || 1.5,
+                        height: (parseFloat(s.label_barcode_height) * 2) || 20,
+                        displayValue: false,
+                        margin: 0
+                    });
+                } catch (e) { }
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const settings = {};
+
+            // Collect all inputs including unchecked checkboxes
+            form.querySelectorAll('input, select').forEach(input => {
+                if (input.type === 'checkbox') settings[input.name] = input.checked ? 'true' : 'false';
+                else settings[input.name] = input.value;
+            });
+
+            try {
+                // Use the bulk update settings endpoint
+                const response = await apiRequest('/admin/owner/settings/bulk', {
+                    method: 'PUT',
+                    body: {
+                        category: 'printing',
+                        settings: settings
+                    }
+                });
+
+                if (response.success) {
+                    showToast('Settings saved successfully!', 'success');
+                }
+            } catch (err) {
+                showToast(err.message || 'Failed to save settings', 'error');
+            }
+        });
+
+        function resetDefaults() {
+            const defaults = {
+                page_size: 'A4',
+                barcode_scale: 2,
+                label_width_mm: 38,
+                label_height_mm: 21,
+                label_lib_font_size: 8,
+                label_title_font_size: 7,
+                label_acc_font_size: 9,
+                label_barcode_height: 10,
+                label_show_lib_name: true,
+                label_show_title: true,
+                label_show_author: false,
+                label_show_isbn: false,
+                label_show_publisher: false,
+                label_show_call_no: false,
+                label_show_barcode: true,
+                label_show_acc_no: true
+            };
+
+            Object.keys(defaults).forEach(key => {
+                const input = form.querySelector(`[name="${key}"]`);
+                if (input) {
+                    if (input.type === 'checkbox') input.checked = defaults[key];
+                    else input.value = defaults[key];
+                }
+            });
+
+            updatePreview();
+        }
+    </script>
+</body>
+
+</html>

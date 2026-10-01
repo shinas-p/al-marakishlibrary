@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Custom Fine | Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --primary-light: #b785ff;
+            --secondary: #f59e0b;
+            --bg-dark: #080c14;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background-image: radial-gradient(at 0% 0%, rgba(156, 77, 255, 0.1) 0, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-header p {
+            color: var(--text-muted);
+        }
+
+        .fine-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-family: 'Outfit';
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--primary-light);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input,
+        select,
+        textarea {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(156, 77, 255, 0.1);
+        }
+
+        /* Student Selector */
+        .student-search-container {
+            position: relative;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-top: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+
+        .result-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .result-item:hover {
+            background: rgba(156, 77, 255, 0.1);
+        }
+
+        .result-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .selected-student-box {
+            display: none;
+            align-items: center;
+            gap: 16px;
+            background: rgba(156, 77, 255, 0.05);
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px dashed var(--primary);
+            margin-top: 12px;
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 24px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>💸 Issue Custom Fine</h1>
+                <p>Add manual charges for book damage, lost items, or other policy violations.</p>
+            </div>
+
+            <div class="fine-card">
+                <form id="fineForm">
+                    <!-- Student Selection -->
+                    <div class="form-section">
+                        <div class="section-title"><i class="fas fa-user-graduate"></i> Target Student</div>
+                        <div class="form-group student-search-container">
+                            <label>Search Student</label>
+                            <input type="text" id="studentSearch" placeholder="Type name, Admission No, or ID..."
+                                autocomplete="off">
+                            <div id="searchResults" class="search-results"></div>
+                        </div>
+
+                        <div id="selectedStudent" class="selected-student-box">
+                            <img src="" id="selAvatar" class="result-avatar">
+                            <div>
+                                <div id="selName" style="font-weight: 700; color: white;">Student Name</div>
+                                <div id="selAdNo" style="font-size: 12px; color: var(--text-muted);">AD-0000</div>
+                            </div>
+                            <button type="button" onclick="clearSelectedStudent()"
+                                style="margin-left: auto; background: none; border: none; color: var(--danger); cursor: pointer;">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Fine Details -->
+                    <div class="form-section">
+                        <div class="section-title"><i class="fas fa-file-invoice-dollar"></i> Fine Details</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Fine Category</label>
+                                <select id="fineType" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Book Damage">📖 Book Damage</option>
+                                    <option value="Lost Book">❌ Lost Book</option>
+                                    <option value="Missing Pages">📄 Missing Pages</option>
+                                    <option value="Library Rule Violation">⚠️ Rule Violation</option>
+                                    <option value="Other">🌀 Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Amount (₹)</label>
+                                <input type="number" id="fineAmount" placeholder="Enter amount..." required min="1">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Reason / Description</label>
+                                <textarea id="reason" rows="3" placeholder="Provide specific details about the fine..."
+                                    required></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Admin Remarks (Internal)</label>
+                                <input type="text" id="remarks" placeholder="Optional notes for other admins...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-plus-circle"></i> Submit Fine Request
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        let selectedStudentId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupStudentSearch();
+        });
+
+        function loadSidebar() {
+            fetch('/admin/sidebar.html')
+                .then(res => res.text())
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+                    if (typeof initSidebar === 'function') initSidebar();
+                });
+        }
+
+        function setupStudentSearch() {
+            const input = document.getElementById('studentSearch');
+            const results = document.getElementById('searchResults');
+            let timeout;
+
+            input.addEventListener('input', () => {
+                clearTimeout(timeout);
+                const query = input.value.trim();
+                if (query.length < 2) {
+                    results.style.display = 'none';
+                    return;
+                }
+
+                timeout = setTimeout(async () => {
+                    try {
+                        // Using the search users endpoint from admin routes
+                        const response = await apiRequest(`/admin/users/search?q=${encodeURIComponent(query)}`);
+                        if (response.success && response.users.length > 0) {
+                            renderResults(response.users);
+                        } else {
+                            results.innerHTML = '<div class="result-item">No students found</div>';
+                            results.style.display = 'block';
+                        }
+                    } catch (err) {
+                        console.error('Search error:', err);
+                    }
+                }, 300);
+            });
+        }
+
+        function renderResults(users) {
+            const results = document.getElementById('searchResults');
+            results.innerHTML = '';
+            users.forEach(user => {
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                const avatar = user.profile_photo ? `/uploads/student_photos/${user.profile_photo}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&background=random&color=fff`;
+
+                item.innerHTML = `
+                    <div style="position: relative; width: 40px; height: 40px; flex-shrink: 0;">
+                        <img src="${avatar}" style="width: 100%; height: 100%; border-radius: 10px; object-fit: cover; border: 1px solid var(--border);">
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 700; color: white;">${user.full_name}</div>
+                        <div style="font-size: 11px; color: var(--text-muted);">${user.ad_no} • ${user.section || 'No Section'}</div>
+                    </div>
+                `;
+                item.onclick = () => selectStudent(user);
+                results.appendChild(item);
+            });
+            results.style.display = 'block';
+        }
+
+        function selectStudent(user) {
+            selectedStudentId = user.id;
+            const input = document.getElementById('studentSearch');
+            const results = document.getElementById('searchResults');
+            const box = document.getElementById('selectedStudent');
+
+            document.getElementById('selName').textContent = user.full_name;
+            document.getElementById('selAdNo').textContent = `${user.ad_no} • ${user.section || 'No Section'}`;
+            const avatar = user.profile_photo ? `/uploads/student_photos/${user.profile_photo}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&background=random&color=fff`;
+            document.getElementById('selAvatar').src = avatar;
+            document.getElementById('selAvatar').style.borderRadius = "12px";
+            document.getElementById('selAvatar').style.width = "48px";
+            document.getElementById('selAvatar').style.height = "48px";
+
+            input.parentElement.style.display = 'none';
+            box.style.display = 'flex';
+            results.style.display = 'none';
+        }
+
+        function clearSelectedStudent() {
+            selectedStudentId = null;
+            document.getElementById('studentSearch').parentElement.style.display = 'flex';
+            document.getElementById('studentSearch').value = '';
+            document.getElementById('selectedStudent').style.display = 'none';
+        }
+
+        document.getElementById('fineForm').onsubmit = async (e) => {
+            e.preventDefault();
+
+            if (!selectedStudentId) {
+                showToast('Please select a student first', 'warning');
+                return;
+            }
+
+            const payload = {
+                student_id: selectedStudentId,
+                fine_type: document.getElementById('fineType').value,
+                fine_amount: document.getElementById('fineAmount').value,
+                reason: document.getElementById('reason').value,
+                admin_remarks: document.getElementById('remarks').value
+            };
+
+            try {
+                const response = await apiRequest('/fines', {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.success) {
+                    showToast('Fine issued successfully! Waiting for owner approval.', 'success');
+                    setTimeout(() => window.location.href = 'transactions.html', 1500);
+                } else {
+                    showToast(response.error || 'Failed to issue fine', 'error');
+                }
+            } catch (err) {
+                showToast(err.message || 'Server error', 'error');
+            }
+        };
+    </script>
+</body>
+
+</html>

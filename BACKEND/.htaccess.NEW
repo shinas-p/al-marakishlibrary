@@ -1,0 +1,126 @@
+# ============================================
+# AL MARAKISH LIBRARY - INFINITYFREE OPTIMIZED
+# ============================================
+# Compatible with InfinityFree shared hosting
+# Updated: 2026-01-18
+
+# Prevent directory listing
+Options -Indexes
+
+# ============================================
+# 1. PROTECT SENSITIVE FILES (ROOT ONLY)
+# ============================================
+<FilesMatch "^(\.env|\.git|composer\.(json|lock)|package\.json|\.htaccess|\.htpasswd)$">
+    Require all denied
+</FilesMatch>
+
+# ============================================
+# 2. PROTECT DEVELOPMENT/MAINTENANCE SCRIPTS (ROOT ONLY)
+# ============================================
+# IMPORTANT: These rules ONLY apply to ROOT directory
+# They DO NOT block /admin/add_transaction.php or similar
+
+# Block root-level dev scripts
+<FilesMatch "^(install_|setup_|migrate_|run_|schema_|create_backup|fix_admin_columns|add_columns_direct).*\.(php|html)$">
+    Require all denied
+</FilesMatch>
+
+# ============================================
+# 3. PROTECT FILE TYPES
+# ============================================
+# Block PowerShell scripts
+<FilesMatch "\.ps1$">
+    Require all denied
+</FilesMatch>
+
+# Block SQL files (except in admin tools if needed)
+<FilesMatch "\.sql$">
+    Require all denied
+</FilesMatch>
+
+# Block backup files
+<FilesMatch "\.(backup|bak|old|tmp|swp|~)$">
+    Require all denied
+</FilesMatch>
+
+# Block log files from direct access
+<FilesMatch "\.log$">
+    Require all denied
+</FilesMatch>
+
+# ============================================
+# 4. PROTECT SPECIFIC FOLDERS
+# ============================================
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Block access to these directories entirely
+    RewriteRule ^(database|logs|includes|migrations|cron|\.gemini)/ - [F,L]
+    
+    # Allow access to helpers (needed by application)
+    # RewriteRule ^helpers/ - [L]
+</IfModule>
+
+# Protect .gemini folder
+RedirectMatch 403 ^/\.gemini/
+
+# ============================================
+# 5. SECURITY HEADERS (InfinityFree Compatible)
+# ============================================
+<IfModule mod_headers.c>
+    # Prevent clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+    
+    # Prevent MIME sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # XSS Protection
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Referrer Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Remove server signature
+    Header always unset X-Powered-By
+    Header always unset Server
+</IfModule>
+
+# ============================================
+# 6. PHP SECURITY (may not work on all shared hosts)
+# ============================================
+# Note: InfinityFree may ignore these
+<IfModule mod_php.c>
+    php_flag display_errors Off
+    php_flag log_errors On
+    php_flag expose_php Off
+</IfModule>
+
+# ============================================
+# 7. BLOCK HIDDEN FILES
+# ============================================
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# ============================================
+# 8. ALLOW SPECIFIC PUBLIC PAGES
+# ============================================
+# Explicitly allow important files
+<FilesMatch "^(index|login|logout|photo|diagnostic)\.php$">
+    Require all granted
+</FilesMatch>
+
+# ============================================
+# 9. ERROR HANDLING
+# ============================================
+# Disable server signature
+ServerSignature Off
+
+# Custom error pages (uncomment if you create them)
+# ErrorDocument 404 /error/404.php
+# ErrorDocument 403 /error/403.php
+# ErrorDocument 500 /error/500.php
+
+# ============================================
+# END OF CONFIGURATION
+# ============================================

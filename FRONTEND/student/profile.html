@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - AL MARAKISH LIBRARY</title>
+
+    <meta name="theme-color" content="#9c4dff">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a2e2e;
+            --primary-light: #2d4a4a;
+            --accent: #cf9d7c;
+            --gold: #ddc9b4;
+            --bg-dark: #080c0c;
+            --glass-bg: rgba(26, 46, 46, 0.6);
+            --glass-border: rgba(221, 201, 180, 0.12);
+            --text-main: #e8e3d5;
+            --text-muted: #94a3a3;
+            --card-radius: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(26, 46, 46, 0.4) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(207, 157, 124, 0.1) 0, transparent 50%);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        .navbar-brand {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .navbar {
+            background: rgba(13, 20, 20, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--gold), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+
+        .nav-btn:hover {
+            background: rgba(221, 201, 180, 0.05);
+            border-color: var(--glass-border);
+            color: var(--accent);
+        }
+
+        .nav-btn.active {
+            background: rgba(207, 157, 124, 0.15);
+            border-color: rgba(207, 157, 124, 0.3);
+            color: var(--accent);
+        }
+
+        .user-meta {
+            margin-left: 20px;
+            padding-left: 20px;
+            border-left: 1px solid var(--glass-border);
+            text-align: left;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 15px;
+            display: block;
+            color: var(--gold);
+        }
+
+        .user-id {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .profile-header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: var(--card-radius);
+            padding: 60px 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 160px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            z-index: 0;
+        }
+
+        .profile-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-photo-container {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 30px;
+            border-radius: 30px;
+            /* Squircle style */
+            overflow: hidden;
+            border: 4px solid var(--gold);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transform: rotate(-2deg);
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .profile-photo-container:hover {
+            transform: rotate(0) scale(1.05);
+        }
+
+        .profile-photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .no-photo {
+            width: 100%;
+            height: 100%;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .profile-name {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            font-family: 'Outfit', sans-serif;
+            color: white;
+        }
+
+        .profile-id {
+            font-size: 16px;
+            color: var(--accent);
+            margin-bottom: 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--gold);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        .info-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: var(--card-radius);
+            padding: 40px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .info-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 24px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            transition: 0.3s;
+        }
+
+        .info-item:hover {
+            background: rgba(221, 201, 180, 0.05);
+            border-color: var(--accent);
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-value {
+            font-size: 18px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 80px 40px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .stats-row {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-book-reader" style="color: var(--accent);"></i>
+            AL MARAKISH LIBRARY
+        </div>
+        <div class="navbar-user">
+            <a href="dashboard.html" class="nav-btn">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="notifications.html" class="nav-btn">
+                <i class="fas fa-bell"></i> Notifications
+            </a>
+            <a href="profile.html" class="nav-btn active">
+                <i class="fas fa-user-circle"></i> Profile
+            </a>
+            <a href="reservations.html" class="nav-btn">
+                <i class="fas fa-bookmark"></i> Reservations
+            </a>
+            <a href="suggestions.html" class="nav-btn">
+                <i class="fas fa-lightbulb"></i> Wishlist
+            </a>
+            <a href="pay_fine.html" class="nav-btn">
+                <i class="fas fa-wallet"></i> Payments
+            </a>
+            <a href="../opac/index.html" class="nav-btn">
+                <i class="fas fa-search"></i> OPAC
+            </a>
+
+            <div class="user-meta">
+                <span class="user-name" id="userName">Student Name</span>
+                <span class="user-id" id="userAdNo">AD NO: --</span>
+            </div>
+
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-power-off"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="loadingIndicator" class="loading">
+            <i class="fas fa-spinner fa-spin" style="font-size: 32px;"></i>
+            <p>Loading profile...</p>
+        </div>
+
+        <div id="profileContent" style="display: none;">
+            <div class="profile-header">
+                <div class="profile-content">
+                    <div class="profile-photo-container">
+                        <div class="no-photo" id="profilePhoto">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+
+                    <div class="profile-name" id="studentName">--</div>
+                    <div class="profile-id" id="studentId">
+                        <i class="fas fa-id-card"></i> Ad No: --
+                    </div>
+
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <div class="stat-number" id="borrowedCount">--</div>
+                            <div class="stat-label">Borrowed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="returnedCount">--</div>
+                            <div class="stat-label">Returned</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalFine">--</div>
+                            <div class="stat-label">Total Fine</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="section-title">
+                    <i class="fas fa-info-circle"></i>
+                    Personal Information
+                </div>
+
+                <div class="info-grid" id="infoGrid">
+                    <!-- Info items will be dynamically loaded -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script>
+        // Protect route (student role)
+        protectRoute();
+
+        // Get user info
+        const user = getUser();
+        if (user) {
+            document.getElementById('userName').textContent = user.full_name || 'Student';
+            document.getElementById('userAdNo').textContent = `Ad No: ${user.ad_no || '—'}`;
+        }
+
+        // Load profile on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProfile();
+        });
+
+        // Load student profile
+        async function loadProfile() {
+            try {
+                const response = await apiRequest('/student/profile');
+
+                if (response.success && response.student) {
+                    displayProfile(response.student, response.stats);
+                } else {
+                    showToast('Error loading profile', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                showToast('Error loading profile: ' + error.message, 'error');
+                loadingIndicator.innerHTML = '<p style="color: #ef4444;">Error loading profile</p>';
+            }
+        }
+
+        // Display profile information
+        function displayProfile(student, stats) {
+            loadingIndicator.style.display = 'none';
+            profileContent.style.display = 'block';
+
+            // Profile header
+            document.getElementById('studentName').textContent = student.full_name || 'N/A';
+            document.getElementById('studentId').innerHTML = `
+            <i class="fas fa-id-card"></i> Ad No: ${student.ad_no || 'N/A'}
+            ${student.section ? '| Section: ' + student.section : ''}
+        `;
+
+            // Profile photo
+            const photoContainer = document.getElementById('profilePhoto');
+            if (student.profile_photo) {
+                photoContainer.innerHTML = `<img src="/uploads/student_photos/${student.profile_photo}" alt="Profile Photo" style="width:100%;height:100%;object-fit:cover;">`;
+            } else {
+                const initials = (student.full_name || 'U').charAt(0).toUpperCase();
+                photoContainer.textContent = initials;
+            }
+
+            // Stats
+            document.getElementById('borrowedCount').textContent = stats.borrowed || 0;
+            document.getElementById('returnedCount').textContent = stats.returned || 0;
+            document.getElementById('totalFine').textContent = formatCurrency(stats.total_fine || 0);
+
+            // Personal information
+            const infoGrid = document.getElementById('infoGrid');
+            infoGrid.innerHTML = '';
+
+            // Class & Section
+            if (student.class) {
+                infoGrid.innerHTML += `
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-graduation-cap"></i> Class & Section
+                    </div>
+                    <div class="info-value">${student.class} ${student.section ? `(${student.section})` : ''}</div>
+                </div>
+            `;
+            }
+
+            // Email
+            if (student.email) {
+                infoGrid.innerHTML += `
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-envelope"></i> Email Address
+                    </div>
+                    <div class="info-value" style="font-size: 14px;">${student.email}</div>
+                </div>
+            `;
+            }
+
+            // Contact Number (Student)
+            if (student.phone) {
+                infoGrid.innerHTML += `
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-phone"></i> Contact Number
+                    </div>
+                    <div class="info-value">${student.phone}</div>
+                </div>
+            `;
+            }
+
+            // Secondary Contact
+            if (student.contact) {
+                infoGrid.innerHTML += `
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-user-friends"></i> Secondary Contact
+                    </div>
+                    <div class="info-value">${student.contact}</div>
+                </div>
+            `;
+            }
+
+            // Date of birth
+            if (student.date_of_birth) {
+                const age = calculateAge(student.date_of_birth);
+                infoGrid.innerHTML += `
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-birthday-cake"></i> Date of Birth
+                    </div>
+                    <div class="info-value">
+                        ${formatDate(student.date_of_birth)}
+                        ${age ? `<span style="font-size:14px; color:#94a3b8; font-weight:normal;"> (${age} years)</span>` : ''}
+                    </div>
+                </div>
+            `;
+            }
+
+            // Blood group
+            if (student.blood_group) {
+                infoGrid.innerHTML += `
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-tint"></i> Blood Group
+                    </div>
+                    <div class="info-value" style="color:#ef4444;">${student.blood_group}</div>
+                </div>
+            `;
+            }
+
+            // Address
+            if (student.address) {
+                infoGrid.innerHTML += `
+                <div class="info-item" style="grid-column: 1 / -1;">
+                    <div class="info-label">
+                        <i class="fas fa-map-marker-alt"></i> Home Address
+                    </div>
+                    <div class="info-value" style="font-size:15px; line-height:1.6; font-weight: normal;">
+                        ${escapeHtml(student.address).replace(/\n/g, '<br>')}
+                    </div>
+                </div>
+            `;
+            }
+        }
+
+        // Calculate age from date of birth
+        function calculateAge(dob) {
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            return age > 0 ? age : null;
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+
+</body>
+
+</html>

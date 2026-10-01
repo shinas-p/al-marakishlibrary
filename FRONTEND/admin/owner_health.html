@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Health | Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/owner-pages.css">
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">
+                    <i class="fas fa-microchip crown-icon"></i> System Vitality
+                </h1>
+                <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">
+                    Real-time monitoring of server performance and database health.
+                </p>
+            </div>
+            <button class="btn btn-primary" onclick="loadSystemHealth()">
+                <i class="fas fa-sync-alt"></i> Refresh Stats
+            </button>
+        </div>
+
+        <div class="health-grid" id="healthGrid">
+            <!-- Cards will be populated by JS -->
+            <div class="health-card" style="grid-column: 1 / -1;">
+                <i class="fas fa-heartbeat fa-beat" style="color: var(--danger)"></i>
+                <div style="margin-top: 20px;">Analyzing system vitals...</div>
+            </div>
+        </div>
+
+        <div class="owner-table-card" style="margin-top: 40px; padding: 35px;">
+            <h3 style="margin-bottom: 25px; color: var(--primary);"><i class="fas fa-server"></i> Node.js Runtime
+                Environment</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px;">
+                <div class="health-card" style="padding: 20px; background: rgba(0,0,0,0.2);">
+                    <div class="setting-description">Version</div>
+                    <div id="nodeVersion" style="font-weight: 800; font-size: 18px; margin-top: 5px;">-</div>
+                </div>
+                <div class="health-card" style="padding: 20px; background: rgba(0,0,0,0.2);">
+                    <div class="setting-description">OS Platform</div>
+                    <div id="platform" style="font-weight: 800; font-size: 18px; margin-top: 5px;">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script src="/assets/js/owner-panel.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await apiRequest('/admin/owner/health');
+                if (res.success && res.health) {
+                    document.getElementById('nodeVersion').textContent = res.health.server.nodeVersion;
+                    document.getElementById('platform').textContent = res.health.server.platform;
+                }
+            } catch (e) { }
+        });
+    </script>
+</body>
+
+</html>

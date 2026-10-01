@@ -1,0 +1,317 @@
+:root {
+    --primary: #9c4dff;
+    --primary-light: rgba(156, 77, 255, 0.1);
+    --bg-dark: #0f1724;
+    --card-bg: #1e293b;
+    --border: #334155;
+    --text-muted: #94a3b8;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+}
+
+/* Base Styles */
+.grid-container {
+    background: #0f172a;
+    border-radius: 12px;
+    border: 1px solid #1e293b;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 600px;
+    margin-top: 20px;
+}
+
+/* Toolbar */
+.grid-toolbar {
+    padding: 15px 20px;
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.toolbar-left {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.toolbar-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.grid-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    color: white;
+}
+
+.btn-add-row {
+    background: #7c3aed;
+}
+
+.btn-10-rows {
+    background: #334155;
+}
+
+.btn-undo {
+    background: #2563eb;
+}
+
+.btn-redo {
+    background: #2563eb;
+}
+
+.btn-import {
+    background: #334155;
+}
+
+.btn-export {
+    background: #f59e0b;
+}
+
+.btn-sample {
+    background: #334155;
+}
+
+.btn-clear {
+    background: #ef4444;
+}
+
+.btn-preview {
+    background: #10b981;
+    margin-left: auto;
+}
+
+.grid-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.search-container {
+    position: relative;
+    flex: 1;
+    max-width: 300px;
+    margin: 0 15px;
+}
+
+.search-container i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+}
+
+.search-container input {
+    width: 100%;
+    padding: 8px 12px 8px 35px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: white;
+    font-size: 13px;
+}
+
+.excel-grid {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: transparent;
+}
+
+.grid-table-wrapper {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+    background: #0f172a;
+}
+
+.excel-grid th {
+    position: sticky;
+    top: 0;
+    padding: 12px 15px;
+    text-align: center;
+    background: #1e293b;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 10;
+}
+
+/* Excel Letter Row */
+.excel-letters th {
+    top: 0;
+    height: 30px;
+    background: #1e293b;
+    color: var(--text-muted);
+    font-family: monospace;
+    font-weight: 400;
+}
+
+/* Field Name Row */
+.field-names th {
+    top: 30px;
+    /* Exact height of the letter row */
+    height: 40px;
+    background: #cbd5e1;
+    color: #1e293b;
+    font-weight: 700;
+    text-transform: none;
+    text-align: center;
+    border-bottom: 2px solid #64748b;
+}
+
+.excel-grid td {
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s;
+    font-family: inherit;
+    white-space: nowrap;
+    min-width: 100px;
+    height: 45px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: #0f172a;
+    color: #e2e8f0;
+}
+
+.excel-grid td.index-cell {
+    background: #111827 !important;
+    text-align: center;
+    color: #64748b;
+    font-weight: 600;
+    min-width: 40px;
+}
+
+/* Status & Action columns style */
+.status-col,
+.action-col,
+.status-cell {
+    background: #1e293b !important;
+    border-right: 2px solid var(--border) !important;
+}
+
+.excel-grid tr:hover {
+    background: rgba(156, 77, 255, 0.05);
+    outline: 1px solid rgba(156, 77, 255, 0.15);
+}
+
+.excel-grid tr.row-error {
+    background: rgba(239, 68, 68, 0.15) !important;
+}
+
+.excel-grid tr.row-warning {
+    background: rgba(245, 158, 11, 0.15) !important;
+}
+
+.excel-grid tr.row-success {
+    background: rgba(16, 185, 129, 0.1) !important;
+}
+
+/* Editable Cells */
+.excel-grid td[contenteditable="true"] {
+    outline: none;
+    border: 1px solid transparent;
+    cursor: text;
+}
+
+.excel-grid td[contenteditable="true"]:empty::before {
+    content: '...';
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.excel-grid td[contenteditable="true"]:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.excel-grid td[contenteditable="true"]:focus {
+    background: rgba(156, 77, 255, 0.08);
+    border-color: var(--primary) !important;
+    box-shadow: inset 0 0 10px rgba(156, 77, 255, 0.2);
+}
+
+/* Status Icons */
+.status-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.status-ok {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.status-error {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.status-warning {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+}
+
+/* Empty State */
+.empty-state {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--text-muted);
+    pointer-events: none;
+    z-index: 5;
+    width: 60%;
+}
+
+.empty-state i {
+    font-size: 50px;
+    margin-bottom: 20px;
+    opacity: 0.2;
+}
+
+/* Stats Footer */
+.grid-footer {
+    padding: 15px 30px;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 30px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}

@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AL MARAKISH LIBRARY</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a2e2e;
+            --primary-light: #2d4a4a;
+            --accent: #cf9d7c;
+            --gold: #ddc9b4;
+            --bg-dark: #080c0c;
+            --glass-bg: rgba(26, 46, 46, 0.6);
+            --glass-border: rgba(221, 201, 180, 0.12);
+            --text-main: #e8e3d5;
+            --text-muted: #94a3a3;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --card-radius: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(26, 46, 46, 0.4) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(207, 157, 124, 0.1) 0, transparent 50%);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        .navbar-brand {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .navbar {
+            background: rgba(13, 20, 20, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--gold), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+
+        .nav-btn:hover {
+            background: rgba(221, 201, 180, 0.05);
+            border-color: var(--glass-border);
+            color: var(--accent);
+        }
+
+        .nav-btn.active {
+            background: rgba(207, 157, 124, 0.15);
+            border-color: rgba(207, 157, 124, 0.3);
+            color: var(--accent);
+        }
+
+        .user-meta {
+            margin-left: 20px;
+            padding-left: 20px;
+            border-left: 1px solid var(--glass-border);
+            text-align: left;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 15px;
+            display: block;
+            color: var(--gold);
+        }
+
+        .user-id {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: var(--card-radius);
+            padding: 48px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .welcome-card::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .welcome-card h1 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(to right, #fff, var(--gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-card p {
+            font-size: 18px;
+            color: var(--text-main);
+            opacity: 0.8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: var(--card-radius);
+            padding: 32px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--accent);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            background: rgba(221, 201, 180, 0.05);
+            border: 1px solid var(--glass-border);
+        }
+
+        .stat-icon.primary {
+            color: var(--gold);
+        }
+
+        .stat-icon.warning {
+            color: var(--warning);
+        }
+
+        .stat-icon.danger {
+            color: var(--accent);
+        }
+
+        .stat-info h3 {
+            font-size: 38px;
+            font-weight: 800;
+            color: white;
+            line-height: 1.1;
+        }
+
+        .stat-info p {
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 4px;
+        }
+
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: var(--card-radius);
+            padding: 36px;
+            margin-bottom: 24px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .book-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 24px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .book-card:hover {
+            background: rgba(221, 201, 180, 0.03);
+            border-color: var(--glass-border);
+            transform: translateX(8px);
+        }
+
+        .book-card.overdue {
+            border-left: 4px solid var(--danger);
+            background: rgba(239, 68, 68, 0.03);
+        }
+
+        .book-cover {
+            width: 100px;
+            height: 140px;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: var(--bg-dark);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .book-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .book-info {
+            flex: 1;
+        }
+
+        .book-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .book-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-top: 15px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .meta-item i {
+            color: var(--accent);
+            width: 16px;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .history-table th {
+            padding: 15px 20px;
+            text-align: left;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .history-table td {
+            padding: 18px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-main);
+            transition: 0.3s;
+        }
+
+        .history-table tr td:first-child {
+            border-radius: 12px 0 0 12px;
+        }
+
+        .history-table tr td:last-child {
+            border-radius: 0 12px 12px 0;
+        }
+
+        .history-table tr:hover td {
+            background: rgba(221, 201, 180, 0.05);
+            color: var(--accent);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 40px;
+        }
+
+        .empty-state i {
+            font-size: 72px;
+            color: var(--accent);
+            opacity: 0.2;
+            margin-bottom: 24px;
+        }
+
+        .btn-pay-fine {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            background: linear-gradient(135deg, var(--accent), #b8865c);
+            color: #1a2e2e;
+            padding: 18px 40px;
+            border-radius: 18px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 800;
+            box-shadow: 0 15px 30px rgba(207, 157, 124, 0.25);
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-pay-fine:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(207, 157, 124, 0.4);
+            filter: brightness(1.1);
+        }
+
+        @media (max-width: 992px) {
+            .navbar {
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .user-meta {
+                margin-left: 0;
+                padding-left: 0;
+                border-left: none;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-book-reader" style="color: var(--accent);"></i>
+            AL MARAKISH LIBRARY
+        </div>
+        <div class="navbar-user">
+            <a href="dashboard.html" class="nav-btn active">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="notifications.html" class="nav-btn">
+                <i class="fas fa-bell"></i> Notifications
+            </a>
+            <a href="profile.html" class="nav-btn">
+                <i class="fas fa-user-circle"></i> Profile
+            </a>
+            <a href="reservations.html" class="nav-btn">
+                <i class="fas fa-bookmark"></i> Reservations
+            </a>
+            <a href="suggestions.html" class="nav-btn">
+                <i class="fas fa-lightbulb"></i> Wishlist
+            </a>
+            <a href="pay_fine.html" class="nav-btn">
+                <i class="fas fa-wallet"></i> Payments
+            </a>
+            <a href="../opac/index.html" class="nav-btn">
+                <i class="fas fa-search"></i> OPAC
+            </a>
+
+            <div class="user-meta">
+                <span class="user-name" id="userName">Student Name</span>
+                <span class="user-id" id="userAdNo">AD NO: --</span>
+            </div>
+
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-power-off"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-card">
+            <h1 id="welcomeMessage">👋 Welcome!</h1>
+            <p>Here's an overview of your library activity</p>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="loading">
+                <i class="fas fa-spinner"></i>
+                <p>Loading statistics...</p>
+            </div>
+        </div>
+
+        <div id="fineNotification" style="display: none; margin-bottom: 30px;">
+            <div
+                style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); padding: 20px 32px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(12px);">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div
+                        style="width: 48px; height: 48px; background: rgba(239, 68, 68, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #ef4444; font-size: 20px;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 16px; font-weight: 700; color: white; margin-bottom: 2px;">Pending Fines
+                            Detected</h3>
+                        <p style="font-size: 13px; color: var(--text-muted);">You have outstanding library fines that
+                            need your attention.</p>
+                    </div>
+                </div>
+                <a href="pay_fine.html"
+                    style="background: #ef4444; color: white; padding: 10px 24px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; transition: 0.3s; box-shadow: 0 8px 16px rgba(239, 68, 68, 0.2);">View
+                    Details</a>
+            </div>
+        </div>
+
+        <div id="payFineSection" style="display: none; text-align: center; margin-bottom: 32px;">
+            <a href="pay_fine.html" style="
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 20px 48px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 700;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s;
+        ">
+                <i class="fas fa-credit-card" style="font-size: 24px;"></i>
+                Pay Fine Now via UPI
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h2>
+                    <i class="fas fa-book-open"></i>
+                    Currently Borrowed Books
+                </h2>
+            </div>
+            <div id="borrowedBooks">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Loading books...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h2>
+                    <i class="fas fa-history"></i>
+                    Recent History
+                </h2>
+            </div>
+            <div id="historySection">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Loading history...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        // Check authentication
+        protectRoute('student');
+
+        function showError(msg) {
+            if (typeof showToast === 'function') {
+                showToast(msg, 'error');
+            } else {
+                alert(msg);
+            }
+        }
+
+        function formatDate(date) {
+            if (!date) return '—';
+            return new Date(date).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+        function formatCurrency(amount) {
+            return '₹' + parseFloat(amount || 0).toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // Get user info
+        const user = getUser();
+        if (user) {
+            document.getElementById('userName').textContent = user.full_name || 'Student';
+            document.getElementById('userAdNo').textContent = `Ad No: ${user.ad_no || '—'}`;
+            const firstName = (user.full_name || '').split(' ')[0];
+            document.getElementById('welcomeMessage').textContent = `👋 Welcome, ${firstName}!`;
+        }
+
+        // Load dashboard data
+        async function loadDashboard() {
+            console.log('🚀 Loading student dashboard...');
+            try {
+                // Fetch public settings to respect 'payment_enable_online'
+                const settingsResponse = await apiRequest('/settings/public');
+                const canPayOnline = settingsResponse.success && settingsResponse.settings && settingsResponse.settings.payment_enable_online !== '0';
+
+                // Load student dashboard stats
+                const dashboardData = await apiRequest('/dashboard/student');
+
+                if (dashboardData && dashboardData.stats) {
+                    const stats = dashboardData.stats;
+                    document.getElementById('statsGrid').innerHTML = `
+                        <div class="stat-card">
+                            <div class="stat-icon primary"><i class="fas fa-book"></i></div>
+                            <div class="stat-info">
+                                <h3>${stats.currentlyBorrowed || 0}</h3>
+                                <p>Currently Borrowed</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon warning"><i class="fas fa-clock"></i></div>
+                            <div class="stat-info">
+                                <h3>${stats.overdueCount || 0}</h3>
+                                <p>Overdue Books</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon danger"><i class="fas fa-money-bill-wave"></i></div>
+                            <div class="stat-info">
+                                <h3>${formatCurrency(stats.totalFine || 0)}</h3>
+                                <p>Total Fine</p>
+                            </div>
+                        </div>
+                    `;
+                    if (parseFloat(stats.totalFine) > 0 && canPayOnline) {
+                        document.getElementById('payFineSection').style.display = 'block';
+                        document.getElementById('fineNotification').style.display = 'block';
+                    }
+                }
+
+                // Load borrowed books
+                console.log('📡 Fetching borrowed books...');
+                const borrowedData = await apiRequest('/transactions/student?status=Borrowed');
+                console.log('📚 Borrowed Data Received:', borrowedData);
+                if (borrowedData && borrowedData.transactions) {
+                    const books = borrowedData.transactions;
+                    const container = document.getElementById('borrowedBooks');
+                    if (books.length > 0) {
+                        const today = new Date();
+                        container.innerHTML = books.map(book => {
+                            const dueDate = new Date(book.due_date);
+                            const isOverdue = dueDate < today;
+                            const daysLeft = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+                            return `
+                                <div class="book-card ${isOverdue ? 'overdue' : ''}">
+                                    <div class="book-cover">
+                                        ${book.cover_image ? `<img src="../uploads/covers/${book.cover_image}" alt="${book.title}">` : '<i class="fas fa-book"></i>'}
+                                    </div>
+                                    <div class="book-info">
+                                        <div class="book-title">${book.title}</div>
+                                        <div class="book-meta">
+                                            <div class="meta-item"><i class="fas fa-barcode"></i> ${book.accession_number}</div>
+                                            <div class="meta-item"><i class="fas fa-calendar-times"></i> Due: ${formatDate(book.due_date)}</div>
+                                        </div>
+                                        ${isOverdue ?
+                                    `<span class="status-badge badge-danger">Overdue by ${Math.abs(daysLeft)} days</span>` :
+                                    `<span class="status-badge badge-success">${daysLeft} days left</span>`}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    } else {
+                        container.innerHTML = `<div class="empty-state"><i class="fas fa-book-open"></i><h3>No Books Borrowed</h3><p>Your active loans will appear here.</p></div>`;
+                    }
+                }
+
+                // Load history (Books + Custom Fines)
+                console.log('📡 Fetching history...');
+                const [historyData, customFinesRes] = await Promise.all([
+                    apiRequest('/transactions/student?status=Returned&limit=10'),
+                    apiRequest('/fines/student')
+                ]);
+
+                const container = document.getElementById('historySection');
+                let combinedHistory = [];
+
+                if (historyData && historyData.transactions) {
+                    historyData.transactions.forEach(t => combinedHistory.push({
+                        title: t.title,
+                        type: 'Return',
+                        date: t.return_date,
+                        fine: t.fine,
+                        created_at: t.created_at
+                    }));
+                }
+
+                if (customFinesRes && customFinesRes.fines && customFinesRes.fines.custom_fines) {
+                    customFinesRes.fines.custom_fines.filter(f => f.status === 'paid').forEach(f => combinedHistory.push({
+                        title: f.book_title || 'General Fine',
+                        type: f.reason,
+                        date: f.paid_at || f.created_at,
+                        fine: f.amount,
+                        created_at: f.created_at
+                    }));
+                }
+
+                // Sort by date
+                combinedHistory.sort((a, b) => new Date(b.date || b.created_at) - new Date(a.date || a.created_at));
+
+                if (combinedHistory.length > 0) {
+                    container.innerHTML = `
+                        <table class="history-table">
+                            <thead><tr><th>Description</th><th>Type</th><th>Date</th><th>Amount</th></tr></thead>
+                            <tbody>
+                                ${combinedHistory.slice(0, 5).map(h => `
+                                    <tr>
+                                        <td>${h.title}</td>
+                                        <td><span style="font-size: 11px; font-weight: 700; color: ${h.type === 'Return' ? 'var(--text-muted)' : 'var(--accent)'}">${h.type}</span></td>
+                                        <td>${formatDate(h.date)}</td>
+                                        <td>${h.fine > 0 ? `<span style="color:var(--danger)">${formatCurrency(h.fine)}</span>` : '—'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    container.innerHTML = `<div class="empty-state"><i class="fas fa-history"></i><h3>No History</h3><p>Your borrowing history is empty.</p></div>`;
+                }
+            } catch (error) {
+                console.error('❌ Dashboard Error:', error);
+                showError(`Failed to load some dashboard data: ${error.message}`);
+                // Hide spinners if error
+                if (document.getElementById('borrowedBooks').innerHTML.includes('Loading')) {
+                    document.getElementById('borrowedBooks').innerHTML = '<div class="empty-state"><p>Error loading data</p></div>';
+                }
+                if (document.getElementById('historySection').innerHTML.includes('Loading')) {
+                    document.getElementById('historySection').innerHTML = '<div class="empty-state"><p>Error loading data</p></div>';
+                }
+            }
+        }
+
+        // Load dashboard on page load
+        loadDashboard();
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suggest a Book | Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a2e2e;
+            --primary-light: #2d4a4a;
+            --accent: #cf9d7c;
+            --gold: #ddc9b4;
+            --bg-dark: #080c0c;
+            --glass-bg: rgba(26, 46, 46, 0.6);
+            --glass-border: rgba(221, 201, 180, 0.12);
+            --text-main: #e8e3d5;
+            --text-muted: #94a3a3;
+            --success: #10b981;
+            --danger: #ef4444;
+            --card-radius: 28px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(26, 46, 46, 0.4) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(207, 157, 124, 0.1) 0, transparent 50%);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        .navbar-brand {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .navbar {
+            background: rgba(13, 20, 20, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--gold), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+
+        .nav-btn:hover {
+            background: rgba(221, 201, 180, 0.05);
+            border-color: var(--glass-border);
+            color: var(--accent);
+        }
+
+        .nav-btn.active {
+            background: rgba(207, 157, 124, 0.15);
+            border-color: rgba(207, 157, 124, 0.3);
+            color: var(--accent);
+        }
+
+        .user-meta {
+            margin-left: 20px;
+            padding-left: 20px;
+            border-left: 1px solid var(--glass-border);
+            text-align: left;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 15px;
+            display: block;
+            color: var(--gold);
+        }
+
+        .user-id {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--gold), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-back {
+            text-decoration: none;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            padding: 10px 20px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            transition: 0.3s;
+        }
+
+        .btn-back:hover {
+            background: rgba(207, 157, 124, 0.1);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 40px;
+        }
+
+        .suggestion-form {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: var(--card-radius);
+            border: 1px solid var(--glass-border);
+            align-self: start;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            padding: 14px 18px;
+            border-radius: 14px;
+            color: white;
+            font-family: inherit;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(207, 157, 124, 0.05);
+            transform: scale(1.02);
+        }
+
+        .form-group option {
+            background: var(--bg-dark);
+            color: white;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent), #b8865c);
+            color: #1a2e2e;
+            border: none;
+            padding: 18px;
+            border-radius: 16px;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 15px 30px rgba(207, 157, 124, 0.2);
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(207, 157, 124, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .suggestions-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .list-header {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .suggestions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .suggestion-item {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .suggestion-item:hover {
+            transform: translateX(10px);
+            border-color: var(--accent);
+            background: rgba(26, 46, 46, 0.8);
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-pending {
+            background: rgba(207, 157, 124, 0.15);
+            color: var(--accent);
+            border: 1px solid rgba(207, 157, 124, 0.2);
+        }
+
+        .status-approved {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .item-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 6px;
+            color: #fff;
+            padding-right: 100px;
+        }
+
+        .item-author {
+            font-size: 14px;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .item-reason {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border-left: 3px solid var(--glass-border);
+        }
+
+        @media (max-width: 900px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-book-reader" style="color: var(--accent);"></i>
+            AL MARAKISH LIBRARY
+        </div>
+        <div class="navbar-user">
+            <a href="dashboard.html" class="nav-btn">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="notifications.html" class="nav-btn">
+                <i class="fas fa-bell"></i> Notifications
+            </a>
+            <a href="profile.html" class="nav-btn">
+                <i class="fas fa-user-circle"></i> Profile
+            </a>
+            <a href="reservations.html" class="nav-btn">
+                <i class="fas fa-bookmark"></i> Reservations
+            </a>
+            <a href="suggestions.html" class="nav-btn active">
+                <i class="fas fa-lightbulb"></i> Wishlist
+            </a>
+            <a href="pay_fine.html" class="nav-btn">
+                <i class="fas fa-wallet"></i> Payments
+            </a>
+            <a href="../opac/index.html" class="nav-btn">
+                <i class="fas fa-search"></i> OPAC
+            </a>
+
+            <div class="user-meta">
+                <span class="user-name" id="userName">Student Name</span>
+                <span class="user-id" id="userAdNo">AD NO: --</span>
+            </div>
+
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-power-off"></i>
+            </button>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-magic" style="color: var(--accent);"></i> Wish a Book</h1>
+            <a href="/student/dashboard.html" class="btn-back"><i class="fas fa-arrow-left"></i> Dashboard</a>
+        </div>
+
+        <div class="content-grid">
+            <div class="suggestion-form">
+                <form id="suggestionForm">
+                    <div class="form-group">
+                        <label>Book Title</label>
+                        <input type="text" name="title" required placeholder="What book should we add?">
+                    </div>
+                    <div class="form-group">
+                        <label>Author</label>
+                        <input type="text" name="author" placeholder="Who wrote it?">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select name="category">
+                            <option value="General">General</option>
+                            <option value="Islamic Science">Islamic Science</option>
+                            <option value="Literature">Literature</option>
+                            <option value="Science">Science</option>
+                            <option value="History">History</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Reason for Suggestion</label>
+                        <textarea name="reason" rows="3"
+                            placeholder="Why do you think this book is necessary for our library?"></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit" id="submitBtn">Submit Suggestion</button>
+                </form>
+            </div>
+
+            <div class="suggestions-list-container">
+                <div class="list-header"><i class="fas fa-list-ul" style="color: var(--accent);"></i> My Suggestions
+                </div>
+                <div id="suggestionList" class="suggestions-list">
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        <i class="fas fa-circle-notch fa-spin"></i> Loading...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script>
+        protectRoute('student');
+
+        // Get user info
+        const user = getUser();
+        if (user) {
+            document.getElementById('userName').textContent = user.full_name || 'Student';
+            document.getElementById('userAdNo').textContent = `Ad No: ${user.ad_no || '—'}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadMySuggestions);
+
+        document.getElementById('suggestionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Submitting...';
+            btn.disabled = true;
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await apiRequest('/opac/suggest-book', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                if (response.success) {
+                    showToast('Suggestion submitted successfully!', 'success');
+                    e.target.reset();
+                    loadMySuggestions();
+                }
+            } catch (err) {
+                showToast(err.message || 'Submission failed', 'error');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        async function loadMySuggestions() {
+            const list = document.getElementById('suggestionList');
+            try {
+                const response = await apiRequest('/opac/suggestions');
+                if (response.success) {
+                    if (response.suggestions.length === 0) {
+                        list.innerHTML = `<div style="text-align: center; padding: 40px; border: 1px dashed var(--border); border-radius: 20px; color: var(--text-muted);">No suggestions yet.</div>`;
+                        return;
+                    }
+
+                    list.innerHTML = response.suggestions.map(s => `
+                        <div class="suggestion-item">
+                            <span class="status-badge status-${s.status.toLowerCase()}">${s.status}</span>
+                            <div class="item-title">${s.title}</div>
+                            <div class="item-author">by ${s.author || 'Unknown'}</div>
+                            <div class="item-reason">"${s.reason || 'No reason specified'}"</div>
+                            <div style="font-size: 10px; color: #475569; margin-top: 10px;">Submitted: ${new Date(s.created_at).toLocaleDateString()}</div>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                list.innerHTML = `<p style="color: var(--danger);">Error loading suggestions.</p>`;
+            }
+        }
+    </script>
+</body>
+
+</html>

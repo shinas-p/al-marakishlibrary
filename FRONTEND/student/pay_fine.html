@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pay Fine | Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a2e2e;
+            --primary-light: #2d4a4a;
+            --accent: #cf9d7c;
+            --gold: #ddc9b4;
+            --bg-dark: #080c0c;
+            --glass-bg: rgba(26, 46, 46, 0.6);
+            --text-main: #e8e3d5;
+            --text-muted: #94a3a3;
+            --card-radius: 32px;
+            --glass-border: rgba(221, 201, 180, 0.12);
+
+            /* Status Colors */
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(26, 46, 46, 0.4) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(207, 157, 124, 0.1) 0, transparent 50%);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1,
+        h2,
+        h3,
+        .navbar-brand {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .navbar {
+            background: rgba(13, 20, 20, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--gold), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+
+        .nav-btn:hover {
+            background: rgba(221, 201, 180, 0.05);
+            border-color: var(--glass-border);
+            color: var(--accent);
+        }
+
+        .nav-btn.active {
+            background: rgba(207, 157, 124, 0.15);
+            border-color: rgba(207, 157, 124, 0.3);
+            color: var(--accent);
+        }
+
+        .user-meta {
+            margin-left: 20px;
+            padding-left: 20px;
+            border-left: 1px solid var(--glass-border);
+            text-align: left;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 15px;
+            display: block;
+            color: var(--gold);
+        }
+
+        .user-id {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .header {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--gold), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-back {
+            text-decoration: none;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            padding: 10px 20px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            transition: 0.3s;
+        }
+
+        .btn-back:hover {
+            background: rgba(207, 157, 124, 0.1);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .payment-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 50px 40px;
+            border-radius: var(--card-radius);
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+        }
+
+        .fine-amount {
+            font-size: 64px;
+            font-weight: 800;
+            color: white;
+            margin: 20px 0;
+            font-family: 'Outfit', sans-serif;
+            text-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .upi-qr-container {
+            background: white;
+            padding: 24px;
+            border-radius: 24px;
+            display: inline-block;
+            margin: 30px 0;
+            box-shadow: 0 0 50px rgba(207, 157, 124, 0.2);
+            border: 8px solid var(--gold);
+        }
+
+        .upi-qr-container img {
+            width: 220px;
+            height: 220px;
+            display: block;
+        }
+
+        .upi-id {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 30px;
+            border-radius: 14px;
+            font-family: 'Outfit', sans-serif;
+            color: var(--gold);
+            font-size: 20px;
+            font-weight: 700;
+            display: inline-block;
+            border: 2px dashed var(--accent);
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+
+        .instructions {
+            text-align: left;
+            margin-top: 50px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .instructions h3 {
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-family: 'Outfit', sans-serif;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+            color: var(--text-main);
+            opacity: 0.8;
+            font-size: 15px;
+        }
+
+        .instructions li {
+            margin-bottom: 12px;
+        }
+
+        .submit-payment {
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            color: var(--accent);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .form-group input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            padding: 16px 20px;
+            border-radius: 14px;
+            color: white;
+            font-family: inherit;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(207, 157, 124, 0.05);
+        }
+
+        .btn-pay {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent), #b8865c);
+            color: #1a2e2e;
+            border: none;
+            padding: 20px;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 18px;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 15px 30px rgba(207, 157, 124, 0.2);
+        }
+
+        .btn-pay:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(207, 157, 124, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-pay:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: var(--text-muted);
+            box-shadow: none;
+        }
+
+        .status-message {
+            margin-top: 24px;
+            padding: 18px;
+            border-radius: 14px;
+            font-weight: 700;
+            text-align: center;
+            display: none;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* History Section Styles */
+        .history-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .history-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .history-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .history-amount {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+
+        .history-meta {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .history-meta i {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .status-Approved {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-Rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .status-Pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            background: rgba(245, 158, 11, 0.05);
+            border: 1px dashed rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 16px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .upload-zone:hover {
+            background: rgba(245, 158, 11, 0.08);
+            border-color: rgba(245, 158, 11, 0.5);
+        }
+
+        .upload-title {
+            color: var(--warning);
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .upload-input {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            width: 100%;
+        }
+
+        .upload-input::file-selector-button {
+            margin-right: 12px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .upload-input::file-selector-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn {
+            background: var(--warning);
+            color: #1a2e2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .proof-link {
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(207, 157, 124, 0.1);
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.3s;
+            border: 1px solid rgba(207, 157, 124, 0.2);
+        }
+
+        .proof-link:hover {
+            background: rgba(207, 157, 124, 0.2);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-book-reader" style="color: var(--accent);"></i>
+            AL MARAKISH LIBRARY
+        </div>
+        <div class="navbar-user">
+            <a href="dashboard.html" class="nav-btn">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="notifications.html" class="nav-btn">
+                <i class="fas fa-bell"></i> Notifications
+            </a>
+            <a href="profile.html" class="nav-btn">
+                <i class="fas fa-user-circle"></i> Profile
+            </a>
+            <a href="reservations.html" class="nav-btn">
+                <i class="fas fa-bookmark"></i> Reservations
+            </a>
+            <a href="suggestions.html" class="nav-btn">
+                <i class="fas fa-lightbulb"></i> Wishlist
+            </a>
+            <a href="pay_fine.html" class="nav-btn active">
+                <i class="fas fa-wallet"></i> Payments
+            </a>
+            <a href="../opac/index.html" class="nav-btn">
+                <i class="fas fa-search"></i> OPAC
+            </a>
+
+            <div class="user-meta">
+                <span class="user-name" id="userName">Student Name</span>
+                <span class="user-id" id="userAdNo">AD NO: --</span>
+            </div>
+
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-power-off"></i>
+            </button>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-wallet" style="color: var(--accent);"></i> Pay Library Fine</h1>
+            <a href="/student/dashboard.html" class="btn-back"><i class="fas fa-arrow-left"></i> Dashboard</a>
+        </div>
+
+        <div class="payment-card">
+            <p style="color: var(--text-muted); text-transform: uppercase; font-size: 12px; font-weight: 800;">Total
+                Pending Amount</p>
+            <div class="fine-amount" id="displayAmount">₹0.00</div>
+
+            <div id="fineBreakdown"
+                style="margin-bottom: 30px; text-align: left; background: rgba(0,0,0,0.2); border-radius: 16px; overflow: hidden; display: none;">
+                <div
+                    style="background: rgba(207, 157, 124, 0.1); padding: 12px 20px; font-size: 11px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 1px;">
+                    Fine Breakdown
+                </div>
+                <div id="breakdownList" style="padding: 10px 0;">
+                    <!-- List items will be injected here -->
+                </div>
+            </div>
+
+            <div class="upi-qr-container">
+                <!-- Using a placeholder QR for demo - in production this would be dynamic or static library UPI -->
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9847411637@kotak811&pn=AlMarakishLibrary&cu=INR"
+                    alt="UPI QR Code">
+            </div>
+
+            <div>
+                <span class="upi-id">library@upi</span>
+            </div>
+
+            <div class="submit-payment">
+                <form id="paymentForm">
+                    <div class="form-group">
+                        <label>Transaction ID / Ref No (from your UPI app)</label>
+                        <input type="text" id="refNo" required placeholder="e.g. 402938475612">
+                    </div>
+                    <div class="form-group">
+                        <label>Amount Paid</label>
+                        <input type="number" id="payAmount" step="0.01" required placeholder="Enter amount paid">
+                    </div>
+                    <button type="submit" class="btn-pay" id="submitBtn">Submit Payment Proof</button>
+                </form>
+                <div id="statusMessage" class="status-message"></div>
+            </div>
+
+            <div class="instructions">
+                <h3>Steps to Pay:</h3>
+                <ol>
+                    <li>Scan the QR code using any UPI app (GPay, PhonePe, Paytm, etc.).</li>
+                    <li>Enter the required fine amount and complete the payment.</li>
+                    <li>Copy the 12-digit Transaction ID or UTR number from the app.</li>
+                    <li>Fill in the details above and click 'Submit Payment Proof'.</li>
+                    <li>Wait for the librarian to verify and approve your payment.</li>
+                </ol>
+                </ol>
+            </div>
+
+            <div id="paymentHistorySection" style="margin-top: 50px; display: none;">
+                <h3
+                    style="color: var(--accent); font-family: 'Outfit', sans-serif; font-size: 20px; margin-bottom: 24px; text-align: left; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-history"></i> Recent Payment History
+                </h3>
+                <div id="paymentHistoryList" class="history-list">
+                    <!-- History injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script>
+        protectRoute('student');
+
+        // Get user info
+        const user = getUser();
+        if (user) {
+            document.getElementById('userName').textContent = user.full_name || 'Student';
+            document.getElementById('userAdNo').textContent = `Ad No: ${user.ad_no || '—'}`;
+        }
+
+        // Load current fine amount and breakdown
+        async function loadFine() {
+            try {
+                // Fetch stats for total
+                const statsResponse = await apiRequest('/dashboard/student');
+                // Fetch details for breakdown
+                const finesResponse = await apiRequest('/fines/student');
+
+                if (statsResponse.success && statsResponse.stats) {
+                    const amount = parseFloat(statsResponse.stats.totalFine || 0);
+                    document.getElementById('displayAmount').textContent = '₹' + amount.toFixed(2);
+                    document.getElementById('payAmount').value = amount;
+
+                    if (amount <= 0) {
+                        document.getElementById('submitBtn').disabled = true;
+                        document.getElementById('submitBtn').textContent = 'No Fines Due';
+                        document.getElementById('submitBtn').style.opacity = '0.5';
+                    }
+                }
+
+                if (finesResponse.success && finesResponse.fines) {
+                    const { transaction_fines, custom_fines } = finesResponse.fines;
+                    const list = document.getElementById('breakdownList');
+                    const container = document.getElementById('fineBreakdown');
+
+                    let html = '';
+
+                    // Add transaction fines
+                    transaction_fines.forEach(f => {
+                        html += `
+                            <div style="padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-weight: 700; font-size: 14px; color: white;">Late Return Fine</div>
+                                    <div style="font-size: 11px; color: var(--text-muted);">${f.book_title} (${f.accession_number})</div>
+                                </div>
+                                <div style="font-weight: 800; color: #ef4444;">₹${parseFloat(f.amount).toFixed(2)}</div>
+                            </div>
+                        `;
+                    });
+
+                    // Add custom fines
+                    custom_fines.forEach(f => {
+                        html += `
+                            <div style="padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-weight: 700; font-size: 14px; color: var(--accent);">${f.reason}</div>
+                                    <div style="font-size: 11px; color: var(--text-muted);">${f.book_title ? `${f.book_title} (${f.accession_number})` : 'General Library Fine'}</div>
+                                </div>
+                                <div style="font-weight: 800; color: #ef4444;">₹${parseFloat(f.amount).toFixed(2)}</div>
+                            </div>
+                        `;
+                    });
+
+                    if (html) {
+                        list.innerHTML = html;
+                        container.style.display = 'block';
+                    }
+                }
+
+                // Fetch public settings for UPI/QR
+                const settingsResponse = await apiRequest('/settings/public');
+                if (settingsResponse.success && settingsResponse.settings) {
+                    const s = settingsResponse.settings;
+                    const upiId = s.payment_upi_id || 'library@upi';
+                    const qrFile = s.payment_qr_code;
+                    const libraryName = s.library_name || 'Al Marakish Library';
+
+                    // Update UPI ID text
+                    const upiDisplay = document.querySelector('.upi-id');
+                    if (upiDisplay) upiDisplay.textContent = upiId;
+
+                    // Update QR Code
+                    const qrImg = document.querySelector('.upi-qr-container img');
+                    if (qrImg) {
+                        if (qrFile && qrFile.trim() !== '') {
+                            qrImg.src = `/uploads/branding/${qrFile}`;
+                        } else {
+                            // Fallback to dynamic if no image uploaded
+                            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=${upiId}&pn=${encodeURIComponent(libraryName)}&cu=INR`;
+                        }
+                    }
+
+                    // Hide QR section if QR is disabled
+                    if (s.payment_enable_qr === '0') {
+                        const qrContainer = document.querySelector('.upi-qr-container');
+                        if (qrContainer) qrContainer.style.display = 'none';
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to load fine:', err);
+            }
+        }
+
+        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const status = document.getElementById('statusMessage');
+
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+
+            const data = {
+                amount: document.getElementById('payAmount').value,
+                payment_reference: document.getElementById('refNo').value,
+                payment_method: 'upi'
+            };
+
+            try {
+                const response = await apiRequest('/fines/student/pay', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                if (response.success) {
+                    status.className = 'status-message status-success';
+                    status.textContent = 'Payment proof submitted! Redirecting to dashboard...';
+                    status.style.display = 'block';
+                    setTimeout(() => window.location.href = 'dashboard.html', 3000);
+                }
+            } catch (err) {
+                status.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Submit Payment Proof';
+            }
+        });
+
+        // Load Payment History
+        async function loadPaymentHistory() {
+            try {
+                const response = await apiRequest('/fines/student/payments');
+                if (response.success && response.payments && response.payments.length > 0) {
+                    const container = document.getElementById('paymentHistoryList');
+                    document.getElementById('paymentHistorySection').style.display = 'block';
+
+                    container.innerHTML = response.payments.map(p => `
+                        <div class="history-card">
+                            <div class="history-header">
+                                <div>
+                                    <div class="history-amount">₹${parseFloat(p.amount).toFixed(2)}</div>
+                                    <div class="history-meta">
+                                        <span><i class="far fa-calendar"></i> ${new Date(p.submitted_at).toLocaleDateString()}</span>
+                                        <span><i class="fas fa-receipt"></i> ${p.payment_reference || 'Ref: N/A'}</span>
+                                    </div>
+                                </div>
+                                <div class="status-badge status-${p.status}">${p.status}</div>
+                            </div>
+                            
+                            ${p.is_screenshot_requested ? `
+                                <div class="upload-zone">
+                                    <div class="upload-title"><i class="fas fa-exclamation-circle"></i> Proof Required</div>
+                                    <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 12px; line-height: 1.4;">Admin has requested a screenshot for this transaction. Please upload it to proceed.</p>
+                                    <input type="file" id="file-${p.id}" accept="image/*" class="upload-input">
+                                    <button onclick="uploadScreenshot(${p.id})" class="action-btn">
+                                        <i class="fas fa-cloud-upload-alt"></i> Upload Proof
+                                    </button>
+                                </div>
+                            ` : ''}
+                            
+                            ${p.payment_screenshot && !p.is_screenshot_requested ? `
+                                <a href="/uploads/payment_proofs/${p.payment_screenshot}" target="_blank" class="proof-link">
+                                    <i class="fas fa-image"></i> View Uploaded Proof
+                                </a>
+                            ` : ''}
+
+                            ${p.status === 'Approved' ? `
+                                <a href="receipt.html?id=${p.id}" target="_blank" class="proof-link" style="background: rgba(156, 77, 255, 0.1); color: #9c4dff; border-color: rgba(156, 77, 255, 0.2); margin-left: 10px;">
+                                    <i class="fas fa-file-invoice"></i> Download Receipt
+                                </a>
+                            ` : ''}
+                        </div>
+                    `).join('');
+                } else {
+                    document.getElementById('paymentHistorySection').style.display = 'none';
+                }
+            } catch (err) {
+                console.error('Failed to load history:', err);
+            }
+        }
+
+        async function uploadScreenshot(paymentId) {
+            const fileInput = document.getElementById(`file-${paymentId}`);
+            if (!fileInput.files[0]) {
+                showToast('Please select a file first', 'warning');
+                return;
+            }
+
+            const confirmed = await showModal({
+                title: 'Upload Proof',
+                message: 'Are you sure you want to upload this screenshot?',
+                type: 'confirm',
+                confirmText: 'Upload',
+                cancelText: 'Cancel'
+            });
+
+            if (!confirmed) return;
+
+            const btn = document.querySelector(`#file-${paymentId}`).nextElementSibling;
+            showLoading(btn, 'Uploading...');
+
+            const formData = new FormData();
+            formData.append('payment_proof', fileInput.files[0]);
+
+            try {
+                // Upload file first
+                const uploadRes = await fetch('/api/upload/payment-proof', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                    body: formData
+                });
+                const uploadData = await uploadRes.json();
+
+                if (uploadData.success) {
+                    // Update payment record
+                    const updateRes = await apiRequest(`/fines/student/payment/${paymentId}/proof`, {
+                        method: 'POST',
+                        body: JSON.stringify({ payment_screenshot: uploadData.filename })
+                    });
+
+                    if (updateRes.success) {
+                        showToast('Screenshot uploaded successfully!', 'success');
+                        loadPaymentHistory();
+                    } else {
+                        showToast(updateRes.error || 'Failed to update payment record', 'error');
+                        hideLoading(btn);
+                    }
+                } else {
+                    showToast(uploadData.error || 'File upload failed', 'error');
+                    hideLoading(btn);
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Error uploading file. Please try again.', 'error');
+                hideLoading(btn);
+            }
+        }
+
+        loadFine();
+        loadPaymentHistory();
+    </script>
+</body>
+
+</html>

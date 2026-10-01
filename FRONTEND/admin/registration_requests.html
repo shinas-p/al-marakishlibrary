@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Requests - Al Marakish Library</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --bg-dark: #0f1724;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: white;
+            line-height: 1.6;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 32px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--warning));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            width: fit-content;
+        }
+
+        .tab {
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #94a3b8;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .requests-container {
+            display: grid;
+            gap: 20px;
+        }
+
+        .request-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .request-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .student-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .student-id {
+            color: #94a3b8;
+            font-size: 13px;
+            font-family: monospace;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-approved {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            font-size: 14px;
+        }
+
+        .detail-label {
+            display: block;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-approve {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-reject {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 450px;
+            border-radius: 16px;
+            padding: 30px;
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            height: 100px;
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: white;
+            margin: 15px 0;
+            font-family: inherit;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-user-plus"></i> Registration Requests</h1>
+        </div>
+
+        <div class="filter-tabs">
+            <div class="tab active" onclick="setFilter('pending')">Pending</div>
+            <div class="tab" onclick="setFilter('approved')">Approved</div>
+            <div class="tab" onclick="setFilter('rejected')">Rejected</div>
+        </div>
+
+        <div id="requestsList" class="requests-container">
+            <!-- Requests will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Reject Modal -->
+    <div id="rejectModal" class="modal">
+        <div class="modal-content">
+            <h2 style="font-size: 20px;">Reject Registration</h2>
+            <p style="color: #94a3b8; font-size: 14px; margin-top: 5px;">Why are you rejecting this student?</p>
+            <textarea id="rejectionReason" placeholder="Enter reason for rejection..."></textarea>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn" style="background: #475569; color: white;" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-reject" id="confirmReject">Reject Permanently</button>
+            </div>
+            <input type="hidden" id="rejectId">
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        // Load Sidebar
+        fetch('/admin/sidebar.html').then(res => res.text()).then(data => {
+            document.getElementById('sidebar-container').innerHTML = data;
+            if (typeof initSidebar === 'function') initSidebar();
+        });
+
+        protectRoute();
+
+        let currentFilter = 'pending';
+
+        window.addEventListener('DOMContentLoaded', () => loadRequests());
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.toggle('active', t.textContent.toLowerCase() === filter);
+            });
+            loadRequests();
+        }
+
+        async function loadRequests() {
+            const list = document.getElementById('requestsList');
+            list.innerHTML = '<div style="text-align: center; padding: 40px; color: #64748b;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+
+            try {
+                // We'll create this API shortly
+                const response = await apiRequest(`/admin/registrations?status=${currentFilter}`);
+                if (response.success && response.registrations.length > 0) {
+                    list.innerHTML = response.registrations.map(r => `
+                        <div class="request-card">
+                            <div class="card-header">
+                                <div>
+                                    <div class="student-name">${r.full_name}</div>
+                                    <div class="student-id">AD ID: ${r.ad_no}</div>
+                                </div>
+                                <span class="status-badge status-${r.status}">${r.status}</span>
+                            </div>
+                            <div class="details-grid">
+                                <div class="detail-item"><span class="detail-label">Email</span>${r.email || '-'}</div>
+                                <div class="detail-item"><span class="detail-label">Phone</span>${r.phone || '-'}</div>
+                                <div class="detail-item"><span class="detail-label">Class</span>${r.section || '-'}</div>
+                                <div class="detail-item"><span class="detail-label">Date</span>${new Date(r.created_at).toLocaleDateString()}</div>
+                            </div>
+                            ${r.status === 'pending' ? `
+                                <div class="actions">
+                                    <button class="btn btn-approve" onclick="approveRequest(${r.id})"><i class="fas fa-check"></i> Approve</button>
+                                    <button class="btn btn-reject" onclick="openRejectModal(${r.id})"><i class="fas fa-times"></i> Reject</button>
+                                </div>
+                            ` : ''}
+                            ${r.status === 'rejected' ? `
+                                <div style="margin-top: 15px; font-size: 13px; color: var(--danger); font-style: italic;">
+                                    Reason: ${r.rejection_reason || 'No reason provided'}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('');
+                } else {
+                    list.innerHTML = `<div style="text-align: center; padding: 40px; color: #64748b;">No ${currentFilter} requests found.</div>`;
+                }
+            } catch (err) {
+                list.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--danger);">Failed to load requests.</div>';
+            }
+        }
+
+        async function approveRequest(id) {
+            if (!confirm('Approve this student? They will be able to log in immediately.')) return;
+
+            try {
+                const response = await apiRequest(`/admin/registrations/${id}/approve`, { method: 'POST' });
+                if (response.success) {
+                    showToast('Student approved successfully!', 'success');
+                    loadRequests();
+                } else {
+                    showToast(response.error || 'Approval failed.', 'error');
+                }
+            } catch (err) {
+                showToast('A network error occurred.', 'error');
+            }
+        }
+
+        function openRejectModal(id) {
+            document.getElementById('rejectId').value = id;
+            document.getElementById('rejectModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('rejectModal').classList.remove('active');
+        }
+
+        document.getElementById('confirmReject').addEventListener('click', async () => {
+            const id = document.getElementById('rejectId').value;
+            const reason = document.getElementById('rejectionReason').value;
+
+            if (!reason) {
+                showToast('Please provide a reason.', 'warning');
+                return;
+            }
+
+            try {
+                const response = await apiRequest(`/admin/registrations/${id}/reject`, {
+                    method: 'POST',
+                    body: JSON.stringify({ reason })
+                });
+
+                if (response.success) {
+                    showToast('Request rejected.', 'success');
+                    closeModal();
+                    loadRequests();
+                } else {
+                    showToast(response.error || 'Rejection failed.', 'error');
+                }
+            } catch (err) {
+                showToast('A network error occurred.', 'error');
+            }
+        });
+    </script>
+</body>
+
+</html>

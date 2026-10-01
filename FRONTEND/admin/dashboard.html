@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AL MARAKISH LIBRARY</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --primary-light: #b785ff;
+            --primary-dark: #7b2cff;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --bg-body: #080c14;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --bg-sidebar: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(30, 41, 59, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(156, 77, 255, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.1) 0, transparent 50%);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: all 0.4s ease;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: rgba(156, 77, 255, 0.15);
+            color: var(--primary-light);
+            border: 1px solid rgba(156, 77, 255, 0.2);
+        }
+
+        .stat-info .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-info .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header-title h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* Table Card Section */
+        .table-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .table-card h2,
+        .table-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .stats-table th {
+            text-align: left;
+            padding: 15px 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .stats-table td {
+            padding: 18px 20px;
+            color: #cbd5e1;
+            font-size: 14px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .stats-table tr:hover td {
+            background: rgba(156, 77, 255, 0.05);
+        }
+
+        .stats-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .btn-view-all {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-view-all:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .no-data-message,
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .badge-role {
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: rgba(156, 77, 255, 0.1);
+            color: var(--primary-light);
+            border: 1px solid rgba(156, 77, 255, 0.2);
+        }
+
+        .badge-count {
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 800;
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-borrowed {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-returned {
+            background: rgba(156, 77, 255, 0.15);
+            color: var(--primary-light);
+            border: 1px solid rgba(156, 77, 255, 0.2);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            color: white;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        /* Stats Grid Layout for Tables */
+        .stats-tables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 24px;
+            }
+
+            .mobile-toggle {
+                display: flex;
+            }
+
+            .stats-tables-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar will be loaded here -->
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="header-title">
+                <div style="display: flex; align-items: center;">
+                    <button id="mobileMenuToggle" class="mobile-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1><i class="fas fa-chart-pie" style="color: var(--primary); margin-right: 12px;"></i>Library
+                        Dashboard</h1>
+                </div>
+                <p>Monitor library performance, student activity and recent transactions</p>
+            </div>
+            <div class="header-actions">
+                <a href="activity_logs.html" class="btn-view-all"
+                    style="background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <i class="fas fa-history"></i> Activity Log
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-book"></i></div>
+                <div class="stat-info">
+                    <div class="stat-value" id="totalBooks">0</div>
+                    <div class="stat-label">Total Books</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"
+                    style="background: rgba(59, 130, 246, 0.1); color: #60a5fa; border-color: rgba(59, 130, 246, 0.2);">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"
+                    style="background: rgba(16, 185, 129, 0.1); color: #34d399; border-color: rgba(16, 185, 129, 0.2);">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="totalBorrowed">0</div>
+                    <div class="stat-label">Currently Borrowed</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"
+                    style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-color: rgba(245, 158, 11, 0.2);">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="totalFine">0</div>
+                    <div class="stat-label">Total Fine</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rankings Section -->
+        <div class="stats-tables-grid">
+            <div class="table-card">
+                <h3>
+                    <span><i class="fas fa-crown" style="color: #ffb700; margin-right: 10px;"></i> Top Admins</span>
+                    <a href="#" class="btn-view-all" onclick="alert('Full audit coming soon!'); return false;">
+                        Full Rank <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+                    </a>
+                </h3>
+                <table class="stats-table" id="adminsTable">
+                    <thead>
+                        <tr>
+                            <th>Admin Name</th>
+                            <th>Role</th>
+                            <th style="text-align: right;">Issues</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminsTableBody">
+                        <tr>
+                            <td colspan="3" class="no-data-message">
+                                <i class="fas fa-circle-notch fa-spin"></i> Loading...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-card">
+                <h3>
+                    <span><i class="fas fa-fire" style="color: #f87171; margin-right: 10px;"></i> Active Students</span>
+                    <a href="users.html" class="btn-view-all">
+                        All Students <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+                    </a>
+                </h3>
+                <table class="stats-table" id="studentsTable">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>AD NO</th>
+                            <th style="text-align: right;">Received</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                        <tr>
+                            <td colspan="3" class="no-data-message">
+                                <i class="fas fa-circle-notch fa-spin"></i> Loading...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="table-card">
+            <h2>
+                <span><i class="fas fa-clock-rotate-left" style="color: #3b82f6; margin-right: 10px;"></i> Recent
+                    Transactions</span>
+                <a href="transactions.html" class="btn-view-all">
+                    View History <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+                </a>
+            </h2>
+
+            <div id="transactionsLoading" class="loading">
+                <i class="fas fa-circle-notch fa-spin"></i> Loading updates...
+            </div>
+
+            <table id="transactionsTable" class="stats-table" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Recipient</th>
+                        <th>Book</th>
+                        <th>Date</th>
+                        <th style="text-align: right;">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionsTableBody">
+                    <!-- Transactions will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+
+        // Protect route
+        protectRoute('assistant');
+
+        // Load dashboard data on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadDashboardStats();
+            loadRecentTransactions();
+            loadAdminsTable();
+            loadStudentsTable();
+        });
+
+        // Load dashboard statistics
+        async function loadDashboardStats() {
+            try {
+                const response = await apiRequest('/dashboard/stats');
+
+                if (response.success && response.stats) {
+                    const stats = response.stats;
+                    document.getElementById('totalBooks').textContent = stats.totalBooks || 0;
+                    document.getElementById('totalUsers').textContent = stats.totalUsers || 0;
+                    document.getElementById('totalBorrowed').textContent = stats.totalBorrowed || 0;
+                    document.getElementById('totalFine').textContent = formatCurrency(stats.totalFine || 0);
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                showToast('Error loading dashboard statistics', 'error');
+            }
+        }
+
+        // Load Admins Table
+        async function loadAdminsTable() {
+            const tbody = document.getElementById('adminsTableBody');
+
+            try {
+                const response = await apiRequest('/dashboard/top-admins?limit=5');
+
+                if (response.success && response.admins && response.admins.length > 0) {
+                    tbody.innerHTML = '';
+
+                    response.admins.forEach(admin => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${escapeHtml(admin.admin_name || 'Unknown')}</td>
+                            <td><span class="badge-role">${escapeHtml(admin.role || 'admin')}</span></td>
+                            <td><span class="badge-count">${admin.issue_count || 0}</span></td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="3" class="no-data-message">No data yet</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading admins table:', error);
+                tbody.innerHTML = '<tr><td colspan="3" class="no-data-message">Error loading data</td></tr>';
+            }
+        }
+
+        // Load Students Table
+        async function loadStudentsTable() {
+            const tbody = document.getElementById('studentsTableBody');
+
+            try {
+                const response = await apiRequest('/dashboard/most-active-students?limit=5');
+
+                if (response.success && response.students && response.students.length > 0) {
+                    tbody.innerHTML = '';
+
+                    response.students.forEach(student => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${escapeHtml(student.student_name || 'Unknown')}</td>
+                            <td>${escapeHtml(student.ad_no || '-')}</td>
+                            <td><span class="badge-count">${student.books_received || 0}</span></td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="3" class="no-data-message">No data yet</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading students table:', error);
+                tbody.innerHTML = '<tr><td colspan="3" class="no-data-message">Error loading data</td></tr>';
+            }
+        }
+
+        // Load recent transactions
+        async function loadRecentTransactions() {
+            const loadingEl = document.getElementById('transactionsLoading');
+            const tableEl = document.getElementById('transactionsTable');
+            const tbodyEl = document.getElementById('transactionsTableBody');
+
+            try {
+                const response = await apiRequest('/dashboard/recent-transactions?limit=5');
+
+                loadingEl.style.display = 'none';
+
+                if (response.success && response.transactions && response.transactions.length > 0) {
+                    tableEl.style.display = 'table';
+                    tbodyEl.innerHTML = '';
+
+                    response.transactions.forEach(transaction => {
+                        const row = document.createElement('tr');
+                        const statusClass = transaction.status.toLowerCase();
+
+                        row.innerHTML = `
+                        <td>${escapeHtml(transaction.user_name || transaction.full_name || 'N/A')}</td>
+                        <td>${escapeHtml(transaction.book_title || transaction.title || 'N/A')}</td>
+                        <td>${formatDate(transaction.borrow_date)}</td>
+                        <td>
+                            <span class="status-badge status-${statusClass}">
+                                ${escapeHtml(transaction.status)}
+                            </span>
+                        </td>
+                    `;
+
+                        tbodyEl.appendChild(row);
+                    });
+                } else {
+                    tableEl.style.display = 'table';
+                    tbodyEl.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:#64748b;">No recent transactions</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                loadingEl.textContent = 'Error loading transactions';
+            }
+        }
+
+        // Utility: Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
+        }
+    </script>
+
+</body>
+
+</html>

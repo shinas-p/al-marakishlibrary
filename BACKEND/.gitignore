@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Uploads (keep structure but ignore files)
+uploads/**/*
+!uploads/.gitkeep
+!uploads/covers/.gitkeep
+!uploads/ebooks/.gitkeep
+!uploads/users/.gitkeep
+!uploads/student_photos/.gitkeep
+
+# Build
+dist/
+build/

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circulation Audit | Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --primary-light: #b785ff;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --bg-body: #080c14;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(30, 41, 59, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            transition: 0.3s;
+        }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: rgba(156, 77, 255, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(156, 77, 255, 0.2);
+        }
+
+        .stat-info .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .stat-info .stat-label {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .btn-filter {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-filter:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* Table Section */
+        .table-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .table-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.4);
+            padding: 16px 24px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-issue {
+            background: rgba(156, 77, 255, 0.15);
+            color: var(--primary-light);
+        }
+
+        .badge-return {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent);
+        }
+
+        .badge-renew {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--secondary);
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-borrowed {
+            background: var(--secondary);
+        }
+
+        .status-returned {
+            background: var(--accent);
+        }
+
+        .btn-rollback {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-rollback:hover:not(:disabled) {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-rollback:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: transparent;
+        }
+
+        /* Pagination */
+        .pagination {
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .page-info {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .page-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-btn {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <!-- Stats Section -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-exchange-alt"></i></div>
+                <div class="stat-info">
+                    <div class="stat-value" id="statTotal">0</div>
+                    <div class="stat-label">Total Logs</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="color: var(--primary-light); background: rgba(156,77,255,0.1);"><i
+                        class="fas fa-book-reader"></i></div>
+                <div class="stat-info">
+                    <div class="stat-value" id="statIssues">0</div>
+                    <div class="stat-label">Issues</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="color: var(--accent); background: rgba(16,185,129,0.1);"><i
+                        class="fas fa-undo"></i></div>
+                <div class="stat-info">
+                    <div class="stat-value" id="statReturns">0</div>
+                    <div class="stat-label">Returns</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="color: var(--danger); background: rgba(239,68,68,0.1);"><i
+                        class="fas fa-history"></i></div>
+                <div class="stat-info">
+                    <div class="stat-value" id="statRolledBack">0</div>
+                    <div class="stat-label">Rolled Back</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-section">
+            <div class="form-group">
+                <label>Search Record</label>
+                <input type="text" id="searchInput" class="form-control" placeholder="Title, student name...">
+            </div>
+            <div class="form-group">
+                <label>Admin</label>
+                <select id="adminFilter" class="form-control">
+                    <option value="all">All Admins</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Action</label>
+                <select id="actionFilter" class="form-control">
+                    <option value="">All Actions</option>
+                    <option value="issue">Issue</option>
+                    <option value="return">Return</option>
+                    <option value="renew">Renew</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Source</label>
+                <select id="sourceFilter" class="form-control">
+                    <option value="all">All Sources</option>
+                </select>
+            </div>
+            <button class="btn-filter" onclick="loadLogs(1)">
+                <i class="fas fa-search"></i> Apply
+            </button>
+        </div>
+
+        <!-- Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h2><i class="fas fa-clipboard-list" style="margin-right: 10px; color: var(--primary);"></i> Circulation
+                    Logs</h2>
+                <button class="btn-filter"
+                    style="padding: 8px 16px; font-size: 13px; background: rgba(255,255,255,0.05); border: 1px solid var(--border);"
+                    onclick="resetFilters()">
+                    Reset Filters
+                </button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DateTime</th>
+                            <th>Action</th>
+                            <th>Book Details</th>
+                            <th>Student</th>
+                            <th>Admin / Source</th>
+                            <th>Rollback</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody">
+                        <!-- Content loaded via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <div class="page-info" id="paginationInfo">Showing 0-0 of 0 logs</div>
+                <div class="page-controls" id="paginationControls">
+                    <!-- Buttons loaded via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+    <script>
+        protectRoute('owner');
+
+        let currentPage = 1;
+        const limit = 50;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLogs(1);
+        });
+
+        async function loadLogs(page = 1) {
+            currentPage = page;
+            const search = document.getElementById('searchInput').value;
+            const admin_id = document.getElementById('adminFilter').value;
+            const action_type = document.getElementById('actionFilter').value;
+            const source = document.getElementById('sourceFilter').value;
+
+            const params = new URLSearchParams({
+                search, admin_id, action_type, source,
+                limit, offset: (page - 1) * limit
+            });
+
+            try {
+                const res = await apiRequest(`/admin/owner/logs/book-issue-audit?${params.toString()}`);
+                if (res.success) {
+                    renderStats(res.stats);
+                    renderFilters(res.filters);
+                    renderTable(res.logs);
+                    renderPagination(res.total);
+                }
+            } catch (err) {
+                showToast('Failed to load audit logs', 'error');
+            }
+        }
+
+        function renderStats(stats) {
+            document.getElementById('statTotal').innerText = stats.total || 0;
+            document.getElementById('statIssues').innerText = stats.issues || 0;
+            document.getElementById('statReturns').innerText = stats.returns || 0;
+            document.getElementById('statRolledBack').innerText = stats.rolled_back || 0;
+        }
+
+        function renderFilters(filters) {
+            const adminSelect = document.getElementById('adminFilter');
+            const sourceSelect = document.getElementById('sourceFilter');
+
+            // Only update if current value is default to avoid clearing selection
+            if (adminSelect.options.length === 1) {
+                filters.admins.forEach(admin => {
+                    const opt = document.createElement('option');
+                    opt.value = admin.admin_id;
+                    opt.textContent = admin.admin_name;
+                    adminSelect.appendChild(opt);
+                });
+            }
+
+            if (sourceSelect.options.length === 1) {
+                filters.sources.forEach(source => {
+                    const opt = document.createElement('option');
+                    opt.value = source;
+                    opt.textContent = source;
+                    sourceSelect.appendChild(opt);
+                });
+            }
+        }
+
+        function renderTable(logs) {
+            const tbody = document.getElementById('logsTableBody');
+            tbody.innerHTML = '';
+
+            if (logs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">No logs found matching criteria.</td></tr>`;
+                return;
+            }
+
+            logs.forEach(log => {
+                const tr = document.createElement('tr');
+                const actionBadge = log.action_type === 'issue' ? 'badge-issue' : (log.action_type === 'return' ? 'badge-return' : 'badge-renew');
+
+                tr.innerHTML = `
+                    <td>
+                        <div style="font-weight: 500;">${moment(log.issued_at).format('DD MMM YYYY')}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">${moment(log.issued_at).format('hh:mm A')}</div>
+                    </td>
+                    <td><span class="badge ${actionBadge}">${log.action_type.toUpperCase()}</span></td>
+                    <td>
+                        <div style="font-weight: 600; color: var(--primary-light);">${log.book_title}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">Acc: ${log.accession_number}</div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 500;">${log.student_name}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">Ad: ${log.student_ad_no}</div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 500;">${log.admin_name}</div>
+                        <div style="font-size: 11px; color: var(--secondary); text-transform: uppercase;">VIA ${log.action_source}</div>
+                    </td>
+                    <td>
+                        ${log.is_rolled_back
+                        ? '<span style="color: var(--danger); font-size: 12px; font-weight: 600;"><i class="fas fa-undo"></i> Rolled Back</span>'
+                        : `<button class="btn-rollback" onclick="handleRollback(${log.id}, '${log.book_title}')">Rollback</button>`}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderPagination(total) {
+            const start = (currentPage - 1) * limit + 1;
+            const end = Math.min(currentPage * limit, total);
+            document.getElementById('paginationInfo').innerText = `Showing ${start}-${end} of ${total} logs`;
+
+            const controls = document.getElementById('paginationControls');
+            controls.innerHTML = '';
+
+            const totalPages = Math.ceil(total / limit);
+
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-btn';
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => loadLogs(currentPage - 1);
+            controls.appendChild(prevBtn);
+
+            // Limited page numbers
+            for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                btn.style.background = i === currentPage ? 'var(--primary)' : '';
+                btn.textContent = i;
+                btn.onclick = () => loadLogs(i);
+                controls.appendChild(btn);
+            }
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-btn';
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.disabled = currentPage >= totalPages;
+            nextBtn.onclick = () => loadLogs(currentPage + 1);
+            controls.appendChild(nextBtn);
+        }
+
+        async function handleRollback(id, title) {
+            const confirmed = await showModal({
+                title: 'Confirm Rollback',
+                message: `Are you sure you want to rollback the transaction for <b>"${title}"</b>? This will reverse the status change.`,
+                type: 'danger',
+                confirmText: 'Yes, Rollback',
+                cancelText: 'Cancel'
+            });
+
+            if (confirmed) {
+                try {
+                    const res = await apiRequest(`/admin/owner/logs/book-issue-audit/${id}/rollback`, {
+                        method: 'POST'
+                    });
+
+                    if (res.success) {
+                        showToast('Transaction rolled back successfully', 'success');
+                        loadLogs(currentPage);
+                    } else {
+                        showToast(res.error || 'Failed to rollback', 'error');
+                    }
+                } catch (err) {
+                    showToast('Network error during rollback', 'error');
+                }
+            }
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('adminFilter').value = 'all';
+            document.getElementById('actionFilter').value = '';
+            document.getElementById('sourceFilter').value = 'all';
+            loadLogs(1);
+        }
+    </script>
+</body>
+
+</html>

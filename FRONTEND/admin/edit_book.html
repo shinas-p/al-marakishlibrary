@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Book | Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --primary-light: #b785ff;
+            --primary-dark: #7b2cff;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --bg-body: #080c14;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --bg-sidebar: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(30, 41, 59, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) transparent;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(156, 77, 255, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.1) 0, transparent 50%);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        .heading-font {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header-title h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .form-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: var(--shadow-lg);
+            max-width: 1000px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        input,
+        select,
+        textarea {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 0 4px rgba(156, 77, 255, 0.1);
+        }
+
+        input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: rgba(15, 23, 42, 0.3);
+        }
+
+        .owner-only-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--secondary);
+            background: rgba(245, 158, 11, 0.1);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            margin-left: 8px;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .upload-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .upload-field {
+            background: rgba(15, 23, 42, 0.4);
+            border: 2px dashed var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .upload-field:hover {
+            border-color: var(--primary);
+            background: rgba(156, 77, 255, 0.05);
+        }
+
+        .upload-field i {
+            font-size: 32px;
+            color: var(--primary-light);
+            margin-bottom: 12px;
+        }
+
+        .upload-field p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .upload-field.has-file i,
+        .upload-field.has-file p {
+            display: none;
+        }
+
+        .upload-field.has-file .preview-area {
+            display: block !important;
+        }
+
+        .preview-area {
+            margin-top: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .preview-img {
+            max-width: 120px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            border: 2px solid var(--glass-border);
+        }
+
+        .form-actions {
+            margin-top: 40px;
+            display: flex;
+            gap: 16px;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 32px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 10px 20px -5px rgba(156, 77, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -5px rgba(156, 77, 255, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 24px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: auto;
+            }
+
+            .upload-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Status Badge for input */
+        .status-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #statusIndicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div class="header-title">
+                <h1>✏️ Edit Book Details</h1>
+                <p>Modify book information and library reference data</p>
+            </div>
+            <a href="view_books.html" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Collection
+            </a>
+        </div>
+
+        <div class="form-card">
+            <form id="editBookForm">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Book Title</label>
+                        <input type="text" id="title" name="title" required placeholder="Enter complete book title">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Accession Number
+                            <span class="owner-only-badge" id="ownerOnlyBadge">
+                                <i class="fas fa-crown"></i> OWNER ONLY
+                            </span>
+                        </label>
+                        <input type="text" id="accession_number" name="accession_number" required
+                            placeholder="e.g., ACC-001">
+                        <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Unique library identifier
+                            (Read-only for Admins)</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>ISBN / barcode</label>
+                        <input type="text" id="isbn" name="isbn" placeholder="Standard Book Number">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Author(s)</label>
+                        <input type="text" id="author" name="author" placeholder="Primary Author Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category</label>
+                        <input type="text" id="category" name="category" placeholder="e.g., Computer Science">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Publisher</label>
+                        <input type="text" id="publisher" name="publisher" placeholder="Publishing House">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Call Number</label>
+                        <input type="text" id="call_number" name="call_number" placeholder="Classification Code">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quantity / Copies</label>
+                        <input type="number" id="count" name="count" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Status</label>
+                        <div class="status-wrapper">
+                            <div id="statusIndicator"></div>
+                            <select id="status" name="status" style="flex: 1;">
+                                <option value="Available">Available</option>
+                                <option value="Unavailable">Unavailable</option>
+                                <option value="Reserved">Reserved</option>
+                                <option value="Lost">Lost</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Language</label>
+                        <select id="language" name="language">
+                            <option value="English">English</option>
+                            <option value="Arabic">Arabic</option>
+                            <option value="Urdu">Urdu</option>
+                            <option value="Malayalam">Malayalam</option>
+                            <option value="Hindi">Hindi</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Library Location (Shelf)</label>
+                        <input type="text" id="location" name="location" placeholder="e.g., Rack 4B-Section 2">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Price (₹)</label>
+                        <input type="text" id="price" name="price" placeholder="0.00">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Publication Year</label>
+                        <input type="text" id="publication_year" name="publication_year" placeholder="YYYY">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Edition</label>
+                        <input type="text" id="edition" name="edition" placeholder="e.g., 2nd Edition">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Volume</label>
+                        <input type="text" id="volume" name="volume" placeholder="e.g., Vol 1">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Total Pages</label>
+                        <input type="number" id="pages" name="pages" placeholder="0">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Brief Description</label>
+                        <textarea id="description" name="description" rows="4"
+                            placeholder="Book synopsis or notes..."></textarea>
+                    </div>
+                </div>
+
+                <div class="upload-section">
+                    <div class="upload-field" onclick="document.getElementById('cover_image').click()">
+                        <i class="fas fa-camera"></i>
+                        <p>Change Book Cover</p>
+                        <input type="file" id="cover_image" name="cover_image" accept="image/*" style="display: none;"
+                            onchange="previewImage(this, 'coverPreview')">
+                        <div class="preview-area">
+                            <img id="coverPreview" src="" class="preview-img" style="display: none;">
+                        </div>
+                    </div>
+                    <div class="upload-field" onclick="document.getElementById('ebook').click()">
+                        <i class="fas fa-file-pdf"></i>
+                        <p>Update E-Book File</p>
+                        <input type="file" id="ebook" name="ebook" accept=".pdf,.epub" style="display: none;"
+                            onchange="updateEbookStatus(this)">
+                        <div id="ebookName"
+                            style="margin-top: 12px; color: var(--accent); font-weight: 600; font-size: 13px;"></div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="saveBtn">
+                        <i class="fas fa-save"></i> Update Book
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="window.location.reload()">
+                        <i class="fas fa-undo"></i> Reset Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookId = urlParams.get('id') || urlParams.get('edit');
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!protectRoute('admin')) return;
+
+            if (!bookId) {
+                showToast('No book identifier specified', 'error');
+                setTimeout(() => window.location.href = 'view_books.html', 1500);
+                return;
+            }
+
+            checkPermissions();
+            await loadBookData();
+            setupStatusLink();
+        });
+
+        function checkPermissions() {
+            const user = getUser();
+            const accNoField = document.getElementById('accession_number');
+            const ownerBadge = document.getElementById('ownerOnlyBadge');
+
+            if (user.role !== 'owner') {
+                accNoField.disabled = true;
+                accNoField.title = "Accession numbers can only be changed by the Owner";
+                ownerBadge.style.display = 'inline-flex';
+            } else {
+                ownerBadge.style.display = 'none';
+            }
+        }
+
+        async function loadBookData() {
+            try {
+                const cleanId = String(bookId).trim();
+                console.log('--- Attempting to load book:', cleanId, '---');
+
+                const response = await apiRequest(`/admin/books/${cleanId}`);
+                console.log('📡 Book Data Response:', response);
+
+                const book = response.book || response.data || (response.success ? response : null);
+
+                if (book) {
+                    console.log('✅ Mapping book data...');
+                    const allFields = document.querySelectorAll('input, select, textarea');
+
+                    allFields.forEach(field => {
+                        const id = field.id;
+                        if (!id || field.type === 'file') return; // Skip file inputs
+
+                        // Try primary match first
+                        let value = book[id];
+
+                        // Fallback logic if value is null or undefined
+                        if (value === undefined || value === null) {
+                            if (id === 'count') value = (book.quantity !== undefined && book.quantity !== null) ? book.quantity : book.count;
+                            if (id === 'accession_number') value = book.accession_number || book.book_number || '';
+                            if (id === 'author') value = book.author || book.author_name || '';
+                            if (id === 'publication_year') value = book.publication_year || book.year || '';
+                            if (id === 'isbn') value = book.isbn || book.barcode || '';
+                        }
+
+                        // Populate the field (Standard handle for all types)
+                        if (value !== undefined && value !== null) {
+                            field.value = value;
+                        } else {
+                            field.value = '';
+                        }
+                    });
+
+                    // UI Tweaks
+                    if (book.cover_image) {
+                        const preview = document.getElementById('coverPreview');
+                        if (preview) {
+                            preview.src = `/uploads/covers/${book.cover_image}`;
+                            preview.style.display = 'block';
+                            preview.closest('.upload-field').classList.add('has-file');
+                        }
+                    }
+
+                    if (book.ebook) {
+                        const ebookName = document.getElementById('ebookName');
+                        if (ebookName) {
+                            ebookName.textContent = `✅ File: ${book.ebook}`;
+                            ebookName.closest('.upload-field').classList.add('has-file');
+                        }
+                    }
+
+                    if (typeof updateStatusColor === 'function') updateStatusColor();
+                    showToast('Book data loaded successfully', 'success');
+                } else {
+                    showToast('No book data found for this ID', 'error');
+                }
+            } catch (error) {
+                console.error('LOAD FAILURE:', error);
+                showToast('Load Error: ' + error.message, 'error');
+            }
+        }
+
+        function setupStatusLink() {
+            const statusSelect = document.getElementById('status');
+            statusSelect.addEventListener('change', updateStatusColor);
+
+            const countInput = document.getElementById('count');
+            countInput.addEventListener('input', () => {
+                if (parseInt(countInput.value) === 0) {
+                    statusSelect.value = 'Unavailable';
+                } else if (statusSelect.value === 'Unavailable' && parseInt(countInput.value) > 0) {
+                    statusSelect.value = 'Available';
+                }
+                updateStatusColor();
+            });
+        }
+
+        function updateStatusColor() {
+            const status = document.getElementById('status').value;
+            const indicators = {
+                'Available': '#10b981',
+                'Unavailable': '#ef4444',
+                'Reserved': '#f59e0b',
+                'Lost': '#64748b'
+            };
+            const indicator = document.getElementById('statusIndicator');
+            const color = indicators[status] || '#10b981';
+            indicator.style.background = color;
+            indicator.style.boxShadow = `0 0 10px ${color}`;
+        }
+
+        function previewImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    preview.closest('.upload-field').classList.add('has-file');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function updateEbookStatus(input) {
+            if (input.files && input.files[0]) {
+                const ebookName = document.getElementById('ebookName');
+                ebookName.textContent = `✅ New: ${input.files[0].name}`;
+                ebookName.closest('.upload-field').classList.add('has-file');
+            }
+        }
+
+        document.getElementById('editBookForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const saveBtn = document.getElementById('saveBtn');
+            showLoading(saveBtn, 'Saving Changes...');
+
+            const formData = new FormData(e.target);
+
+            try {
+                // Modified uploadFile in api-helper should handle PUT
+                const response = await uploadFile(`/admin/books/${bookId}`, formData, { method: 'PUT' });
+
+                if (response.success) {
+                    showToast('Book updated successfully!', 'success');
+                    setTimeout(() => window.location.href = `book_details.html?id=${bookId}`, 1500);
+                } else {
+                    showToast(response.error || 'Update failed', 'error');
+                }
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                hideLoading(saveBtn);
+            }
+        });
+    </script>
+</body>
+
+</html>

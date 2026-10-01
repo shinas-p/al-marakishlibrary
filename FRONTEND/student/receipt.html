@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Receipt - Al Marakish Library</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --accent: #cf9d7c;
+            --text: #1e293b;
+            --text-light: #64748b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 40px;
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+        }
+
+        .receipt-container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            padding: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .receipt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+        }
+
+        .brand-logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo i {
+            color: var(--primary);
+            font-size: 28px;
+        }
+
+        .receipt-title {
+            text-align: right;
+        }
+
+        .receipt-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .receipt-meta {
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .info-group h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text-light);
+            margin: 0 0 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        .info-content {
+            font-size: 15px;
+            line-height: (1.6);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .table-container {
+            margin-bottom: 40px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 16px;
+            background: #f8fafc;
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .total-row td {
+            border-bottom: none;
+            padding-top: 24px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            color: var(--text);
+        }
+
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 13px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 30px;
+        }
+
+        .status-stamp {
+            position: absolute;
+            top: 200px;
+            right: 50px;
+            border: 4px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 20px;
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+            transform: rotate(-15deg);
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        .btn-action {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(156, 77, 255, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(156, 77, 255, 0.5);
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .receipt-container {
+                box-shadow: none;
+                max-width: 100%;
+                padding: 20px;
+            }
+
+            .btn-action {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="receipt-container" id="receipt">
+        <!-- Content will be loaded here -->
+        <div style="text-align:center; padding: 50px; color: #64748b;">Loading receipt...</div>
+    </div>
+
+    <button class="btn-action" onclick="window.print()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-printer">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2" />
+            <path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" />
+            <path d="M7 13m0 2a2 2 0 0 1 2 -2h6a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2z" />
+        </svg>
+        Print / Download
+    </button>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            if (!id) {
+                document.getElementById('receipt').innerHTML = '<div style="text-align:center;color:red">Invalid Receipt ID</div>';
+                return;
+            }
+
+            try {
+                const response = await apiRequest(`/fines/payment/${id}/receipt`);
+                if (response.success && response.receipt) {
+                    renderReceipt(response.receipt);
+                } else {
+                    document.getElementById('receipt').innerHTML = `<div style="text-align:center;color:red">${response.error || 'Receipt not found'}</div>`;
+                }
+            } catch (err) {
+                document.getElementById('receipt').innerHTML = '<div style="text-align:center;color:red">Error loading receipt</div>';
+            }
+        });
+
+        function renderReceipt(data) {
+            const container = document.getElementById('receipt');
+            const formatCurrency = (amt) => '₹' + parseFloat(amt).toFixed(2);
+
+            container.innerHTML = `
+                <div class="status-stamp">${data.payment.status}</div>
+                
+                <div class="receipt-header">
+                    <div class="brand-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9c4dff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15a2.5 2.5 0 0 1 2.5 -2.5h15"/><path d="M20 22v-16a2 2 0 1 0 -4 0v16"/><path d="M20 22a2 2 0 0 1 -2 -2v-16a2 2 0 1 1 2 2v16"/><path d="M4 19.5a2.5 2.5 0 0 1 2.5 -2.5h13.5"/><path d="M8 9h8"/><path d="M8 13h6"/></svg>
+                        AL MARAKISH
+                    </div>
+                    <div class="receipt-title">
+                        <h1>RECEIPT</h1>
+                        <div class="receipt-meta">
+                            Receipt #: <b>${data.receipt_no}</b><br>
+                            Date: ${new Date(data.date).toLocaleDateString()}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-group">
+                        <h3>Billed To</h3>
+                        <div class="info-content">
+                            <b>${data.student.name}</b><br>
+                            ID: ${data.student.id}<br>
+                            ${data.student.section ? `Section: ${data.student.section}` : ''}
+                        </div>
+                    </div>
+                    <div class="info-group">
+                        <h3>Payment Details</h3>
+                        <div class="info-content">
+                            <div class="info-row">
+                                <span>Method:</span>
+                                <b>${data.payment.method.toUpperCase()}</b>
+                            </div>
+                            <div class="info-row">
+                                <span>Reference:</span>
+                                <b>${data.payment.reference || 'N/A'}</b>
+                            </div>
+                            <div class="info-row">
+                                <span>Status:</span>
+                                <b style="color: ${data.payment.status === 'Approved' ? '#10b981' : '#f59e0b'}">${data.payment.status}</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th style="text-align:right">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.items.map(item => `
+                                <tr>
+                                    <td>
+                                        <b>${item.description}</b>
+                                        ${item.details ? `<div style="font-size:12px;color:#94a3b8;margin-top:4px">${item.details}</div>` : ''}
+                                    </td>
+                                    <td style="text-align:right">${formatCurrency(item.amount)}</td>
+                                </tr>
+                            `).join('')}
+                            <tr class="total-row">
+                                <td style="text-align:right; padding-right: 40px;">Total Paid</td>
+                                <td style="text-align:right; color: var(--primary);">${formatCurrency(data.payment.amount)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="footer">
+                    <p>Thank you for your payment!</p>
+                    <p>This is a computer generated receipt and does not require a signature.</p>
+                    <p style="margin-top: 20px; font-weight: 600;">Al Marakish Library Management System</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+
+</html>

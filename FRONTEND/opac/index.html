@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPAC | Al Marakish Library</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/opac/assets/opac.css">
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+
+    <header class="opac-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/opac/index.html" class="logo">
+                    <img src="/logo1.png" alt="Logo" style="height: 48px;">
+                    <div class="logo-text-group">
+                        <span class="logo-text">Al Marakish Library</span>
+                        <div style="font-size: 10px; opacity: 0.7; font-weight: 500;">OPAC - Online Public Access
+                            Catalogue</div>
+                    </div>
+                </a>
+
+                <nav class="header-nav">
+                    <a href="/" class="btn-outline" style="padding: 8px 15px; font-size: 13px;">
+                        <i class="fas fa-globe"></i> Website
+                    </a>
+                    <div id="user-nav">
+                        <a href="/student/login.html" class="btn-primary" style="padding: 8px 15px; font-size: 13px;">
+                            <i class="fas fa-user"></i> Student Login
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="search-hero">
+        <div class="container">
+            <h1 class="hero-title">Explore Our Knowledge Hub</h1>
+            <p class="hero-subtitle">Search through thousands of books across multiple departments and languages.</p>
+
+            <div class="search-box-container">
+                <div class="search-bar-wrapper">
+                    <i class="fas fa-search" style="color: var(--accent); font-size: 18px;"></i>
+                    <input type="text" id="main-search" class="search-input"
+                        placeholder="Search by title, author, subject, language..." autocomplete="off">
+
+                    <div class="search-addons">
+                        <button class="addon-btn" id="voice-search-btn" title="Voice Search">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button class="addon-btn" id="toggle-advanced" title="Advanced Search">
+                            <i class="fas fa-sliders-h"></i>
+                        </button>
+                    </div>
+
+                    <button class="search-btn" id="search-btn">
+                        <i class="fas fa-arrow-right"></i>
+                        <span>Search</span>
+                    </button>
+                </div>
+
+                <div id="search-suggestions" class="search-suggestions" style="display: none;"></div>
+
+                <div id="advanced-search-panel" class="advanced-panel">
+                    <div class="advanced-grid">
+                        <div class="adv-field">
+                            <label><i class="fas fa-book"></i> Title</label>
+                            <input type="text" id="filter-title" placeholder="Search by title...">
+                        </div>
+                        <div class="adv-field">
+                            <label><i class="fas fa-user-edit"></i> Author</label>
+                            <input type="text" id="filter-author" placeholder="Search by author...">
+                        </div>
+                        <div class="adv-field">
+                            <label><i class="fas fa-tags"></i> Subject / Category</label>
+                            <input type="text" id="filter-subject" placeholder="Ex: Fiqh, Science...">
+                        </div>
+
+                        <div class="adv-field">
+                            <label><i class="fas fa-globe"></i> Language</label>
+                            <select id="filter-language">
+                                <option value="">All Languages</option>
+                            </select>
+                        </div>
+                        <div class="adv-field">
+                            <label><i class="fas fa-th-large"></i> Category</label>
+                            <select id="filter-category">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                        <div class="adv-field">
+                            <label><i class="fas fa-building"></i> Publisher</label>
+                            <select id="filter-publisher">
+                                <option value="">All Publishers</option>
+                            </select>
+                        </div>
+                        <div class="adv-field">
+                            <label><i class="fas fa-check-circle"></i> Availability</label>
+                            <select id="filter-availability">
+                                <option value="">Any Status</option>
+                                <option value="available">Available</option>
+                                <option value="issued">Issued / Unavailable</option>
+                            </select>
+                        </div>
+
+                        <div class="adv-field range-field">
+                            <label><i class="fas fa-calendar-alt"></i> Pub. Year</label>
+                            <div>
+                                <input type="number" id="filter-year-from" placeholder="From">
+                                <input type="number" id="filter-year-to" placeholder="To">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="advanced-actions">
+                        <button class="btn-outline" id="clear-all-filters">Clear All Filters</button>
+                        <button class="btn-primary" id="apply-filters-btn">Apply Filters</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="new-arrivals-section" class="new-arrivals" style="display: none;">
+        <div class="container">
+            <h2 style="margin-bottom: 30px; border-left: 4px solid var(--accent); padding-left: 15px;">New Arrivals</h2>
+            <div class="slider-container" style="display: flex; align-items: center;">
+                <button class="addon-btn" id="slider-prev" style="margin-right: 15px;"><i
+                        class="fas fa-chevron-left"></i></button>
+                <div class="arrivals-slider" id="arrivals-slider"
+                    style="display: flex; gap: 20px; overflow-x: auto; padding: 10px 0; scroll-behavior: smooth; -ms-overflow-style: none; scrollbar-width: none;">
+                    <!-- New arrivals injected here -->
+                </div>
+                <button class="addon-btn" id="slider-next" style="margin-left: 15px;"><i
+                        class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <main class="results-section">
+        <div class="container">
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <h3 id="results-count">Searching collection...</h3>
+                    <div id="filter-toggle-mobile" class="mobile-only">
+                        <button class="btn-outline" id="toggle-filters-mobile"><i class="fas fa-filter"></i>
+                            Filters</button>
+                    </div>
+                </div>
+
+                <div id="active-filters" class="active-filters-container"
+                    style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+            </div>
+
+            <div id="loading" style="text-align: center; padding: 50px; display: none;">
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 40px; color: var(--accent);"></i>
+                <p style="margin-top: 15px; color: var(--text-muted);">Fetching books...</p>
+            </div>
+
+            <div class="results-grid" id="books-grid"></div>
+
+            <div id="pagination" class="pagination"></div>
+        </div>
+    </main>
+
+    <div id="book-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button onclick="closeBookModal()"
+                style="position: absolute; top: 20px; right: 20px; background: none; border: none; color: white; font-size: 24px; cursor: pointer; z-index: 10;">&times;</button>
+            <div id="modal-body" style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 300px; padding: 40px; background: #000;">
+                    <img id="modal-cover" src=""
+                        style="width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <div id="modal-availability" class="status-badge"
+                        style="position: static; display: inline-block; margin-top: 20px;"></div>
+                </div>
+                <div style="flex: 1.5; min-width: 300px; padding: 40px;">
+                    <h2 id="modal-title" style="font-size: 32px; margin-bottom: 10px;"></h2>
+                    <p id="modal-author" style="color: var(--accent); font-weight: 700; margin-bottom: 30px;"></p>
+
+                    <div class="meta-grid"
+                        style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 30px;">
+                        <div class="meta-item">
+                            <label
+                                style="display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Category</label>
+                            <span id="modal-category" style="font-weight: 600;"></span>
+                        </div>
+                        <div class="meta-item">
+                            <label
+                                style="display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Language</label>
+                            <span id="modal-language" style="font-weight: 600;"></span>
+                        </div>
+                        <div class="meta-item">
+                            <label
+                                style="display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase;">ISBN</label>
+                            <span id="modal-isbn" style="font-weight: 600;"></span>
+                        </div>
+                        <div class="meta-item">
+                            <label
+                                style="display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Accession
+                                No</label>
+                            <span id="modal-acc" style="font-weight: 600;"></span>
+                        </div>
+                        <div class="meta-item">
+                            <label
+                                style="display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Pub.
+                                Year</label>
+                            <span id="modal-year" style="font-weight: 600;"></span>
+                        </div>
+                        <div class="meta-item">
+                            <label
+                                style="display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Publisher</label>
+                            <span id="modal-publisher" style="font-weight: 600;"></span>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px;">
+                        <h4 style="margin-bottom: 10px; color: var(--accent);">Description</h4>
+                        <p id="modal-desc"
+                            style="color: var(--text-muted); font-size: 14px; line-height: 1.7; max-height: 200px; overflow-y: auto;">
+                        </p>
+                    </div>
+
+                    <div style="margin-top: 40px; display: flex; gap: 15px;">
+                        <button id="modal-reserve-btn" class="btn-primary" style="flex: 1; display: none;">Reserve
+                            Book</button>
+                        <button onclick="closeBookModal()" class="btn-outline" style="flex: 1;">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="mic-indicator" class="mic-indicator">
+        <i class="fas fa-microphone"></i> <span>Listening...</span>
+    </div>
+
+    <footer
+        style="background: var(--surface); padding: 50px 0; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 100px;">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px;">
+                <div>
+                    <h4 style="color: white; margin-bottom: 20px;">Al Marakish Library</h4>
+                    <p style="color: var(--text-muted); font-size: 14px;">Providing extensive knowledge resources for
+                        students and researchers at Darul Huda Karnataka Centre.</p>
+                </div>
+                <div>
+                    <h4 style="color: white; margin-bottom: 20px;">Quick Links</h4>
+                    <ul style="list-style: none; color: var(--text-muted); font-size: 14px;">
+                        <li style="margin-bottom: 10px;"><a href="/"
+                                style="color: inherit; text-decoration: none;">Library Home</a></li>
+                        <li style="margin-bottom: 10px;"><a href="/student/login.html"
+                                style="color: inherit; text-decoration: none;">Student Portal</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                style="margin-top: 50px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; text-align: center; font-size: 12px; color: var(--text-muted);">
+                &copy; 2026 Al Marakish Library Management System. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/opac/assets/opac.js"></script>
+</body>
+
+</html>

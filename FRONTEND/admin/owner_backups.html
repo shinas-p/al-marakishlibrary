@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage & Maintenance | Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/owner-pages.css">
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">
+                    <i class="fas fa-database crown-icon"></i> Data Management
+                </h1>
+                <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">
+                    Perform backups, optimize database tables, and purge historical logs.
+                </p>
+            </div>
+            <button class="btn btn-success" onclick="createBackup()">
+                <i class="fas fa-cloud-arrow-up"></i> Snapshot Now
+            </button>
+        </div>
+
+        <div class="owner-table-card">
+            <div style="padding: 20px; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border);">
+                <h3 style="font-size: 16px;"><i class="fas fa-history"></i> Recent Backups</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Archive Name</th>
+                        <th>Format</th>
+                        <th>File Size</th>
+                        <th>Created By</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody id="backupsTableBody">
+                    <tr>
+                        <td colspan="5" style="text-align:center; padding: 60px;">
+                            <i class="fas fa-circle-notch fa-spin fa-2x" style="color: var(--success);"></i>
+                            <div style="margin-top:20px;">Scanning backup registry...</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="page-header" style="margin-top: 70px;">
+            <div>
+                <h1 class="page-title">
+                    <i class="fas fa-screwdriver-wrench"
+                        style="color: var(--primary); font-size: 0.8em; filter: drop-shadow(0 0 10px var(--primary-glow));"></i>
+                    Maintenance Suite
+                </h1>
+            </div>
+        </div>
+
+        <div class="settings-grid">
+            <div class="setting-card">
+                <h3><i class="fas fa-wand-magic-sparkles"></i> DB Optimization</h3>
+                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 25px; line-height: 1.6;">
+                    Reindexes database tables and reclaims unused space for peak performance.
+                </p>
+                <button class="btn btn-primary" onclick="optimizeDatabase()"
+                    style="width: 100%; justify-content: center;">
+                    Optimize Registry
+                </button>
+            </div>
+            <div class="setting-card">
+                <h3><i class="fas fa-dumpster-fire"></i> Log Pruning</h3>
+                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 25px; line-height: 1.6;">
+                    Wipe historical activity logs to maintain system speed and reduce storage.
+                </p>
+                <button class="btn btn-danger" onclick="cleanLogs()" style="width: 100%; justify-content: center;">
+                    Purge System Logs
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script src="/assets/js/owner-panel.js"></script>
+</body>
+
+</html>

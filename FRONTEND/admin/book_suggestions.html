@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Suggestions | Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --primary-glow: rgba(156, 77, 255, 0.4);
+            --bg-dark: #080c14;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(156, 77, 255, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.05) 0, transparent 50%);
+            color: white;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-title h1 i {
+            color: var(--primary);
+        }
+
+        .filter-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .filter-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px var(--primary-glow);
+        }
+
+        .suggestion-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 24px;
+        }
+
+        .suggestion-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+
+        .suggestion-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .status-pill {
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: rgba(156, 77, 255, 0.15);
+            color: #9c4dff;
+        }
+
+        .status-approved {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .suggestion-content h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .suggestion-content .author {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .info-box {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 16px;
+            margin-bottom: 15px;
+        }
+
+        .info-box label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            font-weight: 800;
+        }
+
+        .info-box p {
+            font-size: 14px;
+        }
+
+        .card-footer {
+            margin-top: 20px;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .student-stub {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .btn-reject:hover {
+            background: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 80px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .suggestion-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div class="header-title">
+                <h1><i class="fas fa-lightbulb"></i> Book Suggestions</h1>
+                <p style="color: var(--text-muted); margin-top: 5px;">Review books recommended by students.</p>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <button class="filter-btn active" onclick="loadSuggestions('', this)">All</button>
+            <button class="filter-btn" onclick="loadSuggestions('Pending', this)">Pending</button>
+            <button class="filter-btn" onclick="loadSuggestions('Approved', this)">Approved</button>
+            <button class="filter-btn" onclick="loadSuggestions('Rejected', this)">Rejected</button>
+        </div>
+
+        <div id="suggestionList" class="suggestion-grid">
+            <div class="loading-state">
+                <i class="fas fa-circle-notch fa-spin fa-3x"></i>
+                <p style="margin-top: 15px;">Loading suggestions...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        protectRoute('assistant');
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSidebar();
+            loadSuggestions();
+        });
+
+        async function loadSidebar() {
+            try {
+                const sidebarData = await fetch('/admin/sidebar.html').then(r => r.text());
+                document.getElementById('sidebar-container').innerHTML = sidebarData;
+                if (typeof initSidebar === 'function') initSidebar();
+            } catch (err) { }
+        }
+
+        async function loadSuggestions(status = '', btn = null) {
+            if (btn) {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+
+            const list = document.getElementById('suggestionList');
+            list.innerHTML = `<div class="loading-state"><i class="fas fa-circle-notch fa-spin"></i><p>Loading...</p></div>`;
+
+            try {
+                const response = await apiRequest(`/admin/book-suggestions?status=${status}`);
+                if (response.success) {
+                    if (response.suggestions.length === 0) {
+                        list.innerHTML = `<div class="loading-state"><i class="fas fa-inbox fa-3x" style="opacity: 0.2;"></i><p>No suggestions found.</p></div>`;
+                        return;
+                    }
+
+                    list.innerHTML = response.suggestions.map(s => `
+                        <div class="suggestion-card">
+                            <div class="card-header">
+                                <span class="status-pill status-${s.status.toLowerCase()}">${s.status}</span>
+                                <span style="font-size: 11px; color: var(--text-muted);">${new Date(s.created_at).toLocaleDateString()}</span>
+                            </div>
+                            
+                            <div class="suggestion-content">
+                                <h3>${s.title}</h3>
+                                <p class="author">by ${s.author || 'Unknown'}</p>
+                                
+                                <div class="info-box">
+                                    <label>Reason for Suggestion</label>
+                                    <p>${s.reason || 'No reason provided.'}</p>
+                                </div>
+                                
+                                ${s.description ? `
+                                <div class="info-box">
+                                    <label>Description</label>
+                                    <p>${s.description}</p>
+                                </div>
+                                ` : ''}
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="student-stub">
+                                    ${s.profile_photo ?
+                            `<img src="/uploads/student_photos/${s.profile_photo}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">` :
+                            `<div style="width:32px;height:32px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;">${s.full_name.charAt(0)}</div>`
+                        }
+                                    <div>
+                                        <div style="font-size: 13px; font-weight: 700; line-height: 1.2;">${s.full_name}</div>
+                                        <div style="font-size: 11px; color: var(--text-muted);">AD: ${s.ad_no}</div>
+                                    </div>
+                                </div>
+                                
+                                ${s.status === 'Pending' && isAdmin() ? `
+                                <div class="actions">
+                                    <button class="btn-action btn-approve" onclick="updateStatus(${s.id}, 'Approved')" title="Approve">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn-action btn-reject" onclick="updateStatus(${s.id}, 'Rejected')" title="Reject">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                list.innerHTML = `<div class="loading-state"><p style="color: var(--danger);">Failed to load suggestions.</p></div>`;
+            }
+        }
+
+        async function updateStatus(id, status) {
+            const notes = await showModal({
+                title: `${status} Suggestion`,
+                message: `Add admin notes for this book suggestion. This helps track reasoning for ${status.toLowerCase()} status.`,
+                placeholder: 'e.g. Book already in library / High demand'
+            });
+
+            if (notes === null) return;
+
+            try {
+                const response = await apiRequest(`/admin/book-suggestions/${id}/status`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ status, admin_notes: notes })
+                });
+                if (response.success) {
+                    showToast(`Suggestion marked as ${status}`, 'success');
+                    loadSuggestions(document.querySelector('.filter-btn.active').textContent.trim());
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        function isAdmin() {
+            const user = getUser();
+            return user && (user.role === 'admin' || user.role === 'owner');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Circulation | Al Marakish Library</title>
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        :root {
+            --neon-blue: #3b82f6;
+            --neon-purple: #8b5cf6;
+            --glass-bg: rgba(30, 41, 59, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shine: rgba(255, 255, 255, 0.03);
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #080c14;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(156, 77, 255, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        /* --- Header --- */
+        .page-title-section {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .main-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(40px, 8vw, 84px);
+            font-weight: 900;
+            background: linear-gradient(135deg, white 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.3));
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 18px;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        /* --- Scan Cards --- */
+        .scan-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .scan-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 60px 40px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .scan-card.active {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 50px rgba(139, 92, 246, 0.2), inset 0 0 30px rgba(139, 92, 246, 0.1);
+            background: rgba(30, 41, 59, 0.5);
+            transform: translateY(-5px);
+        }
+
+        .scan-card.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+        }
+
+        /* --- Circular Indicators --- */
+        .circle-indicator {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.05);
+            margin: 0 auto 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            color: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .active .circle-indicator {
+            border-color: var(--neon-purple);
+            color: white;
+            box-shadow: 0 0 60px rgba(139, 92, 246, 0.4), inset 0 0 30px rgba(139, 92, 246, 0.2);
+            text-shadow: 0 0 20px rgba(139, 92, 246, 0.8);
+        }
+
+        .scan-label {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #64748b;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .active .scan-label {
+            color: white;
+        }
+
+        .scan-label i {
+            font-size: 32px;
+            color: #475569;
+            transition: 0.3s;
+        }
+
+        .active .scan-label i {
+            color: var(--neon-blue);
+            animation: bounce 2s infinite;
+        }
+
+        /* --- Logic/Instructions Box --- */
+        .instructions-box {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .instructions-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .instructions-title i {
+            color: var(--neon-blue);
+            font-size: 22px;
+        }
+
+        .instructions-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .instructions-list li {
+            color: #94a3b8;
+            font-size: 15px;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .instructions-list li::before {
+            content: '\f058';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--neon-purple);
+        }
+
+        /* --- Result Overlays --- */
+        .result-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1e293b;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            animation: zoomIn 0.3s ease-out;
+            z-index: 10;
+        }
+
+        .avatar-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid var(--neon-blue);
+            object-fit: cover;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .book-preview {
+            width: 120px;
+            height: 180px;
+            border-radius: 12px;
+            border: 3px solid var(--neon-purple);
+            object-fit: cover;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+        }
+
+        /* --- Status Pill --- */
+        .system-pill {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .system-pill span {
+            width: 8px;
+            height: 8px;
+            background: #34d399;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #34d399;
+            animation: pulse 2s infinite;
+        }
+
+        /* Hidden Input */
+        #scanner-input {
+            position: fixed;
+            top: -100px;
+            left: -100px;
+            opacity: 0;
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .shake-effect {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .scan-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #sidebar-container {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body onclick="document.getElementById('scanner-input').focus()">
+
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="wrapper">
+            <input type="text" id="scanner-input" autofocus autocomplete="off">
+
+            <div class="page-title-section">
+                <h1 id="main-title" class="main-title">Check Out</h1>
+                <p class="subtitle">Secure Barcode Scanning • Auto-Detect Mode Active</p>
+            </div>
+
+            <div class="scan-grid">
+                <!-- Student Card -->
+                <div id="card-student" class="scan-card active">
+                    <div class="circle-indicator">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="scan-label">
+                        <i class="fas fa-qrcode"></i>
+                        Scan Student ID
+                    </div>
+                    <div id="data-student" class="result-overlay">
+                        <img id="st-img" class="avatar-preview" src="">
+                        <h2 id="st-name" style="font-size: 24px; font-weight: 800; margin-bottom: 5px;">--</h2>
+                        <p id="st-ad" style="color: #94a3b8; font-weight: 500;">--</p>
+                    </div>
+                </div>
+
+                <!-- Book Card -->
+                <div id="card-book" class="scan-card">
+                    <div class="circle-indicator">
+                        <i class="fas fa-book-reader"></i>
+                    </div>
+                    <div class="scan-label">
+                        <i class="fas fa-barcode"></i>
+                        Scan Book Barcode
+                    </div>
+                    <div id="data-book" class="result-overlay">
+                        <img id="bk-img" class="book-preview" src="">
+                        <h2 id="bk-title" style="font-size: 22px; font-weight: 800; margin-bottom: 5px;">--</h2>
+                        <p id="bk-acc" style="color: #94a3b8; font-weight: 500;">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions-box">
+                <div class="instructions-title">
+                    <i class="fas fa-bolt-lightning"></i> Smart Kiosk Operations
+                </div>
+                <ul class="instructions-list">
+                    <li><strong>Identify:</strong> Scan Student ID to authenticate account</li>
+                    <li><strong>Process:</strong> Scan Book to Issue (7 days) or Renew</li>
+                    <li><strong>Check-In:</strong> Scan the same book twice to return instantly</li>
+                    <li><strong>Safety:</strong> System resets sessions after 15s of inactivity</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="system-pill">
+            <span></span> SYSTEM ACTIVE
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        // Protect route
+        protectRoute('assistant');
+
+        let currentStudent = null;
+        let lastBookId = null;
+        let mode = 'STUDENT';
+        let resetTimer = null;
+
+        const input = document.getElementById('scanner-input');
+        const title = document.getElementById('main-title');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSidebar();
+            input.focus();
+
+            // Re-focus on input anytime the page is clicked
+            document.body.addEventListener('click', () => {
+                input.focus();
+            });
+
+            input.addEventListener('keypress', async (e) => {
+                if (e.key === 'Enter') {
+                    const code = input.value.trim();
+                    input.value = '';
+                    if (!code) return;
+
+                    if (mode === 'STUDENT') await handleStudent(code);
+                    else await handleBook(code);
+                }
+            });
+        });
+
+        async function loadSidebar() {
+            try {
+                const sidebarData = await fetch('/admin/sidebar.html').then(r => r.text());
+                document.getElementById('sidebar-container').innerHTML = sidebarData;
+                if (typeof initSidebar === 'function') initSidebar();
+            } catch (err) {
+                console.warn('Sidebar failed to load locally, continuing with main UI.');
+            }
+        }
+
+        async function handleStudent(barcode) {
+            try {
+                const data = await apiRequest(`/circulation/student/${barcode}`);
+                if (data.success) {
+                    currentStudent = data.student;
+
+                    document.getElementById('st-img').src = currentStudent.photo_url;
+                    document.getElementById('st-name').textContent = currentStudent.name;
+                    document.getElementById('st-ad').textContent = `ID: ${currentStudent.admission_no} • ${currentStudent.class}`;
+
+                    document.getElementById('card-student').classList.remove('active');
+                    document.getElementById('data-student').style.display = 'flex';
+
+                    mode = 'BOOK';
+                    document.getElementById('card-book').classList.add('active');
+                    title.textContent = 'READY FOR BOOKS';
+                    showToast('Student Identified', 'success');
+                    resetTimeout();
+                }
+            } catch (err) {
+                showToast(err.message || 'Student not found', 'error');
+                shake(document.getElementById('card-student'));
+            }
+        }
+
+        async function handleBook(barcode) {
+            if (!currentStudent) return;
+            resetTimeout();
+
+            try {
+                const data = await apiRequest(`/circulation/book/${barcode}?student_id=${currentStudent.id}`);
+                if (data.success) {
+                    const book = data.book;
+                    const action = data.suggestedAction;
+
+                    document.getElementById('bk-img').src = book.cover_url;
+                    document.getElementById('bk-title').textContent = book.title;
+                    document.getElementById('bk-acc').textContent = `Acc: ${book.accession_no}`;
+                    document.getElementById('data-book').style.display = 'flex';
+
+                    // TWO-SCAN CONFIRMATION LOGIC
+                    if (lastBookId === book.id) {
+                        // Scan 2: Execute
+                        let finalAction = action;
+                        if (action === 'BLOCK') {
+                            // If blocked because someone else has it, second scan = RETURN
+                            if (book.message && book.message.includes('already issued to')) {
+                                finalAction = 'CHECKIN';
+                            } else {
+                                showToast(book.message, 'error');
+                                shake(document.getElementById('card-book'));
+                                return;
+                            }
+                        }
+
+                        await runAction(finalAction, book, data.currentTransaction?.id);
+                        lastBookId = null; // Clear so we don't loop
+                    } else {
+                        // Scan 1: Show Info
+                        lastBookId = book.id;
+
+                        // Update UI to show what scan 2 will do
+                        if (action === 'CHECKOUT') {
+                            showToast('Scan again to CONFIRM ISSUE', 'info');
+                        } else if (action === 'RENEW') {
+                            showToast('Scan again to CONFIRM RENEWAL', 'info');
+                        } else if (action === 'BLOCK' && book.message.includes('already issued to')) {
+                            showToast('Book belongs to someone else. Scan again to RETURN.', 'warning');
+                        } else if (action === 'BLOCK') {
+                            showToast(book.message, 'error');
+                            shake(document.getElementById('card-book'));
+                        }
+                    }
+                }
+            } catch (err) {
+                showToast(err.message || 'Book not found', 'error');
+                shake(document.getElementById('card-book'));
+            }
+        }
+
+        async function runAction(action, book, txId) {
+            try {
+                const res = await apiRequest('/circulation/process', {
+                    method: 'POST',
+                    body: {
+                        action,
+                        student_id: currentStudent.id,
+                        book_id: book.id,
+                        transaction_id: txId
+                    }
+                });
+
+                if (res.success) {
+                    showToast(res.message, 'success');
+                    title.textContent = action === 'CHECKIN' ? 'RETURNED' : (action === 'RENEW' ? 'RENEWED' : 'ISSUED');
+
+                    setTimeout(() => {
+                        document.getElementById('data-book').style.display = 'none';
+                        title.textContent = 'READY FOR BOOKS';
+                    }, 4000);
+                }
+            } catch (err) {
+                const msg = err.message;
+                if (msg.toLowerCase().includes('limit') || msg.toLowerCase().includes('2 issued books')) {
+                    showToast('⚠️ LIMIT REACHED: Student cannot borrow more than 2 books.', 'warning');
+                } else {
+                    showToast(msg || 'Operation failed', 'error');
+                }
+                shake(document.getElementById('card-book'));
+            }
+        }
+
+        function resetTimeout() {
+            if (resetTimer) clearTimeout(resetTimer);
+            resetTimer = setTimeout(() => {
+                resetSession();
+            }, 15000);
+        }
+
+        function resetSession() {
+            currentStudent = null;
+            lastBookId = null;
+            mode = 'STUDENT';
+            title.textContent = 'Check Out';
+            document.getElementById('data-student').style.display = 'none';
+            document.getElementById('data-book').style.display = 'none';
+            document.getElementById('card-student').classList.add('active');
+            document.getElementById('card-book').classList.remove('active');
+            showToast('Session Reset due to inactivity', 'info');
+        }
+
+        function shake(el) {
+            el.classList.add('shake-anime');
+            setTimeout(() => el.classList.remove('shake-anime'), 500);
+        }
+    </script>
+
+    <style>
+        .shake-anime {
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+    </style>
+</body>
+
+</html>

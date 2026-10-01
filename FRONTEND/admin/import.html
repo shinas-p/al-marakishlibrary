@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import & Add Data - Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/modal.css">
+    <link rel="stylesheet" href="/assets/toast.css">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --bg-dark: #0b1120;
+            /* Darker navy for better contrast */
+            --card-bg: #1e293b;
+            /* Slate-800 for card bg */
+            --border: rgba(255, 255, 255, 0.03);
+            --green: #10b981;
+            --blue: #3b82f6;
+            --teal: #06b6d4;
+            --orange: #f59e0b;
+            --red: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: white;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 50px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            background: #111827;
+            border-radius: 12px;
+            padding: 24px 35px;
+            margin-bottom: 45px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .page-header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-header h1 span:first-child {
+            color: #bd85ff;
+        }
+
+        .page-header h1 span:last-child {
+            color: var(--orange);
+        }
+
+        .import-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1450px;
+        }
+
+        .option-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 50px 20px;
+            text-align: center;
+            border: 1px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            background: #233149;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .option-card i {
+            font-size: 64px;
+            margin-bottom: 25px;
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.3));
+        }
+
+        .option-card h3 {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        /* CARD COLOR THEMES */
+        .color-green i {
+            color: #10b981;
+        }
+
+        .grid-green h3 {
+            color: #10b981;
+            font-weight: 500;
+            font-size: 15px;
+            opacity: 0.8;
+        }
+
+        .color-teal i {
+            color: #06b6d4;
+        }
+
+        .color-blue i {
+            color: #3b82f6;
+        }
+
+        .grid-blue h3 {
+            color: #3b82f6;
+            font-weight: 500;
+            font-size: 15px;
+            opacity: 0.8;
+        }
+
+        .color-orange i {
+            color: var(--orange);
+        }
+
+        .color-red i {
+            color: var(--red);
+        }
+
+        /* Responsive */
+        @media (max-width: 1300px) {
+            .import-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                margin-left: 0;
+                padding: 30px;
+            }
+
+            .import-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .file-input {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1>
+                <span>Import &</span>
+                <span>Add Data</span>
+            </h1>
+        </div>
+
+        <div class="import-grid">
+            <!-- ROW 1: Books -->
+            <div class="option-card color-green" onclick="triggerImport('books')">
+                <i class="fas fa-file-excel"></i>
+                <h3>Import Books</h3>
+                <input type="file" id="import-books" class="file-input" accept=".xlsx"
+                    onchange="handleFileSelect(this, 'books')">
+            </div>
+
+            <a href="excel_grid_status.html" class="option-card color-green grid-green">
+                <i class="fas fa-table-list"></i>
+                <h3>Excel Book Grid Add</h3>
+            </a>
+
+            <a href="/api/admin/import/sample/books" class="option-card color-teal">
+                <i class="fas fa-download"></i>
+                <h3>Sample Books Format</h3>
+            </a>
+
+            <!-- ROW 2: Users -->
+            <div class="option-card color-blue" onclick="triggerImport('users')">
+                <i class="fas fa-file-excel"></i>
+                <h3>Import Users</h3>
+                <input type="file" id="import-users" class="file-input" accept=".xlsx"
+                    onchange="handleFileSelect(this, 'users')">
+            </div>
+
+            <a href="excel_user_grid_status.html" class="option-card color-blue grid-blue">
+                <i class="fas fa-table-list"></i>
+                <h3>Excel User Grid Add</h3>
+            </a>
+
+            <a href="/api/admin/import/sample/users" class="option-card color-blue">
+                <i class="fas fa-download"></i>
+                <h3>Sample Users Format</h3>
+            </a>
+
+            <!-- ROW 3: Manual -->
+            <a href="add_book.html" class="option-card color-orange">
+                <i class="fas fa-book-bookmark"></i>
+                <h3>Add Book</h3>
+            </a>
+
+            <a href="add_student.html" class="option-card color-red">
+                <i class="fas fa-user-plus"></i>
+                <h3>Add Student</h3>
+            </a>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script src="/assets/modal.js"></script>
+    <script src="/assets/toast.js"></script>
+    <script>
+        fetch('/admin/sidebar.html').then(r => r.text()).then(html => {
+            document.getElementById('sidebar-container').innerHTML = html;
+            if (typeof initSidebar === 'function') initSidebar();
+        });
+
+        protectRoute();
+
+        function triggerImport(type) {
+            document.getElementById(`import-${type}`).click();
+        }
+
+        async function handleFileSelect(input, type) {
+            const file = input.files[0];
+            if (!file) return;
+
+            showToast('info', `Importing ${type}...`);
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const res = await uploadFile(`/admin/import/${type}`, formData);
+
+                if (res.success) {
+                    const totalProcessed = res.inserted + res.skipped + (res.failed ? res.failed.length : 0);
+                    const failedCount = res.failed ? res.failed.filter(f => f.status === 'failed').length : 0;
+                    const skippedCount = res.skipped || (res.failed ? res.failed.filter(f => f.status === 'skipped').length : 0);
+
+                    let summaryMessage = `
+                        <div style="text-align: left; margin-top: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border-left: 4px solid #10b981;">
+                                <span style="font-weight: 600; color: #10b981;">✅ Successfully Imported:</span>
+                                <span style="font-weight: 800; font-size: 1.1em;">${res.inserted}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 10px; background: rgba(245, 158, 11, 0.1); border-radius: 8px; border-left: 4px solid #f59e0b;">
+                                <span style="font-weight: 600; color: #f59e0b;">⚠️ Skipped (Duplicates/Incomplete):</span>
+                                <span style="font-weight: 800; font-size: 1.1em;">${skippedCount}</span>
+                            </div>
+                            ${failedCount > 0 ? `
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 10px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; border-left: 4px solid #ef4444;">
+                                <span style="font-weight: 600; color: #ef4444;">❌ Errors (Failed to process):</span>
+                                <span style="font-weight: 800; font-size: 1.1em;">${failedCount}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                    `;
+
+                    if (res.failed && res.failed.length > 0) {
+                        summaryMessage += `
+                            <div style="margin-top: 20px; max-height: 250px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; background: rgba(0,0,0,0.2);">
+                                <table style="width: 100%; font-size: 12px; border-collapse: collapse; text-align: left;">
+                                    <thead style="background: rgba(255,255,255,0.05); position: sticky; top: 0;">
+                                        <tr>
+                                            <th style="padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">Row</th>
+                                            <th style="padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">Identifier</th>
+                                            <th style="padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">Reason</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${res.failed.map(f => `
+                                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                                <td style="padding: 8px 12px; color: #94a3b8;">${f.row}</td>
+                                                <td style="padding: 8px 12px; font-weight: 600;">${f.identifier}</td>
+                                                <td style="padding: 8px 12px; color: ${f.status === 'skipped' ? '#f59e0b' : '#ef4444'}">${f.reason}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+                    }
+
+                    confirmInfo({
+                        title: 'Import Summary',
+                        subtitle: `${type.charAt(0).toUpperCase() + type.slice(1)} Import Results`,
+                        message: `Processed ${totalProcessed} rows from the Excel file.`,
+                        details: {
+                            'File Name': file.name,
+                            'Category': type
+                        },
+                        detailsHtml: summaryMessage, // I'll update modal.js to support detailsHtml for custom content
+                        confirmText: 'Great, Thanks!'
+                    });
+
+                    showToast('success', `Import completed!`);
+                } else {
+                    throw new Error(res.error || 'Import failed');
+                }
+            } catch (err) {
+                showToast('error', err.message);
+            } finally {
+                input.value = '';
+            }
+        }
+    </script>
+</body>
+
+</html>

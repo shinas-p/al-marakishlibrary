@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Print Labels - Al Marakish Library</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --secondary: #f59e0b;
+            --success: #10b981;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --text-muted: #94a3b8;
+            --input-bg: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: white;
+            line-height: 1.6;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 32px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+        }
+
+        .config-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .config-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-box {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .stat-unit {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-left: 2px;
+        }
+
+        /* Preset Section */
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 24px;
+        }
+
+        .preset-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .preset-card:hover {
+            border-color: var(--primary);
+            background: rgba(156, 77, 255, 0.1);
+        }
+
+        .preset-card.active {
+            border-color: var(--primary);
+            background: rgba(156, 77, 255, 0.2);
+            box-shadow: 0 0 15px rgba(156, 77, 255, 0.2);
+        }
+
+        .preset-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--input-bg);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .preset-info h4 {
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .preset-info p {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Content Selector */
+        .content-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--input-bg);
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .checkbox-item:hover {
+            border-color: var(--primary);
+        }
+
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+
+        .prefix-box {
+            background: rgba(245, 158, 11, 0.05);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        /* Books Section */
+        .books-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .table-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-control {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(0, 0, 0, 0.2);
+            text-align: left;
+            padding: 15px;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .acc-code {
+            font-family: monospace;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--secondary);
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <form id="printForm">
+            <div class="page-header">
+                <div class="page-title">
+                    <i class="fas fa-print" style="color: var(--primary);"></i>
+                    Select Books for Label Printing
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='print_settings.html'">
+                    <i class="fas fa-cog"></i> Advanced Settings
+                </button>
+            </div>
+
+            <!-- Current Config Summary -->
+            <div class="config-card">
+                <div class="card-title">
+                    <span><i class="fas fa-sliders-h"></i> Current Label Configuration</span>
+                    <span id="pageSizeBadge"
+                        style="background: rgba(156, 77, 255, 0.1); color: var(--primary); padding: 4px 12px; border-radius: 50px; font-size: 11px;">A4
+                        Paper</span>
+                </div>
+                <div id="configGrid" class="config-grid">
+                    <!-- Dynamic Loading -->
+                    <div style="grid-column: 1 / -1; text-align: center;">Loading settings...</div>
+                </div>
+                <div style="margin-top: 15px; font-size: 12px; color: var(--primary); cursor: pointer;"
+                    onclick="window.location.href='print_settings.html'">
+                    <i class="fas fa-edit"></i> Adjust All Parameters
+                </div>
+            </div>
+
+            <!-- Preset Presets -->
+            <div class="preset-grid">
+                <div class="preset-card" onclick="applyPreset('simple')">
+                    <div class="preset-icon"><i class="fas fa-tag"></i></div>
+                    <div class="preset-info">
+                        <h4>Simple Library</h4>
+                        <p>Library • Barcode • ACC NO</p>
+                    </div>
+                </div>
+                <div class="preset-card" onclick="applyPreset('dewey')">
+                    <div class="preset-icon"><i class="fas fa-book"></i></div>
+                    <div class="preset-info">
+                        <h4>Dewey Class</h4>
+                        <p>Prefix/Lang • Class • Author • ACC</p>
+                    </div>
+                </div>
+                <div class="preset-card" onclick="applyPreset('advanced')">
+                    <div class="preset-icon"><i class="fas fa-file-invoice"></i></div>
+                    <div class="preset-info">
+                        <h4>Advanced Full</h4>
+                        <p>Lib/Lang • Call No • Author • ACC</p>
+                    </div>
+                </div>
+                <div class="preset-card" onclick="applyPreset('isbn')">
+                    <div class="preset-icon"><i class="fas fa-barcode"></i></div>
+                    <div class="preset-info">
+                        <h4>ISBN & Pub</h4>
+                        <p>Library • Title • Author • ISBN • ACC</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Label Content Selection -->
+            <div class="content-card">
+                <div class="card-title"><i class="fas fa-check-square"></i> Label Content</div>
+                <div class="content-grid" id="contentSelectors">
+                    <label class="checkbox-item"><input type="checkbox" name="show_lib_name"> Library Name</label>
+                    <label class="checkbox-item"><input type="checkbox" name="show_call_no"> Call Number</label>
+                    <label class="checkbox-item"><input type="checkbox" name="show_title"> Title</label>
+                    <label class="checkbox-item"><input type="checkbox" name="show_author"> Author</label>
+                    <label class="checkbox-item"><input type="checkbox" name="show_barcode"> Barcode</label>
+                    <label class="checkbox-item"><input type="checkbox" name="show_acc_no"> Accession Number</label>
+                    <label class="checkbox-item"><input type="checkbox" name="show_isbn"> ISBN</label>
+                    <label class="checkbox-item"><input type="checkbox" name="show_publisher"> Publisher</label>
+                </div>
+
+                <div class="prefix-box">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-weight: 600; font-size: 14px; color: var(--secondary);">Call Number
+                            Prefix:</span>
+                        <input type="text" name="call_prefix" class="form-control" placeholder="e.g., AML, LIB"
+                            style="width: 200px;">
+                        <span style="font-size: 12px; color: var(--text-muted);"><i class="fas fa-info-circle"></i>
+                            Added before call number (e.g., "AML/UR")</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Books Table -->
+            <div class="books-card">
+                <div class="table-toolbar">
+                    <div class="toolbar-group">
+                        <i class="fas fa-sort" style="color: var(--primary);"></i>
+                        <select id="sortField" class="form-control">
+                            <option value="accession_number">Acc. Number</option>
+                            <option value="title">Title</option>
+                        </select>
+                        <select id="sortOrder" class="form-control">
+                            <option value="ASC">A-Z</option>
+                            <option value="DESC">Z-A</option>
+                        </select>
+                        <button type="button" class="btn" onclick="loadBooks()">Apply</button>
+                    </div>
+
+                    <div class="toolbar-group">
+                        <i class="fas fa-map-marker-alt" style="color: var(--secondary);"></i>
+                        <span style="font-size: 14px;">Range:</span>
+                        <input type="number" id="rangeFrom" class="form-control" placeholder="1" style="width: 80px;">
+                        <span>to</span>
+                        <input type="number" id="rangeTo" class="form-control" placeholder="65" style="width: 80px;">
+                        <button type="button" class="btn btn-secondary" onclick="applyRange()">Apply</button>
+                    </div>
+
+                    <div class="toolbar-group">
+                        <button type="button" class="btn btn-success" onclick="toggleAll(true)"><i
+                                class="fas fa-check-double"></i> All</button>
+                        <button type="button" class="btn btn-danger" onclick="toggleAll(false)"><i
+                                class="fas fa-times"></i> None</button>
+                    </div>
+                </div>
+
+                <div style="max-height: 50vh; overflow-y: auto;">
+                    <table id="booksTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;">Select</th>
+                                <th>Accession No</th>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Classification</th>
+                            </tr>
+                        </thead>
+                        <tbody id="booksBody">
+                            <!-- Books Rendered Here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 30px; text-align: center;">
+                    <button type="button" class="btn btn-success" id="printBtn"
+                        style="padding: 15px 40px; font-size: 16px;" onclick="generateLabels()">
+                        <i class="fas fa-print"></i> Print Selected Labels
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        // Load Sidebar
+        fetch('/admin/sidebar.html').then(res => res.text()).then(data => {
+            document.getElementById('sidebar-container').innerHTML = data;
+            if (typeof initSidebar === 'function') initSidebar();
+        });
+
+        protectRoute();
+
+        let allBooks = [];
+        let currentSettings = {};
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadSettings();
+            await loadBooks();
+        });
+
+        async function loadSettings() {
+            try {
+                const res = await apiRequest('/admin/labels/books?limit=1');
+                if (res.success) {
+                    currentSettings = res.settings;
+                    renderConfigSummary(res.settings);
+                    mapSettingsToForm(res.settings);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderConfigSummary(s) {
+            const grid = document.getElementById('configGrid');
+            grid.innerHTML = `
+                <div class="stat-box"><span class="stat-label">Top Margin</span><span class="stat-value">${s.top_margin}</span><span class="stat-unit">MM</span></div>
+                <div class="stat-box"><span class="stat-label">Side Margin</span><span class="stat-value">${s.side_margin}</span><span class="stat-unit">MM</span></div>
+                <div class="stat-box"><span class="stat-label">Label Width</span><span class="stat-value">${s.label_width}</span><span class="stat-unit">MM</span></div>
+                <div class="stat-box"><span class="stat-label">Label Height</span><span class="stat-value">${s.label_height}</span><span class="stat-unit">MM</span></div>
+                <div class="stat-box"><span class="stat-label">Horizontal Pitch</span><span class="stat-value">${s.horizontal_pitch}</span><span class="stat-unit">MM</span></div>
+                <div class="stat-box"><span class="stat-label">Vertical Pitch</span><span class="stat-value">${s.vertical_pitch}</span><span class="stat-unit">MM</span></div>
+                <div class="stat-box"><span class="stat-label">Columns</span><span class="stat-value">${s.columns}</span><span class="stat-unit">FIXED</span></div>
+                <div class="stat-box"><span class="stat-label">Rows</span><span class="stat-value">${s.rows}</span><span class="stat-unit">FIXED</span></div>
+                <div class="stat-box" style="background: var(--primary);"><span class="stat-label" style="color:white;">Per Page</span><span class="stat-value">${s.columns * s.rows}</span><span class="stat-unit" style="color:white;">LABELS</span></div>
+            `;
+            document.getElementById('pageSizeBadge').textContent = `${s.page_size} Paper`;
+        }
+
+        function mapSettingsToForm(s) {
+            const form = document.getElementById('printForm');
+            const fields = [
+                'show_lib_name', 'show_call_no', 'show_title', 'show_author',
+                'show_barcode', 'show_acc_no', 'show_isbn', 'show_publisher'
+            ];
+            fields.forEach(f => {
+                const input = form.querySelector(`[name="${f}"]`);
+                if (input) input.checked = s[f];
+            });
+            form.querySelector('[name="call_prefix"]').value = s.call_prefix || 'AML';
+        }
+
+        async function loadBooks() {
+            try {
+                const sortField = document.getElementById('sortField').value;
+                const sortOrder = document.getElementById('sortOrder').value;
+                const res = await apiRequest(`/admin/books?limit=1000&sort=${sortField}&order=${sortOrder}`);
+                if (res.success) {
+                    allBooks = res.books;
+                    renderBooks(res.books);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderBooks(books) {
+            const tbody = document.getElementById('booksBody');
+            tbody.innerHTML = books.map(b => `
+                <tr onclick="toggleRow(this)">
+                    <td style="text-align:center;"><input type="checkbox" name="book_ids" value="${b.id}" onclick="event.stopPropagation()"></td>
+                    <td><span class="acc-code">${b.accession_number}</span></td>
+                    <td style="font-weight: 600;">${b.title}</td>
+                    <td>${b.author || '-'}</td>
+                    <td><span style="font-size: 13px; color: var(--text-muted);">${b.call_number || '-'}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function toggleRow(row) {
+            const cb = row.querySelector('input[type="checkbox"]');
+            cb.checked = !cb.checked;
+        }
+
+        function toggleAll(status) {
+            document.querySelectorAll('input[name="book_ids"]').forEach(cb => cb.checked = status);
+        }
+
+        function applyRange() {
+            const from = parseInt(document.getElementById('rangeFrom').value) || 1;
+            const to = parseInt(document.getElementById('rangeTo').value);
+            if (!to) return;
+
+            const checks = document.querySelectorAll('input[name="book_ids"]');
+            checks.forEach((cb, idx) => {
+                const pos = idx + 1;
+                cb.checked = (pos >= from && pos <= to);
+            });
+        }
+
+        async function generateLabels() {
+            const selected = Array.from(document.querySelectorAll('input[name="book_ids"]:checked')).map(cb => cb.value);
+            if (selected.length === 0) {
+                alert('Please select at least one book.');
+                return;
+            }
+
+            // Save current UI settings before redirecting
+            const form = document.getElementById('printForm');
+            const settings = {};
+            form.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                settings['label_' + cb.name] = cb.checked ? 'true' : 'false';
+            });
+            settings['label_call_prefix'] = form.querySelector('[name="call_prefix"]').value;
+
+            try {
+                await apiRequest('/admin/owner/settings/bulk', {
+                    method: 'PUT',
+                    body: { category: 'printing', settings: settings }
+                });
+
+                const url = `print_labels.html?ids=${selected.join(',')}`;
+                window.open(url, '_blank');
+            } catch (err) {
+                console.error(err);
+                alert('Failed to save settings. Opening labels with existing settings.');
+                window.open(`print_labels.html?ids=${selected.join(',')}`, '_blank');
+            }
+        }
+
+        function applyPreset(type) {
+            const form = document.getElementById('printForm');
+            const resets = {
+                'simple': ['show_lib_name', 'show_barcode', 'show_acc_no'],
+                'dewey': ['show_call_no', 'show_author', 'show_acc_no'],
+                'advanced': ['show_lib_name', 'show_call_no', 'show_author', 'show_acc_no'],
+                'isbn': ['show_lib_name', 'show_title', 'show_author', 'show_isbn', 'show_acc_no']
+            };
+
+            form.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            if (resets[type]) {
+                resets[type].forEach(f => {
+                    const cb = form.querySelector(`[name="${f}"]`);
+                    if (cb) cb.checked = true;
+                });
+            }
+
+            // Visual feedback
+            document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,407 @@
+<!-- Admin Sidebar - Matching Original PHP Design -->
+<div id="app-sidebar" class="app-sidebar">
+    <div class="sb-top">
+        <button id="mobileCloseSidebar" class="sb-close-btn" title="Close Sidebar">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="sb-brand" style="display: flex; align-items: center; gap: 12px; text-align: left;">
+            <img src="/logo1.png" alt="Logo" class="dynamic-library-logo"
+                style="width: 38px; height: 38px; object-fit: contain;">
+            <div>
+                <span class="sb-title dynamic-library-name"
+                    style="display: block; line-height: 1; text-align: center;">AL MARAKISH</span>
+                <small class="sb-sub" style="display: block; line-height: 2; text-align: center;">REFERENCE
+                    LIBRARY</small>
+            </div>
+        </div>
+    </div>
+
+    <nav class="sb-nav">
+        <!-- Owner Only Section -->
+        <!-- Owner Only Section -->
+        <div class="sb-dropdown" data-role="owner">
+            <a href="#" class="sb-item" onclick="toggleSubmenu(event, 'owner')"
+                style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white;">
+                <span class="sb-icon"><i class="fas fa-crown"></i></span>
+                <span class="sb-text">Owner Tools</span>
+                <span class="sb-arrow" id="arrow-owner" style="color: white;">▼</span>
+            </a>
+            <div class="sb-submenu" id="submenu-owner">
+                <a href="/admin/owner_settings.html" class="sb-subitem">System Settings</a>
+                <a href="/admin/owner_admins.html" class="sb-subitem">Admin Management</a>
+                <a href="/admin/owner_health.html" class="sb-subitem">System Health</a>
+                <a href="/admin/owner_backups.html" class="sb-subitem">Backups & Recovery</a>
+                <a href="/admin/activity_logs.html" class="sb-subitem">Activity Logs</a>
+            </div>
+        </div>
+
+        <a href="/admin/dashboard.html" class="sb-item" data-page="dashboard" data-role="assistant">
+            <span class="sb-icon"><i class="fas fa-th-large"></i></span>
+            <span class="sb-text">Dashboard</span>
+        </a>
+
+        <!-- Circulation Section (All Roles) -->
+        <div class="sb-dropdown" data-role="assistant">
+            <a href="#" class="sb-item" onclick="toggleSubmenu(event, 'circulation')">
+                <span class="sb-icon"><i class="fas fa-exchange-alt"></i></span>
+                <span class="sb-text">Circulation</span>
+                <span class="sb-arrow" id="arrow-circulation">▼</span>
+            </a>
+            <div class="sb-submenu" id="submenu-circulation">
+                <a href="/admin/smart_circulation.html" class="sb-subitem">Check Out</a>
+                <a href="/admin/check_in.html" class="sb-subitem">Check In</a>
+                <a href="/admin/add_transaction.html" class="sb-subitem">Manual Check out</a>
+                <a href="/admin/transactions.html" class="sb-subitem">History</a>
+                <a href="/admin/circulation_audit.html" class="sb-subitem" data-role="owner">Audit Log</a>
+            </div>
+        </div>
+
+        <!-- Management Section (Admin Only) -->
+        <div class="sb-dropdown" data-role="admin">
+            <a href="#" class="sb-item" onclick="toggleSubmenu(event, 'management')">
+                <span class="sb-icon"><i class="fas fa-tasks"></i></span>
+                <span class="sb-text">Management</span>
+                <span class="sb-arrow" id="arrow-management">▼</span>
+            </a>
+            <div class="sb-submenu" id="submenu-management">
+                <a href="/admin/users.html" class="sb-subitem">Patrons</a>
+                <a href="/admin/view_books.html" class="sb-subitem">Books</a>
+                <a href="/admin/add_book.html" class="sb-subitem">Add Book</a>
+                <a href="/admin/bulk_manage_books.html" class="sb-subitem">Bulk Books</a>
+                <a href="/admin/bulk_manage_users.html" class="sb-subitem">Bulk Patrons</a>
+            </div>
+        </div>
+
+        <!-- Requests Section (Admin Only) -->
+        <div class="sb-dropdown" data-role="admin">
+            <a href="#" class="sb-item" onclick="toggleSubmenu(event, 'requests')">
+                <span class="sb-icon"><i class="fas fa-bell"></i></span>
+                <span class="sb-text">Requests</span>
+                <span class="sb-badge" id="badge-requests" style="display: none;">0</span>
+                <span class="sb-arrow" id="arrow-requests">▼</span>
+            </a>
+            <div class="sb-submenu" id="submenu-requests">
+                <a href="/admin/reservations.html" class="sb-subitem">Reservations <span class="sb-badge-sub"
+                        id="badge-reservations" style="display: none;">0</span></a>
+                <a href="/admin/book_suggestions.html" class="sb-subitem">Book Suggestions <span class="sb-badge-sub"
+                        id="badge-suggestions" style="display: none;">0</span></a>
+                <a href="/admin/registration_requests.html" class="sb-subitem">Registrations <span class="sb-badge-sub"
+                        id="badge-registrations" style="display: none;">0</span></a>
+                <a href="/admin/cash-payment/verify_payments.html" class="sb-subitem">Payments <span
+                        class="sb-badge-sub" id="badge-requests-payments" style="display: none;">0</span></a>
+            </div>
+        </div>
+
+        <!-- Payments Section (Admin Only) -->
+        <div class="sb-dropdown" data-role="admin">
+            <a href="#" class="sb-item" onclick="toggleSubmenu(event, 'payments')">
+                <span class="sb-icon"><i class="fas fa-credit-card"></i></span>
+                <span class="sb-text">Payments</span>
+                <span class="sb-badge" id="badge-payments" style="display: none;">0</span>
+                <span class="sb-arrow" id="arrow-payments">▼</span>
+            </a>
+            <div class="sb-submenu" id="submenu-payments">
+                <a href="/admin/cash-payment/index.html" class="sb-subitem">Cash Fine
+                    Payment</a>
+                <a href="/admin/cash-payment/create_custom_fine.html" class="sb-subitem"> Create
+                    Custom Fine</a>
+                <a href="/admin/cash-payment/verify_payments.html" class="sb-subitem"> Verify
+                    Payments <span class="sb-badge-sub" id="badge-payments-verify" style="display: none;">0</span></a>
+                <a href="/admin/cash-payment/payment_history.html" class="sb-subitem"> Payment History</a>
+            </div>
+        </div>
+
+        <!-- Tools & Logs Section (Admin Only) -->
+        <div class="sb-dropdown" data-role="admin">
+            <a href="#" class="sb-item" onclick="toggleSubmenu(event, 'tools')">
+                <span class="sb-icon"><i class="fas fa-tools"></i></span>
+                <span class="sb-text">Tools & Logs</span>
+                <span class="sb-arrow" id="arrow-tools">▼</span>
+            </a>
+            <div class="sb-submenu" id="submenu-tools">
+                <a href="/admin/notifications.html" class="sb-subitem">Notifications & Announcements</a>
+                <a href="/admin/activity_logs.html" class="sb-subitem">Activity Logs</a>
+                <a href="/admin/import.html" class="sb-subitem">Import Data</a>
+                <a href="/admin/print_labels_v2.html" class="sb-subitem">Print Labels</a>
+                <a href="/admin/reports.html" class="sb-subitem">Reports</a>
+            </div>
+        </div>
+
+        <a href="/admin/about.html" class="sb-item" data-page="about" data-role="assistant">
+            <span class="sb-icon"><i class="fas fa-info-circle"></i></span>
+            <span class="sb-text">About</span>
+        </a>
+
+        <a href="/admin/settings.html" class="sb-item" data-page="settings" data-role="assistant">
+            <span class="sb-icon"><i class="fas fa-user-circle"></i></span>
+            <span class="sb-text">My Profile</span>
+        </a>
+
+        <a href="/admin/owner_settings.html" class="sb-item" data-page="owner_settings" data-role="owner">
+            <span class="sb-icon"><i class="fas fa-cog"></i></span>
+            <span class="sb-text">System Settings</span>
+        </a>
+
+        <a href="#" class="sb-item logout-nav" id="logoutLink">
+            <span class="sb-icon"><i class="fas fa-sign-out-alt"></i></span>
+            <span class="sb-text">Logout</span>
+        </a>
+    </nav>
+
+    <a href="/admin/settings.html" class="sb-profile-card"
+        style="text-decoration: none; cursor: pointer; display: flex;">
+        <img src="" alt="Admin" id="profileImage" style="width:40px;height:40px;border-radius:50%;background:#9c4dff;">
+        <div class="sb-profile-info">
+            <div class="sb-name" id="profileName">Admin</div>
+            <div class="sb-role" id="profileRole">Administrator</div>
+        </div>
+    </a>
+</div>
+
+<style>
+    :root {
+        --sb-width: 240px;
+        --sb-collapsed: 72px;
+    }
+
+    .app-sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: var(--sb-width);
+        background: #0f1724;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        transition: width .25s ease, transform .25s ease;
+        z-index: 1100;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .sb-top {
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        position: relative;
+    }
+
+    .sb-close-btn {
+        display: none;
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+
+    .sb-close-btn:hover {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+    }
+
+    .sb-title {
+        display: block;
+        font-weight: 800;
+        font-size: 18px;
+        letter-spacing: 1px;
+        color: #fff;
+    }
+
+    .sb-sub {
+        font-size: 10px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .sb-nav {
+        flex: 1;
+        padding: 15px 10px;
+        overflow-y: auto;
+    }
+
+    .sb-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 15px;
+        border-radius: 10px;
+        color: #94a3b8;
+        text-decoration: none;
+        margin-bottom: 5px;
+        font-size: 14px;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+    .sb-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+    }
+
+    .sb-item.sb-active {
+        background: #9c4dff;
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(156, 77, 255, 0.3);
+    }
+
+    .sb-icon {
+        width: 20px;
+        text-align: center;
+    }
+
+    .sb-badge {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 0 7px;
+        height: 18px;
+        border-radius: 9px;
+        margin-left: 8px;
+        min-width: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 3px 6px rgba(220, 38, 38, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        animation: glow-pulse 3s infinite;
+    }
+
+    .sb-badge-sub {
+        background: rgba(239, 68, 68, 0.15);
+        color: #fca5a5;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 6px;
+        margin-left: auto;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        line-height: 1;
+    }
+
+    @keyframes glow-pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+        }
+
+        50% {
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+        }
+    }
+
+    .sb-arrow {
+        margin-left: auto;
+        font-size: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .sb-arrow.rotated {
+        transform: rotate(180deg);
+    }
+
+    .sb-submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease, padding 0.4s ease;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        margin-bottom: 5px;
+    }
+
+    .sb-submenu.open {
+        max-height: 500px;
+        padding: 5px 0;
+    }
+
+    .sb-subitem {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px 10px 47px;
+        color: #64748b;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .sb-subitem:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.05);
+        padding-left: 50px;
+    }
+
+    .sb-profile-card {
+        margin: 15px;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .sb-profile-card img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .sb-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #fff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .sb-role {
+        font-size: 11px;
+        color: #64748b;
+    }
+
+    .logout-nav {
+        margin-top: 20px;
+        color: #ef4444 !important;
+    }
+
+    .logout-nav:hover {
+        background: rgba(239, 68, 68, 0.1) !important;
+    }
+
+    @media (max-width: 900px) {
+        .app-sidebar {
+            transform: translateX(-100%);
+        }
+
+        .app-sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sb-close-btn {
+            display: flex;
+        }
+    }
+</style>
+
+<!-- Dynamic Settings Loader -->
+<script src="/assets/js/settings-loader.js"></script>

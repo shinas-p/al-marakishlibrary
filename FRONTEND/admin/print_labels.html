@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Labels - Al Marakish Library</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <style id="pageStyles">
+        @page {
+            margin: 0;
+            size: A4;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f0f0f0;
+            font-family: 'Inter', Arial, sans-serif;
+        }
+
+        .page {
+            background: white;
+            position: relative;
+            margin: 10px auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        @media print {
+            body {
+                background: none;
+            }
+
+            .page {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always;
+            }
+        }
+
+        .label {
+            position: absolute;
+            box-sizing: border-box;
+            border: 0.1mm dotted #eee;
+            /* Light guide for cutting, usually hidden in final */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2mm;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .lib-name {
+            font-size: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+            white-space: nowrap;
+        }
+
+        .book-title {
+            font-size: 7px;
+            line-height: 1.1;
+            margin-bottom: 2px;
+            max-height: 15px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .barcode-svg {
+            width: 90%;
+            height: auto;
+            max-height: 10mm;
+        }
+
+        .accession-no {
+            font-size: 9px;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loading">
+        <h2 style="color: #9c4dff">Generating Labels...</h2>
+        <p>Please wait while we prepare your labels for printing.</p>
+    </div>
+
+    <div id="pagesContainer"></div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script>
+        protectRoute();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const ids = urlParams.get('ids');
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (!ids) {
+                document.getElementById('loading').innerHTML = '<h2>No books selected.</h2>';
+                return;
+            }
+
+            try {
+                // Fetch settings first
+                const settingsRes = await apiRequest('/admin/labels/books?limit=1');
+                const s = settingsRes.settings;
+
+                // Fetch full book data for these IDs
+                // We'll use a hack - request all books and filter locally if there's no bulk-fetch endpoint
+                // Or better, let's see if we can get them by IDs
+                const booksRes = await apiRequest(`/admin/books?ids=${ids}`);
+                const books = booksRes.books;
+
+                renderLabels(books, s);
+                document.getElementById('loading').style.display = 'none';
+
+                // Automatically trigger print dialog
+                setTimeout(() => window.print(), 1000);
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading').innerHTML = `<h2>Error: ${err.message}</h2>`;
+            }
+        });
+
+        function renderLabels(books, s) {
+            const container = document.getElementById('pagesContainer');
+
+            // Apply page dimensions and custom font sizes
+            const pageStyle = document.getElementById('pageStyles');
+            pageStyle.innerHTML += `
+                .page { 
+                    width: ${s.page_size === 'A4' ? '210mm' : '215.9mm'}; 
+                    height: ${s.page_size === 'A4' ? '297mm' : '279.4mm'}; 
+                }
+                .lib-name { font-size: ${s.lib_font_size}pt; }
+                .book-title { font-size: ${s.title_font_size}pt; max-height: ${parseFloat(s.title_font_size) * 2.5}pt; }
+                .accession-no { font-size: ${s.acc_font_size}pt; }
+                .extra-field { font-size: 6pt; color: #333; line-height: 1; margin: 1px 0; font-weight: 500; }
+                .call-line { font-size: ${s.call_font_size || 8}pt; font-weight: 700; line-height: 1.1; margin: 0; text-transform: uppercase; }
+            `;
+
+            const labelsPerPage = s.columns * s.rows;
+            const numPages = Math.ceil(books.length / labelsPerPage);
+
+            for (let p = 0; p < numPages; p++) {
+                const page = document.createElement('div');
+                page.className = 'page';
+
+                const pageBooks = books.slice(p * labelsPerPage, (p + 1) * labelsPerPage);
+
+                pageBooks.forEach((book, index) => {
+                    const col = index % s.columns;
+                    const row = Math.floor(index / s.columns);
+
+                    const label = document.createElement('div');
+                    label.className = 'label';
+
+                    // Position calculations
+                    const left = parseFloat(s.side_margin) + (col * parseFloat(s.horizontal_pitch));
+                    const top = parseFloat(s.top_margin) + (row * parseFloat(s.vertical_pitch));
+
+                    label.style.width = s.label_width + 'mm';
+                    label.style.height = s.label_height + 'mm';
+                    label.style.left = left + 'mm';
+                    label.style.top = top + 'mm';
+
+                    let labelHtml = '';
+                    if (s.show_lib_name) labelHtml += `<div class="lib-name">${s.library_name || 'AL MARAKISH LIBRARY'}</div>`;
+
+                    if (s.show_call_no) {
+                        if (s.multiline_call) {
+                            const parts = (book.call_number || "").split(' ');
+                            const line1 = (s.library_short_name || 'AML') + '/' + (parts[0] || '');
+                            const line2 = parts[1] || '';
+                            const line3 = parts[2] || '';
+                            const line4 = parts[3] || book.accession_number;
+
+                            labelHtml += `
+                                <div class="call-line">${line1}</div>
+                                <div class="call-line">${line2}</div>
+                                <div class="call-line">${line3}</div>
+                                <div class="call-line">${line4}</div>
+                            `;
+                        } else if (book.call_number) {
+                            labelHtml += `<div class="extra-field">${s.call_prefix} ${book.call_number}</div>`;
+                        }
+                    }
+
+                    if (s.show_title) labelHtml += `<div class="book-title">${book.title}</div>`;
+                    if (s.show_author && book.author) labelHtml += `<div class="extra-field">By: ${book.author}</div>`;
+                    if (s.show_isbn && book.isbn) labelHtml += `<div class="extra-field">ISBN: ${book.isbn}</div>`;
+                    if (s.show_publisher && book.publisher) labelHtml += `<div class="extra-field">${book.publisher}</div>`;
+                    if (s.show_barcode) labelHtml += `<svg class="barcode-svg" id="barcode-${p}-${index}"></svg>`;
+                    if (s.show_acc_no) labelHtml += `<div class="accession-no">${book.accession_number}</div>`;
+
+                    label.innerHTML = labelHtml;
+                    page.appendChild(label);
+                });
+
+                container.appendChild(page);
+
+                // Generate barcodes after adding to DOM
+                if (s.show_barcode) {
+                    pageBooks.forEach((book, index) => {
+                        JsBarcode(`#barcode-${p}-${index}`, book.accession_number, {
+                            format: "CODE128",
+                            width: parseFloat(s.barcode_scale) || 2,
+                            height: parseFloat(s.barcode_height) * 4 || 40,
+                            displayValue: false,
+                            margin: 0
+                        });
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

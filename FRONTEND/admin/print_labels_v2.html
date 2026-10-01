@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Book Labels - Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --primary-dark: #7c3aed;
+            --secondary: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-dark: #0a0e1a;
+            --bg-card: #151b2e;
+            --bg-elevated: #1e293b;
+            --border: #2d3748;
+            --border-light: #374151;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 28px;
+            min-height: 100vh;
+        }
+
+        /* Enhanced Header */
+        .page-header {
+            background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 50%, #1e1b4b 100%);
+            border-radius: 28px;
+            padding: 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(156, 77, 255, 0.2);
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(156, 77, 255, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(40px);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title-section h1 {
+            font-size: 42px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ddd6fe, #fbbf24);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            letter-spacing: -1px;
+        }
+
+        .page-subtitle {
+            color: #cbd5e1;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 16px 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Main Grid Layout */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* Left Sidebar */
+        .sidebar-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(156, 77, 255, 0.2);
+            border-color: rgba(156, 77, 255, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(156, 77, 255, 0.2), rgba(245, 158, 11, 0.2));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        /* Quick Presets */
+        .preset-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .preset-btn {
+            background: linear-gradient(135deg, rgba(156, 77, 255, 0.1), rgba(245, 158, 11, 0.1));
+            border: 2px solid transparent;
+            border-radius: 14px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(156, 77, 255, 0.2), rgba(245, 158, 11, 0.2));
+            transform: translateX(4px);
+        }
+
+        .preset-btn.active {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(156, 77, 255, 0.25), rgba(245, 158, 11, 0.25));
+        }
+
+        .preset-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .preset-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Label Content Toggles */
+        .toggle-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .toggle-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .toggle-item:hover {
+            background: rgba(156, 77, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        .toggle-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-switch {
+            width: 48px;
+            height: 26px;
+            background: var(--border);
+            border-radius: 13px;
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            top: 3px;
+            left: 3px;
+            transition: 0.3s;
+        }
+
+        input[type="checkbox"]:checked+.toggle-item .toggle-switch {
+            background: var(--primary);
+        }
+
+        input[type="checkbox"]:checked+.toggle-item .toggle-switch::after {
+            left: 25px;
+        }
+
+        input[type="checkbox"] {
+            display: none;
+        }
+
+        /* Right Side - Books Table */
+        .books-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 12px;
+            flex: 1;
+            max-width: 500px;
+        }
+
+        .search-input {
+            flex: 1;
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 12px 16px 12px 44px;
+            border-radius: 14px;
+            font-size: 14px;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(156, 77, 255, 0.1);
+        }
+
+        .range-selector {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .range-input {
+            width: 80px;
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .range-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Action Buttons */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(156, 77, 255, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(156, 77, 255, 0.4);
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            justify-content: center;
+        }
+
+        /* Label Preview */
+        .preview-card {
+            margin-top: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(156, 77, 255, 0.2);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .preview-container {
+            background: #f8fafc;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+
+        .label-preview {
+            width: 180px;
+            height: 100px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            color: #000;
+            text-align: center;
+            gap: 4px;
+            transition: all 0.3s;
+        }
+
+        .prev-lib {
+            font-size: 8px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+            line-height: 1;
+        }
+
+        .prev-title {
+            font-size: 7px;
+            font-weight: 600;
+            line-height: 1.1;
+            margin-bottom: 2px;
+        }
+
+        .prev-acc {
+            font-size: 9px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .prev-call {
+            font-size: 8px;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .prev-barcode {
+            width: 90%;
+            height: auto;
+            max-height: 25px;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .table-scroll {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            background: var(--bg-elevated);
+            z-index: 10;
+        }
+
+        th {
+            text-align: left;
+            padding: 16px 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px 20px;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        tbody tr {
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        tbody tr:hover {
+            background: rgba(156, 77, 255, 0.05);
+        }
+
+        tbody tr.selected {
+            background: rgba(156, 77, 255, 0.1);
+        }
+
+        .acc-badge {
+            background: linear-gradient(135deg, rgba(156, 77, 255, 0.2), rgba(245, 158, 11, 0.2));
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 13px;
+            display: inline-block;
+        }
+
+        .checkbox-cell {
+            width: 60px;
+            text-align: center;
+        }
+
+        /* High-Premium Custom Checkbox */
+        .checkbox-container {
+            display: inline-block;
+            position: relative;
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            user-select: none;
+            vertical-align: middle;
+        }
+
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 22px;
+            width: 22px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 2px solid var(--border);
+            border-radius: 7px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checkbox-container:hover input~.checkmark {
+            border-color: var(--primary);
+            background-color: rgba(156, 77, 255, 0.05);
+            transform: scale(1.1);
+        }
+
+        .checkbox-container input:checked~.checkmark {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(156, 77, 255, 0.5);
+        }
+
+        .checkmark:after {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: white;
+            font-size: 11px;
+            display: none;
+        }
+
+        .checkbox-container input:checked~.checkmark:after {
+            display: block;
+        }
+
+        /* Footer Actions */
+        .footer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+            padding: 20px 28px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+        }
+
+        .selection-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .selection-count {
+            font-size: 15px;
+            color: var(--text-muted);
+        }
+
+        .count-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .content-grid {
+                grid-template-columns: 350px 1fr;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .header-stats {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <!-- Enhanced Header -->
+        <div class="page-header">
+            <div class="header-content">
+                <div class="page-title-section">
+                    <h1>
+                        <i class="fas fa-tag"></i>
+                        Print Book Labels
+                    </h1>
+                    <p class="page-subtitle">Select books and customize your labels with presets and quick options</p>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalBooks">0</div>
+                        <div class="stat-label">Total Books</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="selectedBooks">0</div>
+                        <div class="stat-label">Selected</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+            <!-- Left Sidebar Controls -->
+            <div class="sidebar-controls">
+                <!-- Quick Presets Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <div class="card-title">Quick Presets</div>
+                    </div>
+                    <div class="preset-grid">
+                        <div class="preset-btn active" onclick="applyPreset('minimal')">
+                            <div class="preset-name"><i class="fas fa-circle"
+                                    style="font-size: 6px; margin-right: 8px;"></i>Minimal</div>
+                            <div class="preset-desc">Library + Barcode + Acc No</div>
+                        </div>
+                        <div class="preset-btn" onclick="applyPreset('standard')">
+                            <div class="preset-name"><i class="fas fa-circle"
+                                    style="font-size: 6px; margin-right: 8px;"></i>Standard</div>
+                            <div class="preset-desc">+ Title & Author</div>
+                        </div>
+                        <div class="preset-btn" onclick="applyPreset('detailed')">
+                            <div class="preset-name"><i class="fas fa-circle"
+                                    style="font-size: 6px; margin-right: 8px;"></i>Detailed</div>
+                            <div class="preset-desc">All Fields + Call Number</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Label Content Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-list-check"></i>
+                        </div>
+                        <div class="card-title">Label Content</div>
+                    </div>
+                    <div class="toggle-grid">
+                        <input type="checkbox" id="show_lib_name" checked>
+                        <label for="show_lib_name" class="toggle-item">
+                            <span class="toggle-label">
+                                <i class="fas fa-building"></i>
+                                Library Name
+                            </span>
+                            <div class="toggle-switch"></div>
+                        </label>
+
+                        <input type="checkbox" id="show_barcode" checked>
+                        <label for="show_barcode" class="toggle-item">
+                            <span class="toggle-label">
+                                <i class="fas fa-barcode"></i>
+                                Barcode
+                            </span>
+                            <div class="toggle-switch"></div>
+                        </label>
+
+                        <input type="checkbox" id="show_acc_no" checked>
+                        <label for="show_acc_no" class="toggle-item">
+                            <span class="toggle-label">
+                                <i class="fas fa-hashtag"></i>
+                                Accession Number
+                            </span>
+                            <div class="toggle-switch"></div>
+                        </label>
+
+                        <input type="checkbox" id="show_title">
+                        <label for="show_title" class="toggle-item">
+                            <span class="toggle-label">
+                                <i class="fas fa-book"></i>
+                                Book Title
+                            </span>
+                            <div class="toggle-switch"></div>
+                        </label>
+
+                        <input type="checkbox" id="show_author">
+                        <label for="show_author" class="toggle-item">
+                            <span class="toggle-label">
+                                <i class="fas fa-user-pen"></i>
+                                Author
+                            </span>
+                            <div class="toggle-switch"></div>
+                        </label>
+
+                        <input type="checkbox" id="show_call_no">
+                        <label for="show_call_no" class="toggle-item">
+                            <span class="toggle-label">
+                                <i class="fas fa-tag"></i>
+                                Call Number
+                            </span>
+                            <div class="toggle-switch"></div>
+                        </label>
+                    </div>
+                </div>
+                <!-- Label Preview Card -->
+                <div class="card preview-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="card-title">Live Preview</div>
+                    </div>
+                    <div class="preview-container">
+                        <div class="label-preview" id="labelPreview">
+                            <div class="prev-lib" id="previewLib">AL MARAKISH LIBRARY</div>
+                            <div class="prev-title" id="previewTitle">Sample Book Title</div>
+                            <div class="prev-call" id="previewCall">AML/813.54</div>
+                            <svg class="prev-barcode" id="barcodePreview"></svg>
+                            <div class="prev-acc" id="previewAcc">1500</div>
+                        </div>
+                    </div>
+                    <div
+                        style="padding: 12px; font-size: 11px; color: var(--text-muted); text-align: center; background: rgba(255,255,255,0.03);">
+                        <i class="fas fa-info-circle"></i> Updates as you toggle content
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Books Table -->
+            <div class="books-section">
+                <div class="table-header">
+                    <div class="search-box">
+                        <div class="search-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" class="search-input" id="searchInput"
+                                placeholder="Search by title, author, or accession number...">
+                        </div>
+                    </div>
+                    <div class="range-selector">
+                        <div style="font-size: 12px; color: var(--text-muted); margin-right: 10px;">Select Range:</div>
+                        <input type="number" class="range-input" id="rangeFrom" placeholder="Start">
+                        <span style="color: var(--text-muted);">to</span>
+                        <input type="number" class="range-input" id="rangeTo" placeholder="End">
+                        <button class="btn btn-secondary" onclick="applyRange()">
+                            <i class="fas fa-check-double"></i> Select
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="checkbox-cell">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" id="selectAll" onclick="toggleAll(this.checked)">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </th>
+                                    <th>ACC NO</th>
+                                    <th>TITLE</th>
+                                    <th>AUTHOR</th>
+                                    <th>CLASSIFICATION</th>
+                                </tr>
+                            </thead>
+                            <tbody id="booksBody">
+                                <tr>
+                                    <td colspan="5" class="loading">
+                                        <div class="spinner"></div>
+                                        <p>Loading books...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="footer-actions">
+            <div class="selection-info">
+                <div>
+                    <div class="count-number" id="footerSelectedCount">0</div>
+                    <div class="selection-count">books selected</div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="window.location.href='print_settings_v2.html'">
+                    <i class="fas fa-cog"></i> Advanced Settings
+                </button>
+                <button class="btn btn-success" onclick="generateAndPrint()">
+                    <i class="fas fa-print"></i> Print Selected Labels
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        // Load Sidebar
+        fetch('/admin/sidebar.html').then(res => res.text()).then(data => {
+            document.getElementById('sidebar-container').innerHTML = data;
+            if (typeof initSidebar === 'function') initSidebar();
+        });
+
+        protectRoute();
+
+        let allBooks = [];
+        let filteredBooks = [];
+        let libraryName = 'AL MARAKISH LIBRARY';
+
+        // Initialize
+        // Initialize
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadSettings();
+            await loadBooks();
+            setupEventListeners();
+        });
+
+        async function loadSettings() {
+            try {
+                const res = await apiRequest('/admin/labels/books?limit=1');
+                if (res.success && res.settings) {
+                    const s = res.settings;
+                    const mapping = {
+                        'show_lib_name': s.show_lib_name,
+                        'show_barcode': s.show_barcode,
+                        'show_acc_no': s.show_acc_no,
+                        'show_title': s.show_title,
+                        'show_author': s.show_author,
+                        'show_call_no': s.show_call_no
+                    };
+
+                    Object.keys(mapping).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.checked = mapping[id];
+                    });
+
+                    if (s.library_name) {
+                        libraryName = s.library_name;
+                        updatePreview();
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to load settings:', err);
+            }
+        }
+
+        async function loadBooks() {
+            try {
+                const res = await apiRequest('/admin/books?limit=2000&sort=accession_number&order=ASC');
+                if (res.success) {
+                    allBooks = res.books;
+                    filteredBooks = allBooks;
+                    renderBooks(allBooks);
+                    updateStats();
+                }
+            } catch (err) {
+                console.error('Failed to load books:', err);
+                document.getElementById('booksBody').innerHTML = `
+                    <tr><td colspan="5" style="text-align: center; color: var(--danger); padding: 40px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 32px; margin-bottom: 12px;"></i>
+                        <p>Failed to load books. Please refresh the page.</p>
+                    </td></tr>
+                `;
+            }
+        }
+
+        function renderBooks(books) {
+            const tbody = document.getElementById('booksBody');
+            if (books.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        <i class="fas fa-inbox" style="font-size: 32px; margin-bottom: 12px;"></i>
+                        <p>No books found</p>
+                    </td></tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = books.map(b => `
+                <tr onclick="toggleRow(this)" data-id="${b.id}">
+                    <td class="checkbox-cell">
+                        <label class="checkbox-container" onclick="event.stopPropagation()">
+                            <input type="checkbox" name="book_ids" value="${b.id}" data-acc="${b.accession_number}" 
+                                onchange="updateCount()">
+                            <span class="checkmark"></span>
+                        </label>
+                    </td>
+                    <td><span class="acc-badge">${b.accession_number}</span></td>
+                    <td style="font-weight: 600; color: var(--text);">${b.title || 'Untitled'}</td>
+                    <td style="color: var(--text-muted);">${b.author || 'Unknown'}</td>
+                    <td style="color: var(--text-muted); font-size: 12px;">${b.classification || '—'}</td>
+                </tr>
+            `).join('');
+            updateCount();
+        }
+
+        function setupEventListeners() {
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                filteredBooks = allBooks.filter(b =>
+                    (b.title?.toLowerCase().includes(query)) ||
+                    (b.author?.toLowerCase().includes(query)) ||
+                    (b.accession_number?.toString().includes(query))
+                );
+                renderBooks(filteredBooks);
+            });
+
+            // Checkbox change listeners
+            ['show_lib_name', 'show_barcode', 'show_acc_no', 'show_title', 'show_author', 'show_call_no'].forEach(id => {
+                document.getElementById(id).addEventListener('change', () => {
+                    saveQuickSettings();
+                    updatePreview();
+                });
+            });
+        }
+
+        function updatePreview() {
+            const showLib = document.getElementById('show_lib_name').checked;
+            const showBarcode = document.getElementById('show_barcode').checked;
+            const showAcc = document.getElementById('show_acc_no').checked;
+            const showTitle = document.getElementById('show_title').checked;
+            const showAuthor = document.getElementById('show_author').checked;
+            const showCall = document.getElementById('show_call_no').checked;
+
+            document.getElementById('previewLib').textContent = libraryName;
+            document.getElementById('previewLib').style.display = showLib ? 'block' : 'none';
+            document.getElementById('previewTitle').style.display = showTitle ? 'block' : 'none';
+            document.getElementById('previewAcc').style.display = showAcc ? 'block' : 'none';
+            document.getElementById('previewCall').style.display = showCall ? 'block' : 'none';
+            document.getElementById('barcodePreview').style.display = showBarcode ? 'block' : 'none';
+
+            if (showBarcode) {
+                setTimeout(() => {
+                    try {
+                        JsBarcode("#barcodePreview", "1500", {
+                            format: "CODE128",
+                            width: 1.5,
+                            height: 25,
+                            displayValue: false,
+                            margin: 0,
+                            background: "transparent"
+                        });
+                    } catch (e) { }
+                }, 100);
+            }
+        }
+
+        function toggleRow(row) {
+            const cb = row.querySelector('input[type="checkbox"]');
+            cb.checked = !cb.checked;
+            row.classList.toggle('selected', cb.checked);
+            updateCount();
+        }
+
+        function toggleAll(checked) {
+            document.querySelectorAll('input[name="book_ids"]').forEach(cb => {
+                cb.checked = checked;
+                cb.closest('tr').classList.toggle('selected', checked);
+            });
+            updateCount();
+        }
+
+        function applyRange() {
+            const fromVal = document.getElementById('rangeFrom').value;
+            const toVal = document.getElementById('rangeTo').value;
+            const from = parseInt(fromVal);
+            const to = parseInt(toVal);
+
+            if (!from || !to) {
+                showToast('Please enter both From and To values', 'warning');
+                return;
+            }
+
+            if (from > to) {
+                showToast('From value must be less than To value', 'warning');
+                return;
+            }
+
+            let count = 0;
+            const checkboxes = Array.from(document.querySelectorAll('input[name="book_ids"]'));
+
+            // First attempt: Select by Accession Number range
+            checkboxes.forEach(cb => {
+                const accStr = cb.dataset.acc || "";
+                const acc = parseInt(accStr.replace(/\D/g, '')) || 0;
+                cb.checked = (acc >= from && acc <= to);
+                cb.closest('tr').classList.toggle('selected', cb.checked);
+                if (cb.checked) count++;
+            });
+
+            // Fallback: If no books found by ACC and range is likely indices (e.g. 1 to 5)
+            if (count === 0 && from >= 1 && to <= checkboxes.length + 10) {
+                checkboxes.forEach((cb, index) => {
+                    const rowIdx = index + 1;
+                    if (rowIdx >= from && rowIdx <= to) {
+                        cb.checked = true;
+                        cb.closest('tr').classList.add('selected');
+                        count++;
+                    }
+                });
+                if (count > 0) {
+                    showToast(`Selected ${count} books by list order`, 'success');
+                } else {
+                    showToast(`No books found in range ${from}-${to}`, 'warning');
+                }
+            } else if (count === 0) {
+                showToast(`No books found with ACC No. between ${from}-${to}`, 'warning');
+            } else {
+                showToast(`Selected ${count} books by Accession Number`, 'success');
+            }
+
+            updateCount();
+        }
+
+        function updateCount() {
+            const count = document.querySelectorAll('input[name="book_ids"]:checked').length;
+            document.getElementById('selectedBooks').textContent = count;
+            document.getElementById('footerSelectedCount').textContent = count;
+        }
+
+        function updateStats() {
+            document.getElementById('totalBooks').textContent = allBooks.length;
+        }
+
+        function applyPreset(preset) {
+            // Remove active class from all presets
+            document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.preset-btn').classList.add('active');
+
+            // Apply preset settings
+            const presets = {
+                minimal: {
+                    show_lib_name: true,
+                    show_barcode: true,
+                    show_acc_no: true,
+                    show_title: false,
+                    show_author: false,
+                    show_call_no: false
+                },
+                standard: {
+                    show_lib_name: true,
+                    show_barcode: true,
+                    show_acc_no: true,
+                    show_title: true,
+                    show_author: true,
+                    show_call_no: false
+                },
+                detailed: {
+                    show_lib_name: true,
+                    show_barcode: true,
+                    show_acc_no: true,
+                    show_title: true,
+                    show_author: true,
+                    show_call_no: true
+                }
+            };
+
+            const settings = presets[preset];
+            Object.keys(settings).forEach(key => {
+                document.getElementById(key).checked = settings[key];
+            });
+
+            updatePreview();
+            saveQuickSettings();
+            showToast(`Applied ${preset.charAt(0).toUpperCase() + preset.slice(1)} preset`, 'success');
+        }
+
+        async function saveQuickSettings() {
+            const settings = {
+                label_show_lib_name: document.getElementById('show_lib_name').checked ? 'true' : 'false',
+                label_show_barcode: document.getElementById('show_barcode').checked ? 'true' : 'false',
+                label_show_acc_no: document.getElementById('show_acc_no').checked ? 'true' : 'false',
+                label_show_title: document.getElementById('show_title').checked ? 'true' : 'false',
+                label_show_author: document.getElementById('show_author').checked ? 'true' : 'false',
+                label_show_call_no: document.getElementById('show_call_no').checked ? 'true' : 'false'
+            };
+
+            try {
+                await apiRequest('/admin/owner/settings/bulk', {
+                    method: 'PUT',
+                    body: { category: 'printing', settings: settings }
+                });
+            } catch (err) {
+                console.error('Failed to save settings:', err);
+            }
+        }
+
+        async function generateAndPrint() {
+            const selected = Array.from(document.querySelectorAll('input[name="book_ids"]:checked'));
+
+            if (selected.length === 0) {
+                showToast('Please select at least one book', 'warning');
+                return;
+            }
+
+            // Save settings first to ensure the printout uses current toggles
+            await saveQuickSettings();
+
+            if (selected.length > 500) {
+                const confirmed = await showModal({
+                    title: 'Large Selection',
+                    message: `You've selected ${selected.length} books. This may take a while to generate. Continue?`,
+                    type: 'confirm'
+                });
+                if (!confirmed) return;
+            }
+
+            const selectedIds = selected.map(cb => cb.value).join(',');
+            const url = new URL('/admin/print_labels.html', window.location.origin);
+            url.searchParams.set('ids', selectedIds);
+
+            showToast(`Opening ${selected.length} labels...`, 'success');
+            window.open(url.toString(), '_blank');
+        }
+    </script>
+</body>
+
+</html>

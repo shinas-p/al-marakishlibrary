@@ -1,0 +1,98 @@
+td:nth-child(3), th:nth-child(3) { /*title*/
+    max-width: 450px;      
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+td:nth-child(4), th:nth-child(4) { /*author*/
+    max-width: 150px;      
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+td:nth-child(5), th:nth-child(5) { /*type*/
+    max-width: 150px;     
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+td:nth-child(6), th:nth-child(6) { /*language*/
+    max-width: 150px;      
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}td:nth-child(7), th:nth-child(7) { /*publisher*/
+    max-width: 150px;      
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+td:nth-child(8), th:nth-child(8) { /*author*/
+    max-width: 150px;      
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+td:nth-child(9), th:nth-child(9) { /*status*/
+    max-width: 150px;      
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}td:nth-child(10), th:nth-child(10) { /*e book*/
+    max-width: 150px;      
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+td:nth-child(11), th:nth-child(11) { /*actions*/
+    max-width: 150px;      
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+<form id="tb-search" class="tb-search" action="search.php" method="GET">
+            <input name="q" type="search" placeholder="Search books, authors..." aria-label="Search" />
+            <button type="submit">🔍</button>
+        </form>
+
+
+
+
+ header
+        <div class="header">
+        <h1>Manage Users</h1>
+        <button class="add-btn" onclick="window.location.href='add_user.php'">➕ Add User</button>
+    </div>
+
+    .header { background:#fff; padding:15px 20px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.1); margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
+.header h1 { margin:0; }
+
+body {
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f6f9;
+}
+
+.add-btn { background:#2575fc; color:#fff; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; transition:0.3s; }
+.add-btn:hover { background:#6a11cb; }
+
+
+<form method="GET" class="search-filter">
+        <input type="text" name="search" placeholder="Search by name, ID or role..." value="<?= htmlspecialchars($search) ?>">
+        <button type="submit">Search</button>
+    </form>
+
+    .gradient-text {
+    background: linear-gradient(90deg, #9c4dff, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+    font-size: 28px;}
+
+    <a href="add_book.php" class="sb-item">
+            <span class="sb-icon">➕</span>
+            <span class="sb-text">Add Book</span>
+        </a>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Settings | Al Marakish Library</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/owner-pages.css">
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="container" style="max-width: 1200px; margin: 0 auto;">
+            <!-- Top Navigation -->
+            <div style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center;">
+                <a href="dashboard.html"
+                    style="color: var(--text-secondary); text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; opacity: 0.8;">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <div class="header-search" style="max-width: 300px;">
+                    <div class="input-wrapper" style="width: 100%;">
+                        <i class="fas fa-search"
+                            style="position: absolute; left: 16px; color: var(--text-muted); pointer-events: none;"></i>
+                        <input type="text" id="settingsSearch" class="setting-input"
+                            style="width: 100%; padding-left: 45px; text-align: left; border-radius: 100px;"
+                            placeholder="Filter settings..." oninput="filterSettings(this.value)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile-style Header for System -->
+            <div class="profile-header" style="display: flex; gap: 40px; margin-bottom: 40px; align-items: flex-start;">
+                <div class="avatar-container" style="position: relative; flex-shrink: 0;">
+                    <div class="profile-avatar"
+                        style="width: 140px; height: 140px; border-radius: 35px; background: linear-gradient(135deg, var(--bg-secondary) 0%, #1e293b 100%); border: 4px solid var(--border); display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);">
+                        <i class="fas fa-shield-halved"
+                            style="font-size: 60px; color: var(--primary); filter: drop-shadow(0 0 15px rgba(156, 77, 255, 0.4));"></i>
+                    </div>
+                    <span class="status-pill status-active"
+                        style="position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); background: var(--success); color: white; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; text-transform: uppercase;">Owner
+                        Mode</span>
+                </div>
+                <div class="profile-info" style="flex: 1;">
+                    <h1
+                        style="font-family: 'Outfit', sans-serif; font-size: 42px; font-weight: 800; margin-bottom: 8px; background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        System Management</h1>
+                    <div class="profile-badges" style="display: flex; gap: 12px; margin-bottom: 24px;">
+                        <div class="badge"
+                            style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 6px 14px; border-radius: 12px; font-size: 14px; color: var(--text-secondary); display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-microchip" style="color: var(--primary);"></i> v1.4.2 Stable
+                        </div>
+                        <div class="badge"
+                            style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 6px 14px; border-radius: 12px; font-size: 14px; color: var(--text-secondary); display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-database" style="color: #10b981;"></i> Cloud Sync Active
+                        </div>
+                    </div>
+                    <div class="profile-actions" style="display: flex; gap: 16px;">
+                        <button class="btn btn-primary" onclick="loadSystemSettings()"
+                            style="padding: 12px 24px; border-radius: 14px; font-weight: 600; background: var(--primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s;">
+                            <i class="fas fa-sync-alt"></i> Refresh System Data
+                        </button>
+                        <a href="OWNER_SETTINGS_GUIDE.md" target="_blank" class="btn"
+                            style="padding: 12px 24px; border-radius: 14px; font-weight: 600; background: transparent; border: 1px solid var(--border); color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; transition: 0.3s;">
+                            <i class="fas fa-file-alt"></i> Configuration Guide
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Layout Grid (Inspired by View User) -->
+            <div class="profile-grid" style="display: grid; grid-template-columns: 280px 1fr; gap: 32px;">
+                <!-- Left Column: Navigation Card -->
+                <div class="card"
+                    style="background: var(--bg-card); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 24px; padding: 25px; height: fit-content; position: sticky; top: 40px;">
+                    <h2
+                        style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 20px; color: white; display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-list-ul" style="color: var(--primary);"></i> Categories
+                    </h2>
+                    <div class="settings-sidebar-nav" style="display: flex; flex-direction: column; gap: 8px;">
+                        <div class="nav-group-label"
+                            style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 1px; margin: 15px 0 8px 10px; opacity: 0.7;">
+                            General</div>
+                        <button class="settings-nav-item active" onclick="switchSettingsTab('circulation', this)">
+                            <i class="fas fa-exchange-alt"></i> Circulation
+                        </button>
+                        <button class="settings-nav-item" onclick="switchSettingsTab('system', this)">
+                            <i class="fas fa-cog"></i> System Config
+                        </button>
+
+                        <div class="nav-group-label"
+                            style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 1px; margin: 15px 0 8px 10px; opacity: 0.7;">
+                            Branding</div>
+                        <button class="settings-nav-item" onclick="switchSettingsTab('appearance', this)">
+                            <i class="fas fa-palette"></i> Appearance
+                        </button>
+                        <button class="settings-nav-item" onclick="switchSettingsTab('social', this)">
+                            <i class="fas fa-share-alt"></i> Social Links
+                        </button>
+
+                        <div class="nav-group-label"
+                            style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 1px; margin: 15px 0 8px 10px; opacity: 0.7;">
+                            Other</div>
+                        <button class="settings-nav-item" onclick="switchSettingsTab('payments', this)">
+                            <i class="fas fa-credit-card"></i> Payments
+                        </button>
+                        <button class="settings-nav-item" onclick="switchSettingsTab('security', this)">
+                            <i class="fas fa-shield-alt"></i> Security
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Column: Settings Content Pane -->
+                <div class="settings-content-pane">
+                    <div id="settings-pane-container" class="card"
+                        style="background: var(--bg-card); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 24px; min-height: 500px; padding: 0;">
+                        <div style="padding: 100px 40px; text-align: center;">
+                            <i class="fas fa-circle-notch fa-spin" style="font-size: 42px; color: var(--primary);"></i>
+                            <p
+                                style="margin-top: 20px; color: var(--text-secondary); font-weight: 600; letter-spacing: 1px;">
+                                SYNCING SECURE PARAMETERS...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script src="/assets/js/owner-panel.js"></script>
+</body>
+
+</html>

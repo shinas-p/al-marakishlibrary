@@ -1,0 +1,691 @@
+/**
+ * ============================================================================
+ * BULK SELECTION SYSTEM - CENTRALIZED CSS
+ * ============================================================================
+ * Al Marakish Library Management System
+ * 
+ * Purpose: Reusable styling for ALL bulk selection tables across the project
+ * Used by: bulk_manage_books.php, bulk_manage_users.php, print_labels.php, etc.
+ * 
+ * Key Features:
+ * - Modern checkbox styling
+ * - Row-click selection feedback
+ * - Hover/active/focus states
+ * - Indeterminate checkbox state
+ * - Dark theme compatible
+ * - Touch-friendly hit areas
+ * - Accessibility compliant
+ * 
+ * Version: 1.0
+ * Date: 2026-01-06
+ * ============================================================================
+ */
+
+/* ============================================================================
+   DESIGN TOKENS (CSS Variables)
+   ============================================================================ */
+:root {
+    /* Primary colors */
+    --bulk-primary: #9c4dff;
+    --bulk-primary-hover: #b370ff;
+    --bulk-primary-active: #8835ff;
+
+    /* Background colors */
+    --bulk-row-selected: rgba(156, 77, 255, 0.12);
+    --bulk-row-hover: rgba(255, 255, 255, 0.05);
+    --bulk-row-active: rgba(255, 255, 255, 0.08);
+
+    /* Checkbox colors */
+    --bulk-checkbox-bg: #1e293b;
+    --bulk-checkbox-border: #475569;
+    --bulk-checkbox-border-hover: #64748b;
+    --bulk-checkbox-checked-bg: #9c4dff;
+    --bulk-checkbox-checked-border: #9c4dff;
+    --bulk-checkbox-checkmark: #ffffff;
+
+    /* Toolbar colors */
+    --bulk-toolbar-bg: #1e293b;
+    --bulk-toolbar-border: #334155;
+    --bulk-toolbar-text: #e2e8f0;
+
+    /* Spacing */
+    --bulk-checkbox-size: 18px;
+    --bulk-checkbox-border-radius: 25px;
+    --bulk-row-padding: 16px;
+
+    /* Timing */
+    --bulk-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --bulk-transition-medium: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Shadows */
+    --bulk-shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.12);
+    --bulk-shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --bulk-shadow-strong: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* ============================================================================
+   CHECKBOX STYLING (Modern, Accessible)
+   ============================================================================ */
+
+/* Base checkbox reset - HIDDEN BY DEFAULT */
+.bulk-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    width: var(--bulk-checkbox-size);
+    height: var(--bulk-checkbox-size);
+
+    /* 🎯 KEY FIX: Hide checkbox by default */
+    background-color: transparent;
+    border: 2px solid transparent;
+    border-radius: 25px;
+
+    cursor: pointer;
+    position: relative;
+
+    /* Smooth transition for appearance/disappearance */
+    transition: all var(--bulk-transition-fast);
+
+    /* Improve hit area for touch devices */
+    min-width: 44px;
+    min-height: 44px;
+
+    /* Center the visual checkbox */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Hide by default (becomes visible on hover or when checked) */
+    opacity: 0;
+}
+
+/* Show subtle ghost checkbox on row hover (UX improvement) */
+.bulk-row:hover .bulk-checkbox:not(:checked) {
+    opacity: 0.4;
+    border-color: var(--bulk-checkbox-border);
+    background-color: rgba(30, 41, 59, 0.3);
+}
+
+/* Direct checkbox hover (even when row not hovered) */
+.bulk-checkbox:hover:not(:checked) {
+    opacity: 0.6;
+    border-color: var(--bulk-checkbox-border-hover);
+    background-color: rgba(156, 77, 255, 0.05);
+}
+
+/* Focus state (accessibility) - ALWAYS visible when focused */
+.bulk-checkbox:focus {
+    opacity: 1;
+    outline: none;
+    border-color: var(--bulk-primary);
+    background-color: var(--bulk-checkbox-bg);
+    box-shadow: 0 0 0 3px rgba(156, 77, 255, 0.2);
+}
+
+/* Checked state - FULLY VISIBLE */
+.bulk-checkbox:checked {
+    opacity: 1;
+    background-color: var(--bulk-checkbox-checked-bg);
+    border-color: var(--bulk-checkbox-checked-border);
+}
+
+/* Checkmark (using ::after pseudo-element) */
+.bulk-checkbox:checked::after {
+    content: '';
+    position: absolute;
+
+    /* Checkmark dimensions */
+    width: 5px;
+    height: 10px;
+
+    /* Checkmark styling */
+    border: solid var(--bulk-checkbox-checkmark);
+    border-width: 0 2px 2px 0;
+
+    /* Rotate to create checkmark shape */
+    transform: rotate(45deg) translateY(-1px);
+
+    /* Animation */
+    opacity: 0;
+    animation: checkmarkAppear 0.2s ease forwards;
+}
+
+@keyframes checkmarkAppear {
+    from {
+        opacity: 0;
+        transform: rotate(45deg) translateY(-1px) scale(0.5);
+    }
+
+    to {
+        opacity: 1;
+        transform: rotate(45deg) translateY(-1px) scale(1);
+    }
+}
+
+/* Indeterminate state (some rows selected) */
+.bulk-checkbox:indeterminate {
+    background-color: var(--bulk-primary);
+    border-color: var(--bulk-primary);
+}
+
+.bulk-checkbox:indeterminate::after {
+    content: '';
+    position: absolute;
+
+    /* Minus sign dimensions */
+    width: 10px;
+    height: 2px;
+
+    background-color: var(--bulk-checkbox-checkmark);
+    border: none;
+    transform: none;
+
+    opacity: 1;
+}
+
+/* Disabled state */
+.bulk-checkbox:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================================================================
+   TABLE STRUCTURE
+   ============================================================================ */
+
+/* Table container */
+.bulk-table-container {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+}
+
+/* Base table */
+.bulk-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* ============================================================================
+   ROW STYLING (Clickable, Interactive)
+   ============================================================================ */
+
+/* Base row (unselected) */
+.bulk-row {
+    background-color: transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    transition: background-color var(--bulk-transition-fast),
+        transform var(--bulk-transition-fast);
+
+    cursor: pointer;
+
+    /* Keyboard navigation */
+    outline: none;
+}
+
+/* Last row - no border */
+.bulk-row:last-child {
+    border-bottom: none;
+}
+
+/* Hover state */
+.bulk-row:hover {
+    background-color: var(--bulk-row-hover);
+}
+
+/* Active state (click feedback) */
+.bulk-row:active {
+    background-color: var(--bulk-row-active);
+    transform: scale(0.995);
+}
+
+/* Focus state (keyboard navigation) */
+.bulk-row:focus {
+    background-color: var(--bulk-row-hover);
+    box-shadow: inset 3px 0 0 var(--bulk-primary);
+}
+
+/* Selected state */
+.bulk-row.selected {
+    background-color: var(--bulk-row-selected);
+    border-left: 3px solid var(--bulk-primary);
+}
+
+/* Selected + hover */
+.bulk-row.selected:hover {
+    background-color: rgba(156, 77, 255, 0.18);
+}
+
+/* ============================================================================
+   CELL STYLING
+   ============================================================================ */
+
+/* Checkbox cell (first column) */
+.bulk-checkbox-cell {
+    width: 48px;
+    padding: var(--bulk-row-padding);
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Data cells */
+.bulk-data-cell {
+    padding: var(--bulk-row-padding);
+    vertical-align: middle;
+}
+
+/* Action cells (with links/buttons) */
+.bulk-action-cell {
+    padding: var(--bulk-row-padding);
+    vertical-align: middle;
+}
+
+/* Prevent action cell from triggering row selection */
+.bulk-action-cell a,
+.bulk-action-cell button {
+    position: relative;
+    z-index: 10;
+}
+
+/* ============================================================================
+   BULK TOOLBAR (Fixed at bottom when items selected)
+   ============================================================================ */
+
+/* Toolbar container */
+.bulk-toolbar {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+
+    background: var(--bulk-toolbar-bg);
+    border: 1px solid var(--bulk-toolbar-border);
+    border-radius: 12px;
+
+    padding: 16px 24px;
+
+    /* Constraints for proper sizing */
+    max-width: min(90%, 800px);
+    /* Never wider than 90% or 800px */
+    width: auto;
+    /* Shrink to content */
+    white-space: nowrap;
+    /* Prevent wrapping */
+
+    display: flex;
+    align-items: center;
+    gap: 24px;
+
+    box-shadow: var(--bulk-shadow-strong);
+
+    z-index: 1000;
+
+    /* Animation */
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--bulk-transition-medium);
+}
+
+/* Show toolbar when active */
+.bulk-toolbar.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Toolbar info section */
+.bulk-toolbar-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--bulk-toolbar-text);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.bulk-toolbar-info i {
+    color: var(--bulk-primary);
+    font-size: 18px;
+}
+
+.bulk-count {
+    color: var(--bulk-primary);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* Toolbar actions section */
+.bulk-toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Toolbar buttons */
+.bulk-btn {
+    background: var(--bulk-primary);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    transition: all var(--bulk-transition-fast);
+}
+
+.bulk-btn:hover {
+    background: var(--bulk-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--bulk-shadow-medium);
+}
+
+.bulk-btn:active {
+    transform: translateY(0);
+}
+
+/* Secondary button */
+.bulk-btn-secondary {
+    background: transparent;
+    color: var(--bulk-toolbar-text);
+    border: 1px solid var(--bulk-toolbar-border);
+    padding: 10px 18px;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    transition: all var(--bulk-transition-fast);
+}
+
+.bulk-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--bulk-checkbox-border-hover);
+}
+
+/* Danger button */
+.bulk-btn-danger {
+    background: #ef4444;
+}
+
+.bulk-btn-danger:hover {
+    background: #dc2626;
+}
+
+/* ===============================
+   BULK ACTION BUTTONS
+================================ */
+
+.btn-bulk {
+    padding: 12px 26px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 0.3px;
+}
+
+/* Cancel Button */
+.btn-cancel {
+    background: #374151;
+    color: #e5e7eb;
+}
+
+.btn-cancel:hover {
+    background: #4b5563;
+}
+
+/* Apply Changes Button */
+.btn-apply {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
+}
+
+.btn-apply:hover {
+    background: linear-gradient(135deg, #34d399, #10b981);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(16, 185, 129, 0.45);
+}
+
+.btn-apply:active {
+    transform: scale(0.97);
+}
+
+.btn-apply.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* ============================================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================================================ */
+
+/* Screen reader only text */
+.bulk-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Keyboard focus indicator */
+.bulk-row:focus-visible {
+    outline: 2px solid var(--bulk-primary);
+    outline-offset: -2px;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN (Mobile-friendly)
+   ============================================================================ */
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+
+    /* Increase touch targets */
+    .bulk-checkbox {
+        min-width: 48px;
+        min-height: 48px;
+    }
+
+    /* Stack toolbar vertically */
+    .bulk-toolbar {
+        flex-direction: column;
+        gap: 16px;
+        left: 16px;
+        right: 16px;
+        transform: translateX(0) translateY(100px);
+        width: calc(100% - 32px);
+    }
+
+    .bulk-toolbar.active {
+        transform: translateX(0) translateY(0);
+    }
+
+    .bulk-toolbar-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    /* Smaller buttons on mobile */
+    .bulk-btn,
+    .bulk-btn-secondary {
+        padding: 8px 14px;
+        font-size: 13px;
+        flex: 1;
+        justify-content: center;
+    }
+}
+
+/* Tablet optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .bulk-toolbar {
+        bottom: 16px;
+    }
+}
+
+/* ============================================================================
+   ANIMATION UTILITIES
+   ============================================================================ */
+
+/* Fade in animation */
+@keyframes bulkFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Slide up animation */
+@keyframes bulkSlideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Scale in animation */
+@keyframes bulkScaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ============================================================================ */
+
+/* Hide element */
+.bulk-hidden {
+    display: none !important;
+}
+
+/* Disable pointer events */
+.bulk-disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+/* Loading state */
+.bulk-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.bulk-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 24px;
+    height: 24px;
+
+    border: 3px solid rgba(156, 77, 255, 0.2);
+    border-top-color: var(--bulk-primary);
+    border-radius: 50%;
+
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* ============================================================================
+   THEME COMPATIBILITY
+   ============================================================================ */
+
+/* Light theme override (if needed) */
+[data-theme="light"] {
+    --bulk-checkbox-bg: #ffffff;
+    --bulk-checkbox-border: #cbd5e1;
+    --bulk-row-hover: rgba(0, 0, 0, 0.02);
+    --bulk-row-selected: rgba(156, 77, 255, 0.08);
+    --bulk-toolbar-bg: #ffffff;
+    --bulk-toolbar-border: #e2e8f0;
+    --bulk-toolbar-text: #1e293b;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .bulk-checkbox {
+        border-width: 3px;
+    }
+
+    .bulk-row.selected {
+        border-left-width: 5px;
+    }
+}
+
+/* Reduced motion support (accessibility) */
+@media (prefers-reduced-motion: reduce) {
+
+    .bulk-checkbox,
+    .bulk-row,
+    .bulk-toolbar,
+    .bulk-btn {
+        transition: none;
+        animation: none;
+    }
+}
+
+/* ============================================================================
+   PRINT STYLES (Hide bulk controls when printing)
+   ============================================================================ */
+
+@media print {
+
+    .bulk-checkbox,
+    .bulk-toolbar,
+    .bulk-action-cell {
+        display: none !important;
+    }
+
+    .bulk-row {
+        cursor: default;
+        border-left: none !important;
+    }
+}

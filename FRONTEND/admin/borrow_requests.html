@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrow Requests - Al Marakish Library</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #9c4dff;
+            --primary-dark: #0f1724;
+            --bg-dashboard: #0f1724;
+            --bg-card: #1e293b;
+            --border: #334155;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dashboard);
+            color: white;
+            line-height: 1.6;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 32px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        .page-header {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), #f59e0b);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--border);
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .request-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .request-header {
+            display: grid;
+            grid-template-columns: 100px 1fr auto;
+            gap: 20px;
+        }
+
+        .book-thumb {
+            width: 100px;
+            height: 140px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .book-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .book-thumb i {
+            font-size: 40px;
+            opacity: 0.3;
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .status-approved {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            margin-top: 16px;
+        }
+
+        .btn-approve {
+            background: #10b981;
+        }
+
+        .btn-reject {
+            background: #ef4444;
+            margin-left: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #cbd5e1;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .request-header {
+                grid-template-columns: 1fr;
+            }
+
+            .book-thumb {
+                width: 80px;
+                height: 110px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-hand-holding"></i> Borrow Requests</h1>
+            <p style="color: var(--text-muted); margin-top: 8px;">Manage student borrow requests</p>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" onclick="loadRequests('Pending', this)">
+                <i class="fas fa-clock"></i> Pending
+            </button>
+            <button class="filter-btn" onclick="loadRequests('Approved', this)">
+                <i class="fas fa-check-circle"></i> Approved
+            </button>
+            <button class="filter-btn" onclick="loadRequests('Rejected', this)">
+                <i class="fas fa-times-circle"></i> Rejected
+            </button>
+        </div>
+
+        <div id="requestsList">
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading requests...</div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        // Load Sidebar robustly
+        fetch('/admin/sidebar.html')
+            .then(response => {
+                if (!response.ok) throw new Error('Sidebar fetch failed: ' + response.status);
+                return response.text();
+            })
+            .then(data => {
+                document.getElementById('sidebar-container').innerHTML = data;
+                if (typeof initSidebar === 'function') initSidebar();
+            })
+            .catch(err => console.error('Error loading sidebar:', err));
+
+        protectRoute();
+
+        window.addEventListener('DOMContentLoaded', () => loadRequests('Pending'));
+
+        async function loadRequests(status, btn) {
+            if (btn) {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+
+            const list = document.getElementById('requestsList');
+            list.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+
+            try {
+                const response = await apiRequest(`/admin/borrow-requests?status=${status}`);
+                if (response.success) {
+                    if (response.requests.length > 0) {
+                        list.innerHTML = response.requests.map(req => `
+                            <div class="request-card">
+                                <div class="request-header">
+                                    <div class="book-thumb">
+                                        ${req.cover_image ? `<img src="/uploads/covers/${req.cover_image}" alt="Cover">` : '<i class="fas fa-book"></i>'}
+                                    </div>
+                                    <div>
+                                        <h3 style="font-size: 18px; margin-bottom: 5px;">${req.title}</h3>
+                                        <p style="color: var(--text-muted); font-size: 14px;">by ${req.author || 'Unknown'}</p>
+                                        <p style="color: var(--text-muted); font-size: 13px; margin-top: 10px;">
+                                            <i class="fas fa-user"></i> Student: <strong>${req.full_name}</strong> (${req.ad_no})
+                                        </p>
+                                        <p style="color: var(--text-muted); font-size: 11px;">Requested on: ${new Date(req.request_date).toLocaleString()}</p>
+                                    </div>
+                                    <div>
+                                        <span class="status-badge status-${req.status.toLowerCase()}">${req.status}</span>
+                                        ${req.status === 'Pending' ? `
+                                            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                                                <button class="btn btn-approve" onclick="processRequest(${req.id}, 'approve')">
+                                                    <i class="fas fa-check"></i> Approve
+                                                </button>
+                                                <button class="btn btn-reject" onclick="processRequest(${req.id}, 'reject')">
+                                                    <i class="fas fa-times"></i> Reject
+                                                </button>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        list.innerHTML = `
+                            <div style="text-align: center; padding: 60px 20px; color: #64748b;">
+                                <i class="fas fa-inbox" style="font-size: 64px; opacity: 0.3; margin-bottom: 16px;"></i>
+                                <h3>No ${status} requests found</h3>
+                                <p>Requests from OPAC will appear here</p>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                list.innerHTML = '<p style="text-align:center; color: #ef4444;">Error loading requests: ' + error.message + '</p>';
+            }
+        }
+
+        async function processRequest(id, action) {
+            let reason = '';
+            if (action === 'reject') {
+                reason = prompt('Reason for rejection:');
+                if (reason === null) return;
+            } else {
+                if (!confirm('Approve this borrow request?')) return;
+            }
+
+            try {
+                const response = await apiRequest(`/admin/borrow-requests/${id}/${action}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ reason })
+                });
+
+                if (response.success) {
+                    showToast(`Request ${action}d successfully`, 'success');
+                    loadRequests('Pending');
+                } else {
+                    showToast(response.error || `Failed to ${action} request`, 'error');
+                }
+            } catch (error) {
+                showToast('A network error occurred', 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

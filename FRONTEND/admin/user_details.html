@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile | Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <style>
+        :root {
+            /* Color System */
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --danger: #ef4444;
+
+            /* Surfaces */
+            --bg-body: #0a0f1d;
+            --bg-card: rgba(15, 23, 42, 0.6);
+            --bg-sidebar: #0f172a;
+            --border: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.08);
+
+            /* Text */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+
+            /* Spacing Scale (8-12-16-20) */
+            --sp-1: 8px;
+            --sp-2: 12px;
+            --sp-3: 16px;
+            --sp-4: 20px;
+            --sp-6: 32px;
+            --sp-8: 48px;
+
+            /* Effects */
+            --radius-sm: 10px;
+            --radius-md: 14px;
+            --radius-lg: 22px;
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --shadow-premium: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.06) 0, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: var(--sp-6);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Profile Header Design */
+        .profile-header {
+            display: flex;
+            gap: var(--sp-8);
+            margin-bottom: var(--sp-8);
+            align-items: center;
+        }
+
+        .avatar-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .profile-avatar {
+            width: 160px;
+            height: 160px;
+            border-radius: var(--radius-lg);
+            object-fit: cover;
+            border: 4px solid var(--border);
+            background: var(--bg-card);
+            box-shadow: var(--shadow-premium);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.05) rotate(2deg);
+        }
+
+        .status-pill {
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            white-space: nowrap;
+        }
+
+        .status-active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .status-inactive {
+            background: var(--danger);
+            color: white;
+        }
+
+        .profile-info h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: var(--sp-1);
+            background: linear-gradient(135deg, #fff 30%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .profile-badges {
+            display: flex;
+            gap: var(--sp-2);
+            margin-bottom: var(--sp-4);
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: var(--sp-1);
+        }
+
+        .badge i {
+            color: var(--primary-light);
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: var(--sp-3);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--sp-1);
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 20px -10px var(--primary);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 15px 30px -10px var(--primary);
+            filter: brightness(1.1);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+        }
+
+        /* Card Design System */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: var(--sp-6);
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--sp-6);
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow-premium);
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: var(--sp-4);
+            display: flex;
+            align-items: center;
+            gap: var(--sp-2);
+            letter-spacing: -0.5px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        .info-list {
+            list-style: none;
+        }
+
+        .info-item {
+            margin-bottom: var(--sp-4);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding-bottom: var(--sp-3);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-dim);
+            font-weight: 700;
+        }
+
+        .info-value {
+            font-size: 15px;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        /* Stats & History Design */
+        .mini-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--sp-4);
+            margin-bottom: var(--sp-6);
+        }
+
+        .mini-stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: var(--sp-4);
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mini-stat-card::after {
+            content: "";
+            position: absolute;
+            right: -10px;
+            top: -10px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            opacity: 0.05;
+            border-radius: 50%;
+        }
+
+        .mini-stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            display: block;
+            font-family: 'Outfit', sans-serif;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .mini-stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table th {
+            text-align: left;
+            padding: var(--sp-3) var(--sp-4);
+            color: var(--text-dim);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .history-table td {
+            padding: var(--sp-4);
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .history-table tr:hover td {
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-overdue {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .status-returned {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-borrowed {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--secondary);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: var(--sp-3);
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: var(--sp-6);
+            }
+
+            .profile-badges,
+            .profile-actions {
+                justify-content: center;
+            }
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* PREMIUM LUXURY PRINT STYLES */
+        @media print {
+            body {
+                background: #fff !important;
+                margin: 0 !important;
+                color: #0f172a !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            body * {
+                visibility: hidden !important;
+            }
+
+            .print-wrapper,
+            .print-wrapper * {
+                visibility: visible !important;
+            }
+
+            .print-wrapper {
+                display: block !important;
+                position: absolute !important;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: #fff !important;
+                padding: 40px !important;
+            }
+
+            /* Side-by-Side Card Layout */
+            .card-print-container {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: center !important;
+                gap: 40px !important;
+                margin-bottom: 60px !important;
+                width: 100% !important;
+            }
+
+            /* Front Card Styling */
+            #printableCard {
+                display: block !important;
+                width: 350px;
+                height: 680px;
+                background: white !important;
+                border-radius: 24px;
+                overflow: hidden;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+                margin: 0 !important;
+                border: 1px solid #e2e8f0;
+                position: relative;
+            }
+
+            .card-header-premium {
+                height: 180px;
+                background: #0f172a !important;
+                background-image: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+                padding: 25px 20px;
+                text-align: center;
+                position: relative;
+                border-bottom: 4px solid #f59e0b;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                gap: 5px;
+            }
+
+            .lib-contact {
+                font-size: 8px;
+                color: #94a3b8 !important;
+                font-weight: 500;
+                margin-top: 5px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .card-header-premium .lib-name {
+                color: #f59e0b !important;
+                font-size: 20px;
+                font-weight: 800;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+            }
+
+            .card-header-premium .lib-sub {
+                color: #94a3b8 !important;
+                font-size: 10px;
+                letter-spacing: 3px;
+                font-weight: 600;
+            }
+
+            .card-avatar-wrap {
+                position: absolute;
+                top: 110px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 10;
+            }
+
+            .card-avatar-wrap img {
+                width: 140px;
+                height: 140px;
+                border-radius: 24px;
+                border: 6px solid white !important;
+                background: white !important;
+                box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+                object-fit: cover;
+            }
+
+            .card-body-premium {
+                padding: 30px;
+                padding-top: 100px;
+                text-align: center;
+            }
+
+            .card-student-name {
+                font-size: 28px;
+                font-weight: 800;
+                color: #0f172a !important;
+                margin-bottom: 4px;
+                font-family: 'Outfit', sans-serif;
+            }
+
+            .card-student-role {
+                font-size: 12px;
+                font-weight: 700;
+                color: #6366f1 !important;
+                text-transform: uppercase;
+                margin-bottom: 30px;
+                background: #f1f2ff !important;
+                display: inline-block;
+                padding: 4px 16px;
+                border-radius: 50px;
+                letter-spacing: 1.5px;
+            }
+
+            .card-details-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                text-align: left;
+                margin-bottom: 20px;
+            }
+
+            .card-detail-label {
+                font-size: 9px;
+                color: #94a3b8 !important;
+                text-transform: uppercase;
+                font-weight: 800;
+                letter-spacing: 1px;
+                margin-bottom: 2px;
+            }
+
+            .card-detail-value {
+                font-size: 13px;
+                color: #1e293b !important;
+                font-weight: 700;
+            }
+
+            .card-footer-premium {
+                background: #f8fafc !important;
+                padding: 20px 30px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-top: 1px dashed #cbd5e1 !important;
+                position: relative;
+            }
+
+            .card-footer-text h4 {
+                font-size: 9px;
+                color: #94a3b8 !important;
+                font-weight: 800;
+                margin-bottom: 2px;
+            }
+
+            .card-footer-text p {
+                font-size: 13px;
+                color: #0f172a !important;
+                font-weight: 800;
+                margin: 0;
+            }
+
+            .card-barcode-wrap {
+                width: 140px;
+                height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: white !important;
+            }
+
+            .card-barcode-wrap svg {
+                width: 100% !important;
+                height: 100% !important;
+            }
+
+            /* Back Side of Card */
+            #printableCardBack {
+                display: flex !important;
+                flex-direction: column !important;
+                width: 350px;
+                height: 680px;
+                background: white !important;
+                border-radius: 24px;
+                overflow: hidden;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+                margin: 0 !important;
+                border: 1px solid #e2e8f0;
+                position: relative;
+                padding: 25px 20px 0 20px;
+                font-family: 'Inter', sans-serif;
+            }
+
+            .student-details-back {
+                margin-bottom: 12px;
+                background: #f8fafc !important;
+                padding: 10px 12px;
+                border-radius: 12px;
+                border: 1px solid #e2e8f0;
+            }
+
+            .back-detail-row {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 6px;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+                padding-bottom: 3px;
+            }
+
+            .back-detail-label {
+                font-size: 9px;
+                font-weight: 800;
+                color: #94a3b8 !important;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .back-detail-value {
+                font-size: 11px;
+                font-weight: 700;
+                color: #1e293b !important;
+                text-align: right;
+            }
+
+            .back-header {
+                text-align: center;
+                margin-bottom: 12px;
+            }
+
+            .back-header .lib-title {
+                font-family: 'Outfit', sans-serif;
+                font-weight: 800;
+                font-size: 18px;
+                color: #0f172a !important;
+                letter-spacing: 1px;
+            }
+
+            .terms-section {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                padding-bottom: 10px;
+            }
+
+            .terms-title {
+                font-size: 9px;
+                font-weight: 800;
+                color: #6366f1 !important;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin: 5px 0 8px 0;
+                border-bottom: 1px solid #e2e8f0;
+                padding-bottom: 3px;
+            }
+
+            .term-item {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 6px;
+                align-items: flex-start;
+            }
+
+            .term-icon {
+                font-size: 12px;
+                color: #f59e0b !important;
+                margin-top: 2px;
+            }
+
+            .term-text {
+                font-size: 10.5px;
+                line-height: 1.4;
+                color: #475569 !important;
+                font-weight: 500;
+            }
+
+            .back-footer {
+                text-align: center;
+                background: #f8fafc !important;
+                margin: 0 -20px 0 -20px;
+                padding: 15px 20px;
+                border-top: 1px dashed #cbd5e1 !important;
+            }
+
+            .back-footer p {
+                font-size: 10px;
+                color: #94a3b8 !important;
+                margin-bottom: 5px;
+                font-weight: 600;
+            }
+
+            .back-footer .emergency-box {
+                background: #0f172a !important;
+                color: white !important;
+                padding: 8px 15px;
+                border-radius: 10px;
+                display: inline-block;
+                font-size: 12px;
+                font-weight: 700;
+                margin-top: 5px;
+            }
+
+            /* Premium History Report */
+            .print-history-section {
+                width: 100%;
+                display: block !important;
+            }
+
+            .print-history-section h2 {
+                font-family: 'Outfit', sans-serif;
+                font-size: 22px;
+                font-weight: 800;
+                color: #0f172a;
+                margin-bottom: 24px;
+                padding-bottom: 12px;
+                border-bottom: 2px solid #e2e8f0;
+            }
+
+            .print-history-table {
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 0 10px;
+            }
+
+            .print-history-table th {
+                padding: 12px 20px;
+                text-align: left;
+                font-size: 11px;
+                text-transform: uppercase;
+                font-weight: 800;
+                color: #94a3b8;
+                letter-spacing: 1px;
+            }
+
+            .history-row-print td {
+                background: #f8fafc !important;
+                padding: 16px 20px;
+                border-top: 1px solid #e2e8f0 !important;
+                border-bottom: 1px solid #e2e8f0 !important;
+            }
+
+            .history-row-print td:first-child {
+                border-radius: 14px 0 0 14px;
+                border-left: 1px solid #e2e8f0 !important;
+            }
+
+            .history-row-print td:last-child {
+                border-radius: 0 14px 14px 0;
+                border-right: 1px solid #e2e8f0 !important;
+            }
+
+            .book-title-print {
+                font-size: 14px;
+                font-weight: 800;
+                color: #1e293b !important;
+                margin-bottom: 2px;
+            }
+
+            .book-meta-print {
+                font-size: 10px;
+                color: #64748b !important;
+                font-weight: 600;
+            }
+
+            .status-badge-print {
+                padding: 6px 12px;
+                border-radius: 50px;
+                font-size: 10px;
+                font-weight: 800;
+                text-transform: uppercase;
+                display: inline-block;
+            }
+
+            .status-returned-print {
+                background: #dcfce7 !important;
+                color: #166534 !important;
+            }
+
+            .status-borrowed-print {
+                background: #fee2e2 !important;
+                color: #991b1b !important;
+            }
+
+            .status-overdue-print {
+                background: #fef3c7 !important;
+                color: #92400e !important;
+            }
+        }
+
+        /* Non-print helper */
+        .print-wrapper {
+            display: none;
+        }
+
+        #printableCard {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- Top Navigation -->
+            <div style="margin-bottom: 32px;">
+                <a href="users.html"
+                    style="color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px;">
+                    <i class="fas fa-arrow-left"></i> Back to Directory
+                </a>
+            </div>
+
+            <div id="profileContent" style="display: none;">
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="avatar-container">
+                        <img id="profilePhoto" src="/assets/img/default-student.png" alt="Profile"
+                            class="profile-avatar">
+                        <span id="profileStatus" class="status-pill status-active">Active Member</span>
+                    </div>
+                    <div class="profile-info">
+                        <h1 id="fullName">Student Name</h1>
+                        <div class="profile-badges">
+                            <div class="badge"><i class="fas fa-id-card"></i> <span id="adNoBadge">AD0000</span></div>
+                            <div class="badge"><i class="fas fa-layer-group"></i> <span id="sectionBadge">Section</span>
+                            </div>
+                        </div>
+                        <div class="profile-actions">
+                            <a id="editLink" href="#" class="btn btn-primary"><i class="fas fa-user-edit"></i> Edit
+                                Profile</a>
+                            <button class="btn btn-outline" onclick="printMemberCard()"><i class="fas fa-print"></i>
+                                Member
+                                Card</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wrapper for print content -->
+                <div class="print-wrapper">
+                    <!-- Card Print Container -->
+                    <div class="card-print-container">
+                        <!-- Premium Card (Front) -->
+                        <div id="printableCard">
+                            <div class="card-header-premium">
+                                <div class="lib-name">AL MARAKISH</div>
+                                <div class="lib-sub">LIBRARY MANAGEMENT SYSTEM</div>
+                                <div class="lib-contact">Kerala, India • Tel: +91 98474 11637</div>
+                            </div>
+                            <div class="card-avatar-wrap">
+                                <img id="printAvatar" src="" alt="Photo">
+                            </div>
+                            <div class="card-body-premium">
+                                <div class="card-student-name" id="printName">Student Name</div>
+                                <div class="card-student-role">Valid Member Card</div>
+
+                                <div class="card-details-grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+                                    <div class="card-detail-item">
+                                        <span class="card-detail-label">Admission No</span>
+                                        <span class="card-detail-value" id="printAdNo">—</span>
+                                    </div>
+                                    <div class="card-detail-item">
+                                        <span class="card-detail-label">Section</span>
+                                        <span class="card-detail-value" id="printSection">—</span>
+                                    </div>
+                                    <div class="card-detail-item">
+                                        <span class="card-detail-label">Phone Number</span>
+                                        <span class="card-detail-value" id="printPhone"
+                                            style="font-size: 11px;">—</span>
+                                    </div>
+                                    <div class="card-detail-item">
+                                        <span class="card-detail-label">Valid Until</span>
+                                        <span class="card-detail-value">DEC 2026</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer-premium">
+                                <div class="card-footer-text">
+                                    <h4>AUTHORIZED BY</h4>
+                                    <p>CHIEF LIBRARIAN</p>
+                                </div>
+                                <div class="card-barcode-wrap">
+                                    <svg id="barcode"></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Luxury Card Back Side -->
+                        <div id="printableCardBack">
+                            <div class="back-header">
+                                <i class="fas fa-university"
+                                    style="font-size: 32px; color: #0f172a; margin-bottom: 15px;"></i>
+                                <div class="lib-title">TERMS & CONDITIONS</div>
+                            </div>
+
+                            <div class="terms-section">
+                                <div class="terms-title">Student Particulars</div>
+                                <div class="student-details-back">
+                                    <div class="back-detail-row">
+                                        <span class="back-detail-label">Date of Birth</span>
+                                        <span class="back-detail-value" id="printDob">—</span>
+                                    </div>
+                                    <div class="back-detail-row">
+                                        <span class="back-detail-label">Blood Group</span>
+                                        <span class="back-detail-value" id="printBlood">—</span>
+                                    </div>
+                                    <div class="back-detail-row">
+                                        <span class="back-detail-label">Aadhaar No</span>
+                                        <span class="back-detail-value" id="printAadhaar">—</span>
+                                    </div>
+                                    <div class="back-detail-row">
+                                        <span class="back-detail-label">Email ID</span>
+                                        <span class="back-detail-value" id="printEmail"
+                                            style="text-transform: lowercase; font-size: 10px;">—</span>
+                                    </div>
+                                    <div class="back-detail-row"
+                                        style="flex-direction: column; align-items: flex-start; gap: 4px; border: none;">
+                                        <span class="back-detail-label">Residential Address</span>
+                                        <span class="back-detail-value" id="printAddress"
+                                            style="text-align: left; font-size: 10px; line-height: 1.4;">—</span>
+                                    </div>
+                                </div>
+
+                                <div class="terms-title">Library Usage Guidelines</div>
+
+                                <div class="term-item">
+                                    <i class="fas fa-check-circle term-icon"></i>
+                                    <div class="term-text">This card is non-transferable and remains the property of Al
+                                        Marakish Library.</div>
+                                </div>
+
+                                <div class="term-item">
+                                    <i class="fas fa-check-circle term-icon"></i>
+                                    <div class="term-text">Members must present this card for all transactions including
+                                        borrow and return.</div>
+                                </div>
+
+                                <div class="term-item">
+                                    <i class="fas fa-check-circle term-icon"></i>
+                                    <div class="term-text">Books must be returned on or before the due date to avoid
+                                        overdue
+                                        fines.</div>
+                                </div>
+
+                                <div class="term-item">
+                                    <i class="fas fa-check-circle term-icon"></i>
+                                    <div class="term-text">Damage or loss of books will result in a replacement fee plus
+                                        processing charges.</div>
+                                </div>
+
+                                <div class="term-item">
+                                    <i class="fas fa-exclamation-triangle term-icon"
+                                        style="color: #ef4444 !important;"></i>
+                                    <div class="term-text">Loss of card must be reported immediately to the librarian.
+                                        Duplicate card fee: ₹50.</div>
+                                </div>
+                            </div>
+
+                            <div class="back-footer">
+                                <p>If found, please return to the library address:</p>
+                                <div style="font-size: 11px; color: #1e293b; font-weight: 700; margin-bottom: 10px;">
+                                    Al Marakish Library, Shinas, Kerala, India
+                                </div>
+                                <div class="emergency-box">
+                                    <i class="fas fa-phone-alt"></i> Help: +91 919847411637
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transaction History for Print -->
+                    <div class="print-history-section">
+                        <h2> Transaction History Report</h2>
+                        <table class="print-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Book Details</th>
+                                    <th>Issued On</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="printHistoryBody">
+                                <!-- Populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Main Content Grid -->
+                <div class="profile-grid">
+                    <!-- Left Column: Details -->
+                    <div class="card">
+                        <h2 class="card-title"><i class="fas fa-info-circle"></i> Personal Details</h2>
+                        <div class="info-list">
+                            <div class="info-item">
+                                <span class="info-label">Email Address</span>
+                                <span class="info-value" id="emailVal">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Phone Number</span>
+                                <span class="info-value" id="phoneVal">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Date of Birth</span>
+                                <span class="info-value" id="dobVal">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Blood Group</span>
+                                <span class="info-value" id="bloodVal">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Address</span>
+                                <span class="info-value" id="addressVal">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Emergency Contact</span>
+                                <span class="info-value" id="emergencyVal">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: History & Stats -->
+                    <div>
+                        <div class="mini-stats">
+                            <div class="mini-stat-card">
+                                <span class="mini-stat-value" id="booksIssuedCount">0</span>
+                                <span class="mini-stat-label">Currently Issued</span>
+                            </div>
+                            <div class="mini-stat-card">
+                                <span class="mini-stat-value" style="color: var(--danger);" id="pendingFines">₹0</span>
+                                <span class="mini-stat-label">Pending Fines</span>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h2 class="card-title"><i class="fas fa-history"></i> Recent Transactions</h2>
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Book Details</th>
+                                        <th>Issued On</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTableBody">
+                                    <tr>
+                                        <td colspan="4"
+                                            style="text-align: center; color: var(--text-muted); padding: 40px;">No
+                                            transaction history found.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" style="text-align: center; padding: 100px;">
+                <i class="fas fa-circle-notch fa-spin"
+                    style="font-size: 48px; color: var(--primary); margin-bottom: 24px;"></i>
+                <h2>Loading Profile...</h2>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStudentDetails();
+        });
+
+        function loadSidebar() {
+            fetch('/admin/sidebar.html')
+                .then(res => res.text())
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+                    if (typeof initSidebar === 'function') initSidebar();
+                });
+        }
+
+        async function loadStudentDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const studentId = urlParams.get('id');
+
+            if (!studentId) {
+                window.location.href = 'users.html';
+                return;
+            }
+
+            try {
+                const response = await apiRequest(`/admin/users/${studentId}`);
+                document.getElementById('loadingState').style.display = 'none';
+
+                if (response.success) {
+                    const user = response.user;
+                    const history = response.history || [];
+                    const totalFine = parseFloat(response.totalFine || 0);
+                    window.currentStudentData = user;
+
+                    document.getElementById('profileContent').style.display = 'block';
+
+                    // Update Headers
+                    document.getElementById('fullName').textContent = user.full_name;
+                    document.getElementById('adNoBadge').textContent = user.ad_no;
+                    document.getElementById('sectionBadge').textContent = user.section || 'Unassigned';
+
+                    const statusPill = document.getElementById('profileStatus');
+                    statusPill.textContent = user.status === 'active' ? 'Active Member' : 'Suspended';
+                    statusPill.className = `status-pill ${user.status === 'active' ? 'status-active' : 'status-inactive'}`;
+
+                    if (user.profile_photo) {
+                        document.getElementById('profilePhoto').src = `/uploads/student_photos/${user.profile_photo}`;
+                    } else {
+                        document.getElementById('profilePhoto').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&size=256&background=5b21b6&color=fff&bold=true`;
+                    }
+
+                    document.getElementById('editLink').href = `add_student.html?edit=${user.id}`;
+
+                    // Update Details
+                    document.getElementById('emailVal').textContent = user.email || '—';
+                    document.getElementById('phoneVal').textContent = user.phone || '—';
+                    document.getElementById('dobVal').textContent = user.date_of_birth ? new Date(user.date_of_birth).toLocaleDateString('en-GB') : '—';
+                    document.getElementById('bloodVal').textContent = user.blood_group || '—';
+                    document.getElementById('addressVal').textContent = user.address || '—';
+                    document.getElementById('emergencyVal').textContent = user.contact || '—';
+
+                    // Update Summary
+                    document.getElementById('pendingFines').textContent = `₹${totalFine.toFixed(2)}`;
+
+                    // Update History Table
+                    const historyBody = document.getElementById('historyTableBody');
+                    if (history.length > 0) {
+                        historyBody.innerHTML = '';
+                        let activeCount = 0;
+
+                        history.forEach(tx => {
+                            if (tx.status === 'Borrowed' || tx.status === 'Overdue') activeCount++;
+
+                            const tr = document.createElement('tr');
+                            let statusStyle = '';
+                            if (tx.status === 'Overdue') statusStyle = 'status-overdue';
+                            else if (tx.status === 'Returned') statusStyle = 'status-returned';
+                            else if (tx.status === 'Borrowed') statusStyle = 'status-borrowed';
+
+                            tr.innerHTML = `
+                                <td>
+                                    <div style="font-weight: 700; color: white; font-size: 15px; margin-bottom: 2px;">${escapeHtml(tx.title)}</div>
+                                    <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px;">Acc No: ${tx.accession_number}</div>
+                                </td>
+                                <td style="color: var(--text-muted); font-size: 13px;">${new Date(tx.borrow_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                                <td style="color: var(--text-muted); font-size: 13px;">${new Date(tx.due_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                                <td><span class="status-badge ${statusStyle}">${tx.status}</span></td>
+                            `;
+                            historyBody.appendChild(tr);
+                        });
+
+                        document.getElementById('booksIssuedCount').textContent = activeCount;
+                    }
+                } else {
+                    showToast('Failed to load student profile', 'error');
+                }
+            } catch (error) {
+                console.error('Profile load error:', error);
+                document.getElementById('loadingState').innerHTML = `<h2 style="color: var(--danger)">Error loading profile</h2><p>${error.message}</p>`;
+            }
+        }
+
+        function printMemberCard() {
+            // Sync print card content
+            document.getElementById('printName').textContent = document.getElementById('fullName').textContent;
+            document.getElementById('printAdNo').textContent = document.getElementById('adNoBadge').textContent;
+            document.getElementById('printSection').textContent = document.getElementById('sectionBadge').textContent;
+            document.getElementById('printPhone').textContent = document.getElementById('phoneVal').textContent;
+            document.getElementById('printEmail').textContent = document.getElementById('emailVal').textContent;
+            document.getElementById('printBlood').textContent = document.getElementById('bloodVal').textContent;
+            document.getElementById('printDob').textContent = document.getElementById('dobVal').textContent;
+            document.getElementById('printAddress').textContent = document.getElementById('addressVal').textContent;
+            document.getElementById('printAvatar').src = document.getElementById('profilePhoto').src;
+
+            // Handle Aadhaar if available (assuming it might be in the raw user object or future-proof)
+            // If aadhaar isn't explicitly in the current user details, we can try to fetch it or use a fallback
+            window.currentStudentData = window.currentStudentData || {};
+            document.getElementById('printAadhaar').textContent = window.currentStudentData.aadhaar || '—';
+
+            // Generate Barcode
+            const adNo = document.getElementById('adNoBadge').textContent;
+            JsBarcode("#barcode", adNo, {
+                format: "CODE128",
+                width: 1.5,
+                height: 40,
+                displayValue: false,
+                margin: 0,
+                background: "transparent"
+            });
+
+            // Sync History Table for Print
+            const originalBody = document.getElementById('historyTableBody');
+            const printBody = document.getElementById('printHistoryBody');
+            printBody.innerHTML = '';
+
+            // Copy rows but with premium card-style layout
+            const rows = originalBody.querySelectorAll('tr');
+            rows.forEach(row => {
+                if (row.cells.length < 4) return; // Skip "No history found"
+
+                const tr = document.createElement('tr');
+                tr.className = 'history-row-print';
+
+                const bookInfo = row.cells[0].querySelector('div:first-child').textContent;
+                const accNo = row.cells[0].querySelector('div:last-child').textContent;
+                const issuedOn = row.cells[1].textContent;
+                const dueDate = row.cells[2].textContent;
+                const status = row.cells[3].textContent;
+
+                tr.innerHTML = `
+                    <td>
+                        <div class="book-title-print">${bookInfo}</div>
+                        <div class="book-meta-print">SERIAL: ${accNo.replace('Acc No: ', '').replace('ACCESSION: ', '')}</div>
+                    </td>
+                    <td style="font-weight: 700; color: #1e293b; font-size: 12px;">OUT: ${issuedOn}</td>
+                    <td style="font-weight: 700; color: #6366f1; font-size: 12px;">DUE: ${dueDate}</td>
+                    <td><span class="status-badge-print ${getStatusClass(status)}">${status}</span></td>
+                `;
+                printBody.appendChild(tr);
+            });
+
+            if (printBody.innerHTML === '') {
+                printBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 40px; color: #94a3b8;">No transaction history found for this account.</td></tr>';
+            }
+
+            window.print();
+        }
+
+        function getStatusClass(status) {
+            status = status.toUpperCase();
+            if (status.includes('RETURNED')) return 'status-returned-print';
+            if (status.includes('OVERDUE')) return 'status-overdue-print';
+            return 'status-borrowed-print';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
+        }
+    </script>
+</body>
+
+</html>

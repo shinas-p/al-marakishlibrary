@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Reservations | Al Marakish Library</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.4);
+            --bg-dark: #080c14;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.05) 0, transparent 50%);
+            color: white;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-title h1 i {
+            background: linear-gradient(135deg, var(--primary) 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .filter-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .filter-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px var(--primary-glow);
+        }
+
+        .res-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 24px;
+        }
+
+        .res-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-left: 4px solid var(--primary);
+        }
+
+        .res-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .res-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .res-status {
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-pending {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+
+        .status-ready {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+
+        .status-completed {
+            background: rgba(148, 163, 184, 0.15);
+            color: #94a3b8;
+        }
+
+        .status-cancelled {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .book-info {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .book-img {
+            width: 70px;
+            height: 100px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+            background: #1e293b;
+        }
+
+        .book-details h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .student-info {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .student-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 12px;
+        }
+
+        .res-actions {
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-ready {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-complete {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-cancel {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-ready:hover,
+        .btn-complete:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        .btn-cancel:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 80px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .res-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div class="header-title">
+                <h1><i class="fas fa-bookmark"></i> Reservations</h1>
+                <p style="color: var(--text-muted); margin-top: 5px;">Manage student book reservations and pick-ups.</p>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <button class="filter-btn active" onclick="loadReservations('', this)"><i class="fas fa-list"></i>
+                All</button>
+            <button class="filter-btn" onclick="loadReservations('Pending', this)"><i class="fas fa-clock"></i>
+                Pending</button>
+            <button class="filter-btn" onclick="loadReservations('Ready', this)"><i class="fas fa-check-circle"></i>
+                Ready</button>
+            <button class="filter-btn" onclick="loadReservations('Completed', this)"><i class="fas fa-check-double"></i>
+                Completed</button>
+        </div>
+
+        <div id="resList" class="res-grid">
+            <div class="loading-state">
+                <i class="fas fa-circle-notch fa-spin fa-3x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                <p>Fetching reservations...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api-helper.js"></script>
+    <script src="/assets/js/sidebar.js"></script>
+    <script>
+        protectRoute('assistant');
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSidebar();
+            loadReservations();
+        });
+
+        async function loadSidebar() {
+            try {
+                const sidebarData = await fetch('/admin/sidebar.html').then(r => r.text());
+                document.getElementById('sidebar-container').innerHTML = sidebarData;
+                if (typeof initSidebar === 'function') initSidebar();
+            } catch (err) { }
+        }
+
+        async function loadReservations(status = '', btn = null) {
+            if (btn) {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+
+            const list = document.getElementById('resList');
+            list.innerHTML = `<div class="loading-state"><i class="fas fa-circle-notch fa-spin fa-2x"></i><p>Loading...</p></div>`;
+
+            try {
+                const response = await apiRequest(`/admin/reservations?status=${status}`);
+                if (response.success) {
+                    if (response.reservations.length === 0) {
+                        list.innerHTML = `<div class="loading-state"><i class="fas fa-inbox fa-3x" style="opacity: 0.2; margin-bottom: 15px;"></i><p>No reservations found in this category.</p></div>`;
+                        return;
+                    }
+
+                    list.innerHTML = response.reservations.map(r => {
+                        const date = new Date(r.reservation_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                        return `
+                        <div class="res-card" style="border-left-color: ${getStatusColor(r.status)}">
+                            <div class="res-header">
+                                <span class="res-status status-${r.status.toLowerCase()}">${r.status}</span>
+                                <span style="font-size: 11px; color: var(--text-muted); font-weight: 700;">${date}</span>
+                            </div>
+                            
+                            <div class="book-info">
+                                <div class="book-details">
+                                    <h3>${r.title}</h3>
+                                    <p style="color: var(--primary); font-size: 12px; font-weight: 700;">Acc No: ${r.accession_number}</p>
+                                </div>
+                            </div>
+
+                            <div class="student-info">
+                                ${r.profile_photo ?
+                                `<img src="/uploads/student_photos/${r.profile_photo}" class="student-avatar" style="object-fit: cover;">` :
+                                `<div class="student-avatar">${r.full_name.charAt(0)}</div>`
+                            }
+                                <div>
+                                    <div style="font-size: 13px; font-weight: 700;">${r.full_name}</div>
+                                    <div style="font-size: 11px; color: var(--text-muted);">Ad No: ${r.ad_no}</div>
+                                </div>
+                            </div>
+
+                            ${isAdmin() && (r.status === 'Pending' || r.status === 'Ready') ? `
+                                <div class="res-actions">
+                                    ${r.status === 'Pending' ? `
+                                        <button class="action-btn btn-ready" onclick="updateStatus(${r.id}, 'Ready')">
+                                            <i class="fas fa-bell"></i> Mark Ready
+                                        </button>
+                                    ` : `
+                                        <button class="action-btn btn-complete" onclick="updateStatus(${r.id}, 'Completed')">
+                                            <i class="fas fa-check"></i> Complete (Borrow)
+                                        </button>
+                                    `}
+                                    <button class="action-btn btn-cancel" onclick="updateStatus(${r.id}, 'Cancelled')">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                        `;
+                    }).join('');
+                }
+            } catch (err) {
+                list.innerHTML = `<div class="loading-state"><p style="color: var(--danger);">Failed to load reservations.</p></div>`;
+            }
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'Pending': return '#3b82f6';
+                case 'Ready': return '#10b981';
+                case 'Completed': return '#94a3b8';
+                case 'Cancelled': return '#ef4444';
+                default: return '#3b82f6';
+            }
+        }
+
+        async function updateStatus(id, status) {
+            const isComplete = status === 'Completed';
+            const message = isComplete ?
+                "Marking this as completed will create a new borrow record and decrement the book count. Proceed?" :
+                `Are you sure you want to move this reservation status to <strong>${status}</strong>?`;
+
+            const confirmed = await showModal({
+                title: isComplete ? 'Complete Reservation' : 'Update Status',
+                message: message,
+                type: 'confirm',
+                confirmText: isComplete ? 'Complete' : 'Update',
+                cancelText: 'Cancel'
+            });
+
+            if (confirmed) {
+                try {
+                    const response = await apiRequest(`/admin/reservations/${id}/status`, {
+                        method: 'PUT',
+                        body: JSON.stringify({ status })
+                    });
+                    if (response.success) {
+                        showToast(`Reservation updated to ${status}`, 'success');
+                        loadReservations(document.querySelector('.filter-btn.active').textContent.trim());
+                    }
+                } catch (err) {
+                    showToast(err.message || 'Update failed', 'error');
+                }
+            }
+        }
+
+        function isAdmin() {
+            const user = getUser();
+            return user && (user.role === 'admin' || user.role === 'owner');
+        }
+    </script>
+</body>
+
+</html>

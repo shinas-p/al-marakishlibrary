@@ -1,0 +1,99 @@
+# ============================================
+# AL MARAKISH LIBRARY - ROOT SECURITY
+# ============================================
+# Added: 2026-01-05 - Security Audit
+# Purpose: Security headers, file protection, directory listing disabled
+
+# Prevent directory listing
+Options -Indexes
+
+# Deny access to sensitive files
+<FilesMatch "^(\.env|\.git|composer\.(json|lock)|\.htaccess|\.htpasswd|package\.json|README\.md|config\.php)$">
+    Require all denied
+</FilesMatch>
+
+# Protect utility/migration scripts in root
+<FilesMatch "^(add_|check_|fix_|install_|setup_|migrate_|run_|database_|diagnose_|final_|schema_|system_|update_|verify_|functional_|create_backup)">
+    Require all denied
+</FilesMatch>
+
+# Protect PowerShell scripts
+<FilesMatch "\.ps1$">
+    Require all denied
+</FilesMatch>
+
+# Protect SQL files
+<FilesMatch "\.sql$">
+    Require all denied
+</FilesMatch>
+
+# Protect HTML documentation files
+<FilesMatch "^(excel_grid_status|fine_system_summary|system_ready)\.html$">
+    Require all denied
+</FilesMatch>
+
+# Deny access to backup files
+<FilesMatch "\.(backup|bak|old|tmp|swp|~)$">
+    Require all denied
+</FilesMatch>
+
+# Protect .gemini folder
+RedirectMatch 403 ^/\.gemini/
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^\.gemini/ - [F,L]
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    # Prevent clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+    
+    # Prevent MIME sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # XSS Protection (legacy browsers)
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Referrer Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Remove server signature
+    Header always unset X-Powered-By
+    Header always unset Server
+    
+    # Content Security Policy (basic - customize as needed)
+    # Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self';"
+</IfModule>
+
+# PHP Security Settings
+<IfModule mod_php.c>
+    php_flag display_errors Off
+    php_flag log_errors On
+    php_flag expose_php Off
+</IfModule>
+
+# Disable server signature
+ServerSignature Off
+
+# Force HTTPS (uncomment in production with SSL)
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteCond %{HTTPS} off
+#     RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+# </IfModule>
+
+# Prevent access to hidden files/directories
+<FilesMatch "^\..+">
+    Require all denied
+</FilesMatch>
+
+# Error pages (optional - customize paths)
+# ErrorDocument 404 /error/404.php
+# ErrorDocument 403 /error/403.php
+# ErrorDocument 500 /error/500.php
+# Block direct access to core folders
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(database|logs|helpers|includes|sql|migrations|cron)/ - [F,L]
+</IfModule>
